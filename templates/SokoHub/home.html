@@ -1,0 +1,55 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+
+<!-- HERO SECTION -->
+<div class="heros bg-secondary opacity-75 text-white p-5 text-center">
+    <h1 class="display-4 fw-bold">Welcome to Inkingi Wood Ltd</h1>
+    <p style="font-weight: 900;" class="lead text-white  mb-4">Your marketplace for local vendors and amazing Wooden products</p>
+    <a href="{% url 'products:product_list' %}" class="btn btn-primary btn-lg mt-3">
+        Browse Products
+    </a>
+
+</div>
+
+<!-- NEWEST PRODUCTS SECTION -->
+<div class="container my-5">
+    <h2 class="text-center mb-4">Newest Products</h2>
+
+    <div class="row">
+
+        {% for product in products %}
+        <div class="col-12 col-md-6 col-lg-4 col-xl-3 mb-4">
+            <div class="card h-100 shadow-sm">
+
+                <!-- Product Image -->
+                {% if product.image %}
+                    <img src="{{ product.image.url }}" class="card-img-top" alt="Product image">
+                {% else %}
+                    <img src="{% static 'img/placeholder.png' %}" class="card-img-top" alt="Placeholder">
+                {% endif %}
+
+                <div class="card-body">
+                    <h5 class="card-title">{{ product.name }}</h5>
+                    <p class="card-text text-muted">
+                        {{ product.vendor.username }}  
+                    </p>
+                    <p class="fw-bold">Price: {{ product.price|floatformat:2 }} RWF</p>
+
+                    <a href="{% url 'products:product_detail' product.id %}" class="btn btn-view w-100">
+                        View Details
+                    </a>
+                </div>
+
+            </div>
+        </div>
+        {% endfor %}
+
+        {% if products|length == 0 %}
+        <p class="text-center">No products available yet.</p>
+        {% endif %}
+    </div>
+</div>
+
+{% endblock %}

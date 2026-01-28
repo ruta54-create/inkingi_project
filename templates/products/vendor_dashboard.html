@@ -1,0 +1,68 @@
+{% extends 'base.html' %}
+{% block title %}Vendor Dashboard{% endblock %}
+
+{% block content %}
+<div class="container my-5">
+    <h2 class="mb-4">Vendor Dashboard</h2>
+
+    <div class="row g-3">
+        <div class="col-md-3">
+            <div class="card p-3 text-center">
+                <h5 class="mb-0">Total Products</h5>
+                <p class="display-6">{{ total_products }}</p>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card p-3 text-center">
+                <h5 class="mb-0">Active Products</h5>
+                <p class="display-6 text-success">{{ active_products }}</p>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card p-3 text-center">
+                <h5 class="mb-0">Out of Stock</h5>
+                <p class="display-6 text-danger">{{ out_of_stock }}</p>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card p-3 text-center">
+                <h5 class="mb-0">Pending Orders</h5>
+                <p class="display-6">{{ pending_order_items }}</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="mt-5 d-flex justify-content-between align-items-center">
+        <h4>Recent Products</h4>
+        <div>
+            <a href="{% url 'products:add_product' %}" class="btn btn-primary">Add New Product</a>
+            <a href="{% url 'products:vendor_products' %}" class="btn btn-outline-secondary ms-2">View All Products</a>
+            <a href="{% url 'orders:vendor_orders' %}" class="btn btn-outline-info ms-2">View Orders</a>
+        </div>
+    </div>
+
+        <div class="row row-cols-1 row-cols-md-3 g-4 mt-3">
+        {% for product in recent_products %}
+        <div class="col">
+            <div class="card product-card h-100">
+                {% if product.image %}
+                <img src="{{ product.image.url }}" class="card-img-top card-img-cover" />
+                {% else %}
+                <div class="bg-light d-flex align-items-center justify-content-center card-img-cover">No Image</div>
+                {% endif %}
+                <div class="card-body d-flex flex-column">
+                    <h5 class="card-title">{{ product.name }}</h5>
+                    <p class="text-muted mb-2">{{ product.price|floatformat:2 }} RWF <small class="text-muted">/ {{ product.unit }}</small></p>
+                    <p class="mb-2">Stock: <strong{% if product.stock == 0 %} class="text-danger"{% endif %}>{{ product.stock }}</strong></p>
+                    <div class="mt-auto">
+                        <a href="{% url 'products:product_detail' product.id %}" class="btn btn-sm btn-outline-primary">View</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% empty %}
+        <div class="col-12 alert alert-info">No products yet.</div>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}

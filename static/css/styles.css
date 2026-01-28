@@ -1,0 +1,70 @@
+/* Custom SokoHub styles */
+:root{
+  /* Warm orange primary (not fully saturated) */
+  --brand:#ff7a18; /* primary orange */
+  --brand-dark:#e65c00; /* darker accent */
+  --muted:#d76e18;
+  /* Sync with Bootstrap's primary variable so utility classes like bg-primary/text-primary follow */
+  --bs-primary: var(--brand);
+}
+body{background:#fff;font-family:system-ui,-apple-system,Segoe UI,Roboto,'Helvetica Neue',Arial}
+
+.navbar-brand{font-size:1.25rem}
+.navbar-brand{color:var(--brand); text-shadow:0 1px 0 rgba(255,255,255,0.06)}
+.navbar .nav-link{color:var(--brand-dark)}
+.navbar .nav-link.active{color:var(--brand);font-weight:600}
+
+.card{border:0;border-radius:.6rem}
+.card .card-img-top{border-top-left-radius:.6rem;border-top-right-radius:.6rem}
+
+
+
+.btn-primary{background:var(--brand);border-color:var(--brand);color:#fff}
+.btn-outline-primary{color:var(--brand);border-color:var(--brand);background:transparent}
+/* .btn-outline-primary:hover{background:rgba(21, 12, 0, 0.08); color: white;} */
+
+/* View Details button (accented orange) */
+.btn-view{
+  background: linear-gradient(180deg, var(--brand), var(--brand-dark));
+  border-color: var(--brand-dark);
+  color: #fff;
+}
+.btn-view:hover{background: linear-gradient(180deg, var(--brand-dark), #cc5200); border-color:#cc5200}
+
+/* Outline variant */
+.btn-outline-view{color:var(--brand); border-color:var(--brand); background:transparent}
+.btn-outline-view:hover{background:rgba(228, 134, 10, 0.08)}
+
+/* Make CTA and primary buttons consistently use the brand */
+.btn{border-radius:.45rem}
+.btn-primary, .btn-view, .btn-register { background: var(--brand); border-color: var(--brand); color: #fff }
+.btn-primary:hover, .btn-view:hover, .btn-register:hover { background: var(--brand-dark); border-color: var(--brand-dark); color:#fff }
+
+/* Force consistent product card sizing and image fit */
+.product-card{height:100%; display:flex; flex-direction:column}
+.product-card .card-img-cover{height:180px; object-fit:cover; width:100%; border-top-left-radius:.6rem; border-top-right-radius:.6rem}
+.product-card .card-body{flex:1; display:flex; flex-direction:column}
+.product-card .card-actions{margin-top:auto}
+
+/* Brand link styles */
+.link-brand{color:var(--brand); text-decoration:underline; font-weight:600}
+.link-brand:hover{color:var(--brand-dark); text-decoration:none}
+
+/* header hero helpers */
+.hero{padding:3rem 0}
+.hero .lead{font-size:1.1rem;color:var(--muted)}
+
+/* Small utilities */
+.small-muted{color:var(--muted)}
+
+/* Product card placeholder */
+.img-placeholder{background:#d67d09;display:flex;align-items:center;justify-content:center;height:200px;border-radius:.5rem}
+
+/* Forms */
+.form-control:focus{box-shadow:0 0 0 .15rem rgba(255,122,24,.12)}
+
+/* Footer */
+footer{color:#e87b06}
+
+/* Toast tweaks */
+.toast { min-width: 260px; }

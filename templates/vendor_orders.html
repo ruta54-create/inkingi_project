@@ -1,0 +1,55 @@
+<!-- templates/vendor_orders.html -->
+{% extends "base.html" %}
+{% block content %}
+
+<div style="max-width:850px; margin:30px auto; background:hsl(34, 41%, 49%); padding:25px; border-radius:14px; box-shadow:0 8px 18px rgba(0,0,0,0.1);">
+    
+    <h2 style="color:#4e342e; text-align:center; margin-bottom:25px;">
+        Orders Containing Your Products
+    </h2>
+
+
+    {% if items %}
+    <div style="overflow-x:auto;">
+    <table class="table table-bordered table-striped align-middle" style="background:rgb(12, 114, 123);">
+        <thead style="background:#7fb815;">
+            <tr>
+                <th>Order #</th>
+                <th>Product</th>
+                <th>Quantity</th>
+                <th>Customer</th>
+                <th>Delivery Address</th>
+                <th>Status</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for item in items %}
+            <tr>
+                <td><a href="{% url 'orders:confirmation' item.order.id %}">{{ item.order.id }}</a></td>
+                <td>{{ item.product.name }}</td>
+                <td>{{ item.quantity }}</td>
+                <td>{{ item.order.customer.username }}</td>
+                <td>{{ item.order.delivery_address }}</td>
+                <td>
+                    {% if item.order.status == 'pending' %}
+                        <span style="background:#ffe082; color:#6d4c41; padding:2px 10px; border-radius:8px; font-weight:600;">Pending</span>
+                    {% elif item.order.status == 'completed' %}
+                        <span style="background:#a7ca57; color:#256029; padding:2px 10px; border-radius:8px; font-weight:600;">Completed</span>
+                    {% else %}
+                        <span style="background:#6d8f1e; color:#333; padding:2px 10px; border-radius:8px; font-weight:600;">{{ item.order.status|capfirst }}</span>
+                    {% endif %}
+                </td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+    </div>
+    {% else %}
+        <p style="text-align:center; color:#6d4c41; font-size:18px;">
+            No orders include your products yet.
+        </p>
+    {% endif %}
+
+</div>
+
+{% endblock %}

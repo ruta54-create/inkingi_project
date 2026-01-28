@@ -1,0 +1,47 @@
+<!-- templates/orders/checkout.html -->
+{% extends "base.html" %}
+{% block content %}
+<div style="max-width:700px; margin:30px auto; background:#f5e6d3; border-radius:12px; padding:22px; box-shadow:0 6px 18px rgba(0,0,0,0.08);">
+  <h2 style="color:#5d4037; text-align:center; margin-bottom:10px;">Checkout</h2>
+
+  <div style="display:flex; gap:20px; align-items:center;">
+    <div style="flex:1;">
+      <img src="{{ product.image.url }}" alt="{{ product.name }}" style="max-width:100%; border-radius:8px; box-shadow:0 4px 10px rgba(0,0,0,0.06);">
+    </div>
+    <div style="flex:1;">
+      <h3 style="color:#6d4c41; margin:0 0 6px;">{{ product.name }}</h3>
+      <p style="color:#4e342e; margin:0 0 8px;">Price: <strong>{{ product.price }} RWF</strong></p>
+      <p style="color:#4e342e; margin:0 0 8px;">Stock: {{ product.stock }}</p>
+    </div>
+  </div>
+
+  <form method="post" style="margin-top:18px;">
+    {% csrf_token %}
+    <div style="margin-bottom:10px;">
+      {{ form.quantity.label_tag }}<br>
+      {{ form.quantity }}
+      {% if form.quantity.errors %}<div style="color:#b71c1c;">{{ form.quantity.errors }}</div>{% endif %}
+    </div>
+
+    <div style="margin-bottom:10px;">
+      {{ form.delivery_address.label_tag }}<br>
+      {{ form.delivery_address }}
+      {% if form.delivery_address.errors %}<div style="color:#b71c1c;">{{ form.delivery_address.errors }}</div>{% endif %}
+    </div>
+
+    <div style="margin-bottom:10px;">
+      {{ form.phone.label_tag }}<br>
+      {{ form.phone }}
+      {% if form.phone.errors %}<div style="color:#b71c1c;">{{ form.phone.errors }}</div>{% endif %}
+    </div>
+
+    <p style="font-weight:600; color:#4e342e;">Total preview: <span style="font-size:1.1em;">{{ total_preview }} RWF</span></p>
+
+    <button type="submit" style="background:#6d4c41; color:white; padding:12px 18px; border-radius:8px; border:none; width:100%; font-weight:600;">Place Order</button>
+  </form>
+
+  <div style="text-align:center; margin-top:10px;">
+    <a href="{% url 'products:product_detail' product.id %}" style="color:#6d4c41; text-decoration:none;">Back to product</a>
+  </div>
+</div>
+{% endblock %}

@@ -1,0 +1,63 @@
+{% extends 'base.html' %}
+{% block title %}My Products{% endblock %}
+
+{% block content %}
+<div class="container my-5">
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <h2>My Products</h2>
+        <a href="{% url 'products:add_product' %}" class="btn btn-primary">Add New Product</a>
+    </div>
+
+    <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
+        {% for product in page_obj %}
+        <div class="col">
+            <div class="card product-card h-100">
+                {% if product.image %}
+                <img src="{{ product.image.url }}" class="card-img-top card-img-cover" />
+                {% else %}
+                <div class="bg-light d-flex align-items-center justify-content-center card-img-cover">No Image</div>
+                {% endif %}
+                <div class="card-body d-flex flex-column">
+                    <h5 class="card-title">{{ product.name }}</h5>
+                    <p class="text-muted mb-2">{{ product.price|floatformat:2 }} RWF <small class="text-muted">/ {{ product.unit }}</small></p>
+                    <p class="mb-2">Stock: <strong{% if product.stock == 0 %} class="text-danger"{% endif %}>{{ product.stock }}</strong></p>
+                    <p class="mb-2">Status: <span class="badge bg-secondary">{{ product.get_status_display }}</span></p>
+                    <div class="card-actions mt-auto d-flex gap-2">
+                        <a href="{% url 'products:edit_product' product.id %}" class="btn btn-sm btn-outline-primary">Edit</a>
+                        <a href="{% url 'products:delete_product' product.id %}" class="btn btn-sm btn-outline-danger">Delete</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% empty %}
+        <div class="col-12 alert alert-info">You have no products yet.</div>
+        {% endfor %}
+    </div>
+
+    {% if page_obj.has_other_pages %}
+    <nav class="mt-4">
+        <ul class="pagination justify-content-center">
+            {% if page_obj.has_previous %}
+                <li class="page-item"><a class="page-link" href="?page={{ page_obj.previous_page_number }}">Previous</a></li>
+            {% else %}
+                <li class="page-item disabled"><a class="page-link">Previous</a></li>
+            {% endif %}
+
+            {% for i in page_obj.paginator.page_range %}
+                {% if page_obj.number == i %}
+                    <li class="page-item active"><a class="page-link">{{ i }}</a></li>
+                {% else %}
+                    <li class="page-item"><a class="page-link" href="?page={{ i }}">{{ i }}</a></li>
+                {% endif %}
+            {% endfor %}
+
+            {% if page_obj.has_next %}
+                <li class="page-item"><a class="page-link" href="?page={{ page_obj.next_page_number }}">Next</a></li>
+            {% else %}
+                <li class="page-item disabled"><a class="page-link">Next</a></li>
+            {% endif %}
+        </ul>
+    </nav>
+    {% endif %}
+</div>
+{% endblock %}

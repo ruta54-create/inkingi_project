@@ -1,0 +1,43 @@
+{% extends 'base.html' %}
+
+{% block title %}Privacy Policy - Inkingi Wood{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="row">
+        <div class="col-lg-8 mx-auto">
+            <h1 class="mb-4">Privacy Policy</h1>
+            
+            <div class="card">
+                <div class="card-body">
+                    <p class="text-muted">Last updated: {% now "Y" %}</p>
+                    
+                    <h2 class="h4 mt-4">1. Information We Collect</h2>
+                    <p>We collect information you provide directly to us, including:</p>
+                    <ul>
+                        <li>Name and contact information</li>
+                        <li>Account credentials</li>
+                        <li>Transaction information</li>
+                        <li>Communications with us</li>
+                    </ul>
+                    
+                    <h2 class="h4 mt-4">2. How We Use Your Information</h2>
+                    <p>We use the information we collect to:</p>
+                    <ul>
+                        <li>Provide and improve our services</li>
+                        <li>Process transactions</li>
+                        <li>Communicate with you</li>
+                        <li>Ensure security and prevent fraud</li>
+                    </ul>
+                    
+                    <h2 class="h4 mt-4">3. Data Security</h2>
+                    <p>We implement appropriate security measures to protect your personal information.</p>
+                    
+                    <h2 class="h4 mt-4">4. Contact Us</h2>
+                    <p>If you have questions about this Privacy Policy, please contact us.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

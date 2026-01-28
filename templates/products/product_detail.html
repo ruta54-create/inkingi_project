@@ -1,0 +1,104 @@
+{% extends 'base.html' %} 
+{% load static %}
+
+{% block title %}{{ product.name }}{% endblock %}
+
+{% block content %}
+<div class="container my-5">
+
+    <nav aria-label="breadcrumb" class="mb-4">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="{% url 'home_page' %}">Home</a></li>
+            <li class="breadcrumb-item"><a href="{% url 'products:product_list' %}">Products</a></li>
+            <li class="breadcrumb-item active" aria-current="page">{{ product.name }}</li>
+        </ol>
+    </nav>
+
+    <div class="row">
+        
+        <div class="col-md-6 mb-4">
+            {% if product.image %}
+                <img src="{{ product.image.url }}" class="img-fluid rounded shadow-sm" alt="{{ product.name }}" style="max-height: 500px; object-fit: cover;">
+            {% else %}
+                <div class="bg-light d-flex align-items-center justify-content-center border rounded" style="height: 500px;">
+                    <span class="text-muted fs-4">No Image Available</span>
+                </div>
+            {% endif %}
+        </div>
+
+        <div class="col-md-6">
+            <h1 class="display-5 fw-bold mb-3">{{ product.name }}</h1>
+            
+            <hr>
+
+            <p class="fs-2 fw-bold text-success mb-2">
+                {{ product.price|floatformat:2 }} RWF <small class="text-muted">/ {{ product.unit }}</small>
+            </p>
+
+            <p class="text-muted mb-4">
+                Sold by: 
+                {% if product.vendor %}
+                    <a href="{% url 'products:vendor_products' %}" class="text-primary fw-medium">{{ product.vendor.username }}</a>
+                {% else %}
+                    N/A
+                {% endif %}
+            </p>
+
+            <h4 class="mb-3">
+                {% if product.stock > 0 %}
+                    <span class="badge bg-success">In Stock ({{ product.stock }} available)</span>
+                {% else %}
+                    <span class="badge bg-danger">Out of Stock</span>
+                {% endif %}
+            </h4>
+
+            <div class="card p-3 shadow-sm mb-4">
+                <form method="POST" action="{% url 'orders:checkout' product.id %}">
+                    {% csrf_token %}
+                    <div class="row g-2 align-items-center">
+                        <div class="col-auto">
+                            <label for="quantity-select" class="form-label mb-0">Quantity</label>
+                            <select id="quantity-select" name="quantity" class="form-select" style="width:100px;" {% if product.stock == 0 %}disabled{% endif %}>
+                                {% for i in quantity_range %}
+                                    <option value="{{ i }}">{{ i }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <div class="col">
+                            <p class="mb-0 small-muted">Total: <strong id="total-preview">{{ product.price|floatformat:2 }} RWF</strong></p>
+                        </div>
+                        <div class="col-12">
+                                    <button type="submit" class="btn btn-lg btn-primary w-100" {% if product.stock == 0 %}disabled{% endif %}>Buy Now</button>
+                                    <button type="submit" formaction="{% url 'orders:add_to_cart' product.id %}" class="btn btn-outline-view w-100 mt-2" {% if product.stock == 0 %}disabled{% endif %}>Add to Cart</button>
+                        </div>
+                    </div>
+                </form>
+                <script>
+                    (function(){
+                        const price = parseFloat("{{ product.price|floatformat:2 }}");
+                        const qtySel = document.getElementById('quantity-select');
+                        const totalEl = document.getElementById('total-preview');
+                        if(qtySel && totalEl){
+                                qtySel.addEventListener('change', ()=>{
+                                const q = parseInt(qtySel.value || '1',10);
+                                totalEl.textContent = (price * q).toFixed(2) + ' RWF';
+                            });
+                        }
+                    })();
+                </script>
+            </div>
+            
+            <h5 class="mt-5">Product Details</h5>
+            <div class="border p-3 bg-light rounded">
+                <p>{{ product.description|linebreaksbr }}</p>
+            </div>
+            
+            <div class="mt-4">
+                <a href="{% url 'products:product_list' %}" class="btn btn-outline-secondary">
+                    &larr; Back to Products
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock content %}

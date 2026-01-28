@@ -1,0 +1,33 @@
+{% extends 'base.html' %}
+
+{% block title %}Products{% endblock %}
+
+{% block content %}
+<div class="container my-5">
+  <div class="row g-3">
+    {% for product in products %}
+      <div class="col-md-3">
+        <div class="card product-card h-100 p-3 shadow-sm">
+          {% if product.image %}
+            <img src="{{ product.image.url }}" class="card-img-top card-img-cover mb-2">
+          {% endif %}
+          <h5 class="fw-bold mb-1">{{ product.name }}</h5>
+          <p class="mb-1">{{ product.price|floatformat:2 }} RWF <small class="text-muted">/ {{ product.unit }}</small></p>
+          <p class="small-muted mb-2">{% if product.stock > 0 %}{{ product.stock }} available{% else %}<span class="text-danger">Out of stock</span>{% endif %}</p>
+
+          <div class="d-grid gap-2 card-actions">
+            <a href="{% url 'products:product_detail' product.id %}" class="btn btn-view btn-sm">View</a>
+            <form method="post" action="{% url 'orders:add_to_cart' product.id %}">
+              {% csrf_token %}
+              <input type="hidden" name="quantity" value="1">
+              <button type="submit" class="btn btn-outline-view btn-sm" {% if product.stock == 0 %}disabled{% endif %}>Add to Cart</button>
+            </form>
+          </div>
+        </div>
+      </div>
+    {% empty %}
+      <p>No products found.</p>
+    {% endfor %}
+  </div>
+</div>
+{% endblock %}

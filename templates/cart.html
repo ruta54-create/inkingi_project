@@ -1,0 +1,42 @@
+{% extends 'base.html' %}
+{% block title %}Your Cart{% endblock %}
+
+{% block content %}
+<div class="container my-5">
+    <h2>Your Cart</h2>
+    {% if items %}
+    <form method="post" action="{% url 'orders:update_cart' %}">
+        {% csrf_token %}
+        <table class="table">
+            <thead>
+                <tr><th>Product</th><th>Unit</th><th>Qty</th><th>Price</th><th>Subtotal</th><th></th></tr>
+            </thead>
+            <tbody>
+                {% for it in items %}
+                <tr>
+                    <td><a href="{% url 'products:product_detail' it.product.id %}" class="link-brand">{{ it.product.name }}</a></td>
+                    <td>{{ it.product.unit }}</td>
+                    <td><input type="number" name="qty_{{ it.product.id }}" value="{{ it.quantity }}" min="1" class="form-control" style="width:100px;"></td>
+                    <td>{{ it.product.price|floatformat:2 }} RWF</td>
+                    <td>{{ it.subtotal|floatformat:2 }} RWF</td>
+                    <td><a href="{% url 'orders:remove_from_cart' it.product.id %}" class="btn btn-sm btn-outline-danger">Remove</a></td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+                <div class="d-flex justify-content-between align-items-center">
+            <div>
+                <button class="btn btn-outline-secondary" type="submit">Update Cart</button>
+            </div>
+                <div>
+                <strong>Total: {{ total|floatformat:2 }} RWF</strong>
+                <a class="btn btn-view ms-3" href="{% url 'orders:checkout_cart' %}">Checkout</a>
+                <a href="{% url 'products:product_list' %}" class="btn btn-link ms-3">Continue Shopping</a>
+            </div>
+        </div>
+    </form>
+    {% else %}
+        <div class="alert alert-info">Your cart is empty. </div>
+    {% endif %}
+</div>
+{% endblock %}

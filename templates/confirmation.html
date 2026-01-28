@@ -1,0 +1,41 @@
+
+<!-- templates/orders/confirmation.html -->
+{% extends "base.html" %}
+{% block content %}
+<div style="max-width:700px; margin:30px auto; background:#efe0d4; border-radius:12px; padding:22px; box-shadow:0 6px 18px rgba(0,0,0,0.06);">
+  {% if viewer_role == 'customer' %}
+    <h2 style="color:#5d4037; text-align:center;">Thank you — order placed!</h2>
+    <p style="text-align:center; color:#6d4c41;">Order #<strong>{{ order.id }}</strong></p>
+  {% elif viewer_role == 'vendor' %}
+    <h2 style="color:#5d4037; text-align:center;">Order details for your product(s)</h2>
+    <p style="text-align:center; color:#6d4c41;">Order #<strong>{{ order.id }}</strong></p>
+  {% elif viewer_role == 'staff' %}
+    <h2 style="color:#5d4037; text-align:center;">Order details (admin view)</h2>
+    <p style="text-align:center; color:#6d4c41;">Order #<strong>{{ order.id }}</strong></p>
+  {% else %}
+    <h2 style="color:#5d4037; text-align:center;">Order details</h2>
+    <p style="text-align:center; color:#6d4c41;">Order #<strong>{{ order.id }}</strong></p>
+  {% endif %}
+
+  <div style="margin-top:12px;">
+    <h4 style="color:#4e342e;">Order details</h4>
+    <ul>
+      {% for item in items %}
+        <li style="margin-bottom:6px;">
+          <strong>{{ item.product.name }}</strong> — {{ item.quantity }} × {{ item.price }} RWF
+        </li>
+      {% endfor %}
+    </ul>
+
+    <p style="font-weight:600; color:#4e342e;">Total: {{ order.total }} RWF</p>
+    <p><strong>Delivery address:</strong> {{ order.delivery_address }}</p>
+    <p><strong>Phone:</strong> {{ order.phone }}</p>
+    <p><strong>Status:</strong> {{ order.status }}</p>
+
+    <div style="margin-top:14px; display:flex; gap:10px;">
+      <a href="{% url 'orders:my_orders' %}" style="background: #6d4c41; color:white; padding:10px 14px; border-radius:8px; text-decoration:none;">View My Orders</a>
+      <a href="{% url 'products:product_list' %}" style="background:#8d6e63; color:white; padding:10px 14px; border-radius:8px; text-decoration:none;">Continue shopping</a>
+    </div>
+  </div>
+</div>
+{% endblock %}

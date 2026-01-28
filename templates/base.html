@@ -1,0 +1,461 @@
+{% load static %}
+{% load cart_extras %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" crossorigin="anonymous">
+    <!-- Bootstrap Icons -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
+    <link href="{% static 'css/styles.css' %}" rel="stylesheet">
+    <title>{% block title %}Inkingi Woods Ltd{% endblock %}</title>
+
+    <style>
+        .heros {
+            opacity: 30;
+            background-image: url('static/images/banner.jpg');
+            background-position: 100%;
+            background-repeat: no-repeat;
+            background-size: cover;
+        }
+        .text-color {
+            color: #ff7a18;
+        }
+        /* Footer Styles */
+        .footer {
+            background: linear-gradient(135deg, #2c3e50 0%, #1a1a2e 100%);
+            color: #fff;
+        }
+        .footer-links a {
+            text-decoration: none;
+            transition: color 0.3s ease;
+        }
+        .footer-links a:hover {
+            color: #ff7a18 !important;
+        }
+        .social-icon {
+            width: 40px;
+            height: 40px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            transition: all 0.3s ease;
+        }
+        .social-icon:hover {
+            transform: translateY(-3px);
+        }
+        .contact-info-item {
+            margin-bottom: 15px;
+            display: flex;
+            align-items: flex-start;
+        }
+        .contact-info-icon {
+            width: 20px;
+            margin-right: 10px;
+            margin-top: 3px;
+            color: #ff7a18;
+        }
+        .footer-bottom {
+            background-color: rgba(0, 0, 0, 0.2);
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        .footer-brand {
+            font-size: 1.8rem;
+            font-weight: 700;
+            background: linear-gradient(45deg, #ff7a18, #ff9d4d);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+    </style>
+</head>
+<body class="bg-light">
+
+<nav class="navbar navbar-expand-lg navbar-white bg-white border-bottom shadow-sm">
+    <div class="container">
+        <a class="text-color navbar-brand fw-bold mb-0 fs-4" href="{% url 'home_page' %}">Inkingi Woods Ltd</a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#mainNav">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+
+        <div class="collapse navbar-collapse" id="mainNav">
+            <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                <li class="nav-item">
+                    <a class="nav-link {% if request.path == '/' %}active{% endif %}" href="{% url 'home_page' %}">Home</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link {% if 'products' in request.path %}active{% endif %}" href="{% url 'products:product_list' %}">Products</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link position-relative {% if 'cart' in request.path %}active{% endif %}" href="{% url 'orders:cart_view' %}">
+                        🛒 Cart
+                        {% cart_item_count as cart_count %}
+                        {% if cart_count %}
+                            <span class="badge bg-danger rounded-pill ms-1">{{ cart_count }}</span>
+                        {% endif %}
+                    </a>
+                </li>
+            </ul>
+
+            <form class="d-flex ms-3 me-3" role="search" method="get" action="{% url 'products:product_list' %}">
+                <input class="form-control form-control-sm me-2" type="search" name="q" placeholder="Search products..." aria-label="Search" value="{{ request.GET.q|default:'' }}">
+                <button class="btn btn-sm btn-outline-primary" type="submit">Search</button>
+            </form>
+
+            <ul class="navbar-nav mb-2 mb-lg-0">
+                {% if request.user.is_authenticated %}
+                    {% if request.user.user_type == 'vendor' %}
+                        <li class="nav-item"><a class="nav-link" href="{% url 'products:vendor_dashboard' %}">Dashboard</a></li>
+                        <li class="nav-item"><a class="nav-link" href="{% url 'products:vendor_products' %}">My Products</a></li>
+                        <li class="nav-item"><a class="nav-link" href="{% url 'orders:vendor_orders' %}">Orders</a></li>
+                    {% else %}
+                        <li class="nav-item"><a class="nav-link" href="{% url 'orders:my_orders' %}">My Orders</a></li>
+                    {% endif %}
+
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" id="userMenu" role="button" data-bs-toggle="dropdown">{{ request.user.username }}</a>
+                        <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userMenu">
+                            <li><a class="dropdown-item" href="{% url 'accounts:profile' %}">Profile</a></li>
+                            <li><a class="dropdown-item" href="{% url 'accounts:password_change' %}">Change password</a></li>
+                            <li><hr class="dropdown-divider"></li>
+                            <li><a class="dropdown-item" href="{% url 'logout' %}">Logout</a></li>
+                        </ul>
+                    </li>
+
+                {% else %}
+                    <li class="nav-item"><a class="nav-link btn btn-sm btn-primary text-white ms-6" href="{% url 'login' %}">Login</a></li>
+                  
+                    <li class="nav-item">
+                        <a class="nav-link btn btn-sm btn-primary text-white ms-2" href="{% url 'pages:about' %}">About</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link btn btn-sm btn-primary text-white ms-2" href="{% url 'pages:contact' %}">Contact</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link btn btn-sm btn-primary text-white ms-2" href="{% url 'pages:faq' %}">FAQ</a>
+                    </li>
+                {% endif %}
+            </ul>
+            
+            {# CTA button: for vendors show Add Product, otherwise prompt to Register/Sell #}
+            <div class="d-flex align-items-center ms-3">
+                {% if request.user.is_authenticated and request.user.user_type == 'vendor' %}
+                    <a href="{% url 'products:add_product' %}" class="btn btn-sm btn-outline-primary">Add Product</a>
+                {% elif request.user.is_authenticated %}
+                    <a href="{% url 'products:product_list' %}" class="btn btn-sm btn-outline-primary">Browse</a>
+                {% else %}
+                    <a href="{% url 'register' %}" class="btn btn-sm btn-primary ms-2">Sell on Inkingi Woods Ltd</a>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</nav>
+
+<header class="py-4 bg-white border-bottom mb-4">
+    <div class="container">
+        {% block header %}{% endblock %}
+    </div>
+</header>
+
+<main class="container mb-5">
+    {# Flash messages area #}
+    {% if messages %}
+    <div class="mb-3">
+        {% for message in messages %}
+            <div class="alert alert-{{ message.tags }} alert-custom" role="alert">
+                {{ message }}
+            </div>
+        {% endfor %}
+    </div>
+    {% endif %}
+
+    {% block content %}{% endblock %}
+</main>
+
+<!-- Professional Footer -->
+<footer class="footer pt-5 pb-4">
+    <div class="container">
+        <div class="row">
+            <!-- Company Info -->
+            <div class="col-lg-4 col-md-6 mb-4">
+                <h3 class="footer-brand mb-3">Inkingi Woods Ltd</h3>
+                <p class="text-light mb-4" style="opacity: 0.9;">
+                    Rwanda's premier marketplace for sustainable wood products, 
+                    connecting artisans with global customers while preserving 
+                    traditional craftsmanship.
+                </p>
+                <div class="contact-info-item">
+                    <i class="bi bi-building contact-info-icon"></i>
+                    <div>
+                        <strong>Headquarters:</strong><br>
+                        <a href="https://maps.google.com/?q=KG+7+Ave,+Kigali,+Rwanda" 
+                           target="_blank" 
+                           class="text-white text-decoration-none" 
+                           style="opacity: 0.9;">
+                            KG 7 Avenue, Kigali<br>
+                            Rwanda, East Africa
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Quick Links -->
+            <div class="col-lg-2 col-md-6 mb-4">
+                <h5 class="mb-3" style="color: #ff7a18;">Quick Links</h5>
+                <ul class="list-unstyled footer-links">
+                    <li class="mb-2"><a href="{% url 'home_page' %}" class="text-white" style="opacity: 0.9;">Home</a></li>
+                    <li class="mb-2"><a href="{% url 'products:product_list' %}" class="text-white" style="opacity: 0.9;">Products</a></li>
+                    <li class="mb-2"><a href="{% url 'pages:about' %}" class="text-white" style="opacity: 0.9;">About Us</a></li>
+                    <li class="mb-2"><a href="{% url 'pages:contact' %}" class="text-white" style="opacity: 0.9;">Contact</a></li>
+                    <li class="mb-2"><a href="{% url 'pages:faq' %}" class="text-white" style="opacity: 0.9;">FAQ</a></li>
+                    <li class="mb-2"><a href="{% url 'register' %}" class="text-white" style="opacity: 0.9;">Become a Seller</a></li>
+                    <li><a href="{% url 'orders:cart_view' %}" class="text-white" style="opacity: 0.9;">Your Cart</a></li>
+                </ul>
+            </div>
+
+            <!-- Contact Information -->
+            <div class="col-lg-3 col-md-6 mb-4">
+                <h5 class="mb-3" style="color: #ff7a18;">Contact Us</h5>
+                <div class="contact-info-item">
+                    <i class="bi bi-telephone contact-info-icon"></i>
+                    <div>
+                        <strong>Phone:</strong><br>
+                        <a href="tel:+250788123456" class="text-white text-decoration-none" style="opacity: 0.9;">
+                            +250 788 123 456
+                        </a><br>
+                        <a href="tel:+250788987654" class="text-white text-decoration-none" style="opacity: 0.9;">
+                            +250 788 987 654
+                        </a>
+                    </div>
+                </div>
+                <div class="contact-info-item">
+                    <i class="bi bi-envelope contact-info-icon"></i>
+                    <div>
+                        <strong>Email:</strong><br>
+                        <a href="mailto:info@inkingiwoods.rw" class="text-white text-decoration-none" style="opacity: 0.9;">
+                            info@inkingiwoods.rw
+                        </a><br>
+                        <a href="mailto:sales@inkingiwoods.rw" class="text-white text-decoration-none" style="opacity: 0.9;">
+                            sales@inkingiwoods.rw
+                        </a><br>
+                        <a href="mailto:support@inkingiwoods.rw" class="text-white text-decoration-none" style="opacity: 0.9;">
+                            support@inkingiwoods.rw
+                        </a>
+                    </div>
+                </div>
+                <div class="contact-info-item">
+                    <i class="bi bi-globe contact-info-icon"></i>
+                    <div>
+                        <strong>Website:</strong><br>
+                        <a href="https://www.inkingiwoods.rw" 
+                           target="_blank" 
+                           class="text-white text-decoration-none" 
+                           style="opacity: 0.9;">
+                            www.inkingiwoods.rw
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Social Media & Business Hours -->
+            <div class="col-lg-3 col-md-6 mb-4">
+                <h5 class="mb-3" style="color: #ff7a18;">Connect With Us</h5>
+                <div class="mb-4">
+                    <a href="https://wa.me/250788123456?text=Hello%20Inkingi%20Woods,%20I%20have%20a%20question" 
+                       target="_blank" 
+                       class="social-icon bg-success text-white me-2 mb-2">
+                        <i class="bi bi-whatsapp"></i>
+                    </a>
+                    <a href="https://twitter.com/inkingiwoods" 
+                       target="_blank" 
+                       class="social-icon bg-info text-white me-2 mb-2">
+                        <i class="bi bi-twitter"></i>
+                    </a>
+                    <a href="https://facebook.com/inkingiwoods" 
+                       target="_blank" 
+                       class="social-icon bg-primary text-white me-2 mb-2">
+                        <i class="bi bi-facebook"></i>
+                    </a>
+                    <a href="https://instagram.com/inkingiwoods" 
+                       target="_blank" 
+                       class="social-icon bg-danger text-white me-2 mb-2">
+                        <i class="bi bi-instagram"></i>
+                    </a>
+                    <a href="https://linkedin.com/company/inkingi-woods" 
+                       target="_blank" 
+                       class="social-icon bg-dark text-white me-2 mb-2">
+                        <i class="bi bi-linkedin"></i>
+                    </a>
+                </div>
+                
+                <h5 class="mb-3" style="color: #ff7a18;">Business Hours</h5>
+                <div class="text-white" style="opacity: 0.9;">
+                    <div class="mb-1"><strong>Monday - Friday:</strong> 8:00 AM - 6:00 PM</div>
+                    <div class="mb-1"><strong>Saturday:</strong> 9:00 AM - 4:00 PM</div>
+                    <div><strong>Sunday:</strong> Closed</div>
+                </div>
+                
+                <div class="mt-4">
+                    <a href="{% url 'pages:contact' %}" class="btn btn-outline-light btn-sm">
+                        <i class="bi bi-chat-left-text me-1"></i> Get In Touch
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <div class="row footer-bottom mt-4 pt-4">
+            <div class="col-md-6 text-center text-md-start mb-2 mb-md-0">
+                <p class="mb-0" style="opacity: 0.8;">
+                    &copy; {{ now|date:'Y' }} Inkingi Woods Ltd. All rights reserved.
+                </p>
+            </div>
+            <div class="col-md-6 text-center text-md-end">
+                <p class="mb-0" style="opacity: 0.8;">
+                    <a href="/privacy-policy/" class="text-white text-decoration-none me-3">Privacy Policy</a>
+                    <a href="/terms-of-service/" class="text-white text-decoration-none me-3">Terms of Service</a>
+                    <a href="/refund-policy/" class="text-white text-decoration-none">Refund Policy</a>
+                </p>
+            </div>
+        </div>
+    </div>
+</footer>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" crossorigin="anonymous"></script>
+
+<!-- Password reset modal (global) -->
+<div class="modal fade" id="passwordResetModal" tabindex="-1" aria-labelledby="passwordResetModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="passwordResetModalLabel">Reset your password</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div id="pr-alert" class="alert d-none" role="alert"></div>
+                <form id="password-reset-modal-form" method="post" action="{% url 'accounts:password_reset' %}">
+                    {% csrf_token %}
+                    <div class="mb-3">
+                        <label for="pr-email" class="form-label">Email address</label>
+                        <input type="email" id="pr-email" name="email" class="form-control" placeholder="you@example.com" required>
+                    </div>
+                    <div class="d-flex justify-content-end">
+                        <button type="submit" class="btn btn-view">Send reset link</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Toast container (top-right) -->
+<div aria-live="polite" aria-atomic="true" class="position-fixed top-0 end-0 p-3" style="z-index: 1200">
+    <div id="toast-container"></div>
+</div>
+
+<script>
+// Helper: get CSRF from cookie
+function getCookie(name) {
+    const value = `; ${document.cookie}`;
+    const parts = value.split(`; ${name}=`);
+    if (parts.length === 2) return parts.pop().split(';').shift();
+}
+
+// Intercept links that want to open the modal and prevent navigation
+document.addEventListener('DOMContentLoaded', function(){
+    document.querySelectorAll('a[data-bs-toggle="modal"]').forEach(function(el){
+        el.addEventListener('click', function(ev){
+            ev.preventDefault();
+            const target = el.getAttribute('data-bs-target') || el.dataset.bsTarget;
+            if(target){
+                const modalEl = document.querySelector(target);
+                if(modalEl){
+                    const bs = bootstrap.Modal.getOrCreateInstance(modalEl);
+                    bs.show();
+                }
+            }
+        });
+    });
+
+    // Password reset modal submit via fetch
+    const prForm = document.getElementById('password-reset-modal-form');
+    if(prForm){
+        prForm.addEventListener('submit', function(ev){
+            ev.preventDefault();
+            const url = prForm.getAttribute('action');
+            const formData = new FormData(prForm);
+            const csrftoken = getCookie('csrftoken');
+            const submitBtn = prForm.querySelector('button[type="submit"]');
+            if(submitBtn) submitBtn.disabled = true;
+
+            fetch(url, {
+                method: 'POST',
+                headers: {
+                    'X-Requested-With': 'XMLHttpRequest',
+                    'X-CSRFToken': csrftoken
+                },
+                body: formData,
+                credentials: 'same-origin'
+            }).then(res => {
+                // regardless of response status, present a generic success message for privacy
+                const alert = document.getElementById('pr-alert');
+                alert.className = 'alert alert-success';
+                alert.textContent = 'If your email exists in our system, you will receive a password reset link shortly.';
+                alert.classList.remove('d-none');
+                // show toast and close modal after short delay so users notice it
+                showToast('Password reset requested', 'If your email exists, a reset link was sent.');
+                // clear email field and re-enable button
+                const emailInput = prForm.querySelector('input[name="email"]');
+                if(emailInput) emailInput.value = '';
+                if(submitBtn) submitBtn.disabled = false;
+
+                // hide modal after a brief pause so alert is visible
+                setTimeout(()=>{
+                    const modalEl = document.getElementById('passwordResetModal');
+                    const bs = bootstrap.Modal.getInstance(modalEl);
+                    if(bs) bs.hide();
+                }, 1500);
+                return res.text();
+            }).catch(err => {
+                const alert = document.getElementById('pr-alert');
+                alert.className = 'alert alert-danger';
+                alert.textContent = 'Unable to send reset link right now. Please try again later.';
+                alert.classList.remove('d-none');
+                if(submitBtn) submitBtn.disabled = false;
+            });
+        });
+    }
+
+    // Convert Django messages alerts into Bootstrap toasts (for success messages)
+    document.querySelectorAll('.alert').forEach(function(alertEl){
+        const cls = alertEl.className || '';
+        if(cls.indexOf('alert-success') !== -1){
+            const title = 'Success';
+            const body = alertEl.textContent.trim();
+            if(body){ showToast(title, body); }
+            // keep the original alert visible for accessibility, then remove after a while
+            setTimeout(()=> alertEl.remove(), 4000);
+        }
+    });
+});
+
+function showToast(title, message){
+    const container = document.getElementById('toast-container');
+    const toastId = 't' + Math.random().toString(16).slice(2);
+    const html = `\
+        <div id="${toastId}" class="toast" role="alert" aria-live="assertive" aria-atomic="true">\
+            <div class="toast-header">\
+                <strong class="me-auto">${title}</strong>\
+                <button type="button" class="btn-close ms-2 mb-1" data-bs-dismiss="toast" aria-label="Close"></button>\
+            </div>\
+            <div class="toast-body">${message}</div>\
+        </div>`;
+    container.insertAdjacentHTML('beforeend', html);
+    const tEl = document.getElementById(toastId);
+    const t = new bootstrap.Toast(tEl, { delay: 4000 });
+    t.show();
+}
+</script>
+</body>
+</html>

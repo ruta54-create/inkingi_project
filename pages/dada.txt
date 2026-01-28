@@ -1,0 +1,19 @@
+HELLO, I have e-commerce project that called inkingi company ltd, this is ecommerce platform that will used in selling and buying wooden product  using online. I want to develop this platform as like  murukali,alibaba or amazon platform, this platform also will made up home page, about us page, product page, payment page,  all categories page will has dropdown (Dumzas ltd, safintra ltd, phoenix ltd, royal steel giant ltd, tolirwa ltd, master steel ltd, salama sheet ltd, madras sheet ltd) these are companies we will working with them, but if any registered to this platform it will be displayed to the frontend in all categories as dropdown, cart page, help page, contact page, delivering service page, admin page. each page may has a relatioship with other page except admin page well be used by only admin, the interface also will made up banner as image that I have, flowed by navigation bars, after will show the product when any one click on one of them will see the details of that product and if wants to buy will start the process of buying, this will be home page and design other pages well.
+
+please I have a logo that made by white, green, blue, black, brown colors these are color that I want to use in css. 
+
+Admin will have ability to control all activities of platform like posting new product, edit, delete, update, and so many admin tasks. This platform will made up frontend and backend technology.
+
+
+
+
+please I have a logo that made by white, green, blue, black, brown colors these are color that I want to use in css. 
+
+
+Admin will have ability to control all activities of platform like posting new product, edit, delete, update, and so many admin tasks. This platform will made up frontend and backend technology.
+
+Also this platform is multiuser if a company is registered the admin dashboard of one company will differ to the other admin dashboard of other company.
+
+I want to use html, js, cs, and modern php, this platform must be responsive to the all devices
+
+let start from starting of project up end of it

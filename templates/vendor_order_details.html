@@ -1,0 +1,39 @@
+<!-- templates/vendor_order_details.html -->
+{% extends "base.html" %}
+{% block content %}
+
+<div style="max-width:850px; margin:30px auto; background:#688b2f; padding:25px; border-radius:14px; box-shadow:0 8px 18px rgba(0,0,0,0.1);">
+
+    <h2 style="color:#2e4e33; text-align:center; margin-bottom:25px;">
+        Order #{{ order.id }} — Items You Sold
+    </h2>
+
+    <p><strong>Date:</strong> {{ order.created_at }}</p>
+    <p><strong>Status:</strong> {{ order.status }}</p>
+    <p><strong>Customer:</strong> {{ order.customer.email }}</p>
+    <p><strong>Delivery:</strong> {{ order.delivery_address }}</p>
+
+    <hr style="margin:20px 0; border-color:hsl(46, 62%, 41%);">
+
+    {% if items %}
+        {% for item in items %}
+            <div style="background:rgb(173, 197, 42); padding:18px; border-radius:10px; margin-bottom:20px; box-shadow:0 4px 10px rgba(0,0,0,0.08);">
+                <p><strong>Product:</strong> {{ item.product.name }}</p>
+                <p><strong>Quantity:</strong> {{ item.quantity }}</p>
+                <p><strong>Price:</strong> {{ item.price }} RWF</p>
+            </div>
+        {% endfor %}
+    {% else %}
+        <p style="color:#dc9314; text-align:center; padding:20px;">
+            You have no items in this order.
+        </p>
+    {% endif %}
+
+    <a href="{% url 'orders:vendor_orders' %}" 
+       style="display:inline-block; margin-top:10px; background:#6d4c41; color:white; padding:8px 14px; border-radius:8px; text-decoration:none;">
+        ⬅ Back to Orders
+    </a>
+
+</div>
+
+{% endblock %}
