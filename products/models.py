@@ -52,6 +52,29 @@ class Product(models.Model):
         default=UNIT_METER
     )
 
+    # ===== PRODUCT CATEGORIES =====
+    CATEGORY_BED = 'bed'
+    CATEGORY_CHAIR = 'chair'
+    CATEGORY_TABLE = 'table'
+    CATEGORY_KITCHEN = 'kitchen_tools'
+    CATEGORY_ARTISAN = 'artisan_designer'
+    CATEGORY_OTHER = 'other'
+
+    CATEGORY_CHOICES = [
+        (CATEGORY_BED, 'Bed'),
+        (CATEGORY_CHAIR, 'Chair'),
+        (CATEGORY_TABLE, 'Table'),
+        (CATEGORY_KITCHEN, 'Kitchen Tools'),
+        (CATEGORY_ARTISAN, 'Artisan / Wooden Designer'),
+        (CATEGORY_OTHER, 'Other'),
+    ]
+
+    category = models.CharField(
+        max_length=30,
+        choices=CATEGORY_CHOICES,
+        default=CATEGORY_OTHER,
+    )
+
     image = models.ImageField(upload_to='products/', blank=True, null=True)
 
     status = models.CharField(

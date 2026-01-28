@@ -1,78 +1,104 @@
 {% extends 'base.html' %}
 
-{% block title %}Register - SokoHub{% endblock %}
+{% block title %}Register - Inkingi Wood Ltd{% endblock %}
 
 {% block content %}
-<div class="row justify-content-center mt-4">
-    <div class="col-12 col-md-8 col-lg-6">
-        <div class="card p-4 shadow-sm">
-            <h3 class="mb-3 text-center">Create your account</h3>
+<section class="auth-page py-5">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-12 col-sm-8 col-md-8 col-lg-6">
+                <div class="card shadow-sm border-0">
+                    <div class="card-body p-5">
+                        <h1 class="h3 mb-2 text-center fw-bold">Create Your Account</h1>
+                        <p class="text-center text-muted mb-4">Join Inkingi Wood to start shopping or selling</p>
 
-            {% if form.non_field_errors %}
-                <div class="alert alert-danger">
-                    {% for e in form.non_field_errors %}{{ e }} {% endfor %}
+                        {% if form.non_field_errors %}
+                            <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                                {% for error in form.non_field_errors %}
+                                    <div>{{ error }}</div>
+                                {% endfor %}
+                                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                            </div>
+                        {% endif %}
+
+                        <form method="post" novalidate>
+                            {% csrf_token %}
+
+                            <div class="row">
+                                <div class="col-md-6 mb-3">
+                                    <label for="{{ form.username.id_for_label }}" class="form-label fw-bold">Username</label>
+                                    {{ form.username }}
+                                    {% if form.username.errors %}
+                                        <div class="alert alert-danger small mt-2" role="alert">{{ form.username.errors.0 }}</div>
+                                    {% endif %}
+                                </div>
+
+                                <div class="col-md-6 mb-3">
+                                    <label for="{{ form.email.id_for_label }}" class="form-label fw-bold">Email</label>
+                                    {{ form.email }}
+                                    {% if form.email.errors %}
+                                        <div class="alert alert-danger small mt-2" role="alert">{{ form.email.errors.0 }}</div>
+                                    {% endif %}
+                                </div>
+
+                                <div class="col-md-6 mb-3">
+                                    <label for="{{ form.password.id_for_label }}" class="form-label fw-bold">Password</label>
+                                    {{ form.password }}
+                                    {% if form.password.errors %}
+                                        <div class="alert alert-danger small mt-2" role="alert">{{ form.password.errors.0 }}</div>
+                                    {% endif %}
+                                </div>
+
+                                <div class="col-md-6 mb-3">
+                                    <label for="{{ form.password_confirm.id_for_label }}" class="form-label fw-bold">Confirm Password</label>
+                                    {{ form.password_confirm }}
+                                    {% if form.password_confirm.errors %}
+                                        <div class="alert alert-danger small mt-2" role="alert">{{ form.password_confirm.errors.0 }}</div>
+                                    {% endif %}
+                                </div>
+
+                                <div class="col-md-12 mb-3">
+                                    <label for="{{ form.user_type.id_for_label }}" class="form-label fw-bold">Account Type</label>
+                                    {{ form.user_type }}
+                                    {% if form.user_type.errors %}
+                                        <div class="alert alert-danger small mt-2" role="alert">{{ form.user_type.errors.0 }}</div>
+                                    {% endif %}
+                                </div>
+                                
+                                <div class="col-md-6 mb-3">
+                                    <label for="{{ form.phone.id_for_label }}" class="form-label fw-bold">Phone</label>
+                                    {{ form.phone }}
+                                    {% if form.phone.errors %}
+                                        <div class="alert alert-danger small mt-2" role="alert">{{ form.phone.errors.0 }}</div>
+                                    {% endif %}
+                                </div>
+
+                                <div class="col-md-6 mb-3">
+                                    <label for="{{ form.location.id_for_label }}" class="form-label fw-bold">Location</label>
+                                    {{ form.location }}
+                                    {% if form.location.errors %}
+                                        <div class="alert alert-danger small mt-2" role="alert">{{ form.location.errors.0 }}</div>
+                                    {% endif %}
+                                </div>
+                            </div>
+
+                            <div class="d-grid gap-2 mt-4">
+                                <button class="btn btn-success btn-lg fw-bold" type="submit">Create Account</button>
+                            </div>
+                        </form>
+
+                        <hr class="my-4">
+
+                        <div class="text-center">
+                            <small class="text-muted">Already have an account? <a href="{% url 'login' %}" class="fw-bold text-decoration-none">Sign in here</a></small>
+                            <div class="mt-2">
+                                <a href="{% url 'accounts:password_reset' %}" class="small text-decoration-none" data-bs-toggle="modal" data-bs-target="#passwordResetModal">Forgot your password?</a>
+                            </div>
+                        </div>
+                    </div>
                 </div>
-            {% endif %}
-
-            <form method="post" novalidate>
-                {% csrf_token %}
-
-                <div class="row">
-                    <div class="col-md-6 mb-3">
-                        <label class="form-label">Username</label>
-                        {{ form.username }}
-                        {% if form.username.errors %}<div class="text-danger small">{{ form.username.errors.0 }}</div>{% endif %}
-                    </div>
-
-                    <div class="col-md-6 mb-3">
-                        <label class="form-label">Email</label>
-                        {{ form.email }}
-                        {% if form.email.errors %}<div class="text-danger small">{{ form.email.errors.0 }}</div>{% endif %}
-                    </div>
-
-                    <div class="col-md-6 mb-3">
-                        <label class="form-label">Password</label>
-                        {{ form.password }}
-                        {% if form.password.errors %}<div class="text-danger small">{{ form.password.errors.0 }}</div>{% endif %}
-                    </div>
-
-                    <div class="col-md-6 mb-3">
-                        <label class="form-label">Confirm Password</label>
-                        {{ form.password_confirm }}
-                        {% if form.password_confirm.errors %}<div class="text-danger small">{{ form.password_confirm.errors.0 }}</div>{% endif %}
-                    </div>
-
-                    <div class="col-md-6 mb-3">
-                        <label class="form-label">Account Type</label>
-                        {{ form.user_type }}
-                        {% if form.user_type.errors %}<div class="text-danger small">{{ form.user_type.errors.0 }}</div>{% endif %}
-                    </div>
-                    
-                    <div class="col-md-2 mb-3">
-                        <label class="form-label">Phone</label>
-                        {{ form.phone }}
-                        {% if form.phone.errors %}<div class="text-danger small">{{ form.phone.errors.0 }}</div>{% endif %}
-                    </div>
-                    <div>
-                    <div class="col-md-2 mb-3">
-                        <label class="form-label">Location</label>
-                        {{ form.location }}
-                        {% if form.location.errors %}<div class="text-danger small">{{ form.location.errors.0 }}</div>{% endif %}
-                    </div>
-                    </div>
-                </div>
-
-                <div class="d-grid mt-3">
-                    <button class="btn btn-success" type="submit">Create Account</button>
-                </div>
-            </form>
-
-            <div class="text-center mt-3 small-muted">
-                Already have an account? <a href="{% url 'login' %}">Log in</a>
-                <div class="mt-1"><a href="{% url 'accounts:password_reset' %}" class="small" data-bs-toggle="modal" data-bs-target="#passwordResetModal">Forgot password?</a></div>
             </div>
         </div>
     </div>
-</div>
-
+</section>
 {% endblock %}

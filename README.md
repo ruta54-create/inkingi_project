@@ -1,6 +1,6 @@
-# SokoHub
+# Inkingi Woods
 
-Minimal Django marketplace (SokoHub) — vendors add products, customers buy.
+Minimal Django marketplace (Inkingi Woods) — vendors add products, customers buy.
 
 ## Quick start (development)
 

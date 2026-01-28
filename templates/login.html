@@ -1,50 +1,65 @@
 {% extends 'base.html' %}
 
-{% block title %}Login - SokoHub{% endblock %}
+{% block title %}Login - Inkingi Wood Ltd{% endblock %}
 
 {% block content %}
-<div class="row justify-content-center mt-5">
-    <div class="col-12 col-md-5">
-        <div class="card p-4 shadow-sm">
-            <h3 class="mb-3 text-center">Welcome back</h3>
+<section class="auth-page py-5">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-12 col-sm-8 col-md-6 col-lg-5">
+                <div class="card shadow-sm border-0">
+                    <div class="card-body p-5">
+                        <h1 class="h3 mb-4 text-center fw-bold">Welcome Back</h1>
+                        <p class="text-center text-muted mb-4">Sign in to your account to continue shopping</p>
 
-            {% if error %}
-                <div class="alert alert-danger">{{ error }}</div>
-            {% endif %}
+                        {% if error %}
+                            <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                                <strong>Error:</strong> {{ error }}
+                                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                            </div>
+                        {% endif %}
 
-            <form method="post" novalidate>
-                {% csrf_token %}
+                        <form method="post" novalidate>
+                            {% csrf_token %}
 
-                <div class="mb-3">
-                    <label class="form-label">Email or Username</label>
-                      {{ form.email }}
-                    {% if form.email.errors %}
-                        <div class="text-danger small mt-1">{{ form.email.errors.0 }}</div>
-                    {% endif %}
+                            <div class="mb-3">
+                                <label for="{{ form.email.id_for_label }}" class="form-label fw-bold">Email or Username</label>
+                                {{ form.email }}
+                                {% if form.email.errors %}
+                                    <div class="alert alert-danger small mt-2" role="alert">
+                                        {{ form.email.errors.0 }}
+                                    </div>
+                                {% endif %}
+                            </div>
+
+                            <div class="mb-3">
+                                <label for="{{ form.password.id_for_label }}" class="form-label fw-bold">Password</label>
+                                {{ form.password }}
+                                {% if form.password.errors %}
+                                    <div class="alert alert-danger small mt-2" role="alert">
+                                        {{ form.password.errors.0 }}
+                                    </div>
+                                {% endif %}
+                            </div>
+
+                            <div class="mb-3 text-end">
+                                <a href="{% url 'accounts:password_reset' %}" class="small text-decoration-none" data-bs-toggle="modal" data-bs-target="#passwordResetModal">Forgot password?</a>
+                            </div>
+
+                            <div class="d-grid mb-3">
+                                <button class="btn btn-primary btn-lg fw-bold" type="submit">Sign In</button>
+                            </div>
+
+                            <hr class="my-4">
+
+                            <div class="text-center">
+                                <small class="text-muted">Don't have an account? <a href="{% url 'register' %}" class="fw-bold text-decoration-none">Register here</a></small>
+                            </div>
+                        </form>
+                    </div>
                 </div>
-
-                <div class="mb-3">
-                    <label class="form-label">Password</label>
-                      {{ form.password }}
-                    {% if form.password.errors %}
-                        <div class="text-danger small mt-1">{{ form.password.errors.0 }}</div>
-                    {% endif %}
-                </div>
-
-                <div class="mb-2 text-end">
-                    <a href="{% url 'accounts:password_reset' %}" class="small" data-bs-toggle="modal" data-bs-target="#passwordResetModal">Forgot password?</a>
-                </div>
-
-                <div class="d-grid">
-                    <button class="btn btn-primary" type="submit">Log In</button>
-                </div>
-
-                <div class="text-center mt-3">
-                    <small class="text-muted">Don't have an account? <a href="{% url 'register' %}">Register</a></small>
-                </div>
-            </form>
+            </div>
         </div>
     </div>
-</div>
-
+</section>
 {% endblock %}

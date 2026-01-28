@@ -18,4 +18,6 @@ urlpatterns = [
 
     # (Session cart removed — using simple single-product checkout flow)
 
+    path('mock-pay/<int:product_id>/', views.mock_pay, name='mock_pay'),
+    path('site-admin/', views.admin_dashboard, name='site_admin'),
 ]

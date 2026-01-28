@@ -12,7 +12,7 @@ from django.db.models import Sum, Q, Count
 
 def home(request):
     products=Product.objects.filter(status='active').order_by('-created_at')[:8]
-    return render(request, 'SokoHub/home.html', {'products':products})
+    return render(request, 'InkingiWoods/home.html', {'products':products})
 
 def product_list(request):
     """

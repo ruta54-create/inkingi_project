@@ -11,8 +11,8 @@ class Command(BaseCommand):
 
     def handle(self, *args, **options):
         recipient = options['recipient']
-        subject = f"[{settings.DEFAULT_FROM_EMAIL}] Test email from SokoHub"
-        message = 'This is a test email sent from the SokoHub application to verify SMTP settings.'
+        subject = f"[{settings.DEFAULT_FROM_EMAIL}] Test email from Inkingi Woods"
+        message = 'This is a test email sent from the Inkingi Woods application to verify SMTP settings.'
         from_email = settings.DEFAULT_FROM_EMAIL
         try:
             send_mail(subject, message, from_email, [recipient])

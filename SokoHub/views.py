@@ -9,6 +9,6 @@ def home(request):
         print(f"Error fetching newest products: {e}")
         newest_products = []
 
-    # Provide `products` in context so `templates/SokoHub/home.html` can iterate over them
+    # Provide `products` in context so `templates/InkingiWoods/home.html` can iterate over them
     context = {'products': newest_products}
-    return render(request, 'SokoHub/home.html', context)
+    return render(request, 'InkingiWoods/home.html', context)

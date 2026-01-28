@@ -1,0 +1,65 @@
+{% extends 'base.html' %}
+{% block title %}Site Admin Dashboard{% endblock %}
+
+{% block content %}
+<div class="container my-5">
+    <h1>Site Admin Dashboard</h1>
+    <hr>
+
+    <h3>Products</h3>
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Name</th>
+                <th>Vendor</th>
+                <th>Price</th>
+                <th>Stock</th>
+                <th>Created</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for p in products %}
+            <tr>
+                <td>{{ p.id }}</td>
+                <td>{{ p.name }}</td>
+                <td>{{ p.vendor.username }}</td>
+                <td>{{ p.price|floatformat:2 }}</td>
+                <td>{{ p.stock }}</td>
+                <td>{{ p.created_at }}</td>
+            </tr>
+            {% empty %}
+            <tr><td colspan="6">No products found.</td></tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+    <h3 class="mt-4">Mock Purchases</h3>
+    <table class="table table-sm">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Customer</th>
+                <th>Product</th>
+                <th>Qty</th>
+                <th>Amount</th>
+                <th>When</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for pu in purchases %}
+            <tr>
+                <td>{{ pu.id }}</td>
+                <td>{{ pu.customer.username }}</td>
+                <td>{{ pu.product.name }}</td>
+                <td>{{ pu.quantity }}</td>
+                <td>{{ pu.amount|floatformat:2 }}</td>
+                <td>{{ pu.created_at }}</td>
+            </tr>
+            {% empty %}
+            <tr><td colspan="6">No purchases yet.</td></tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}

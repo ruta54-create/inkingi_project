@@ -33,3 +33,18 @@ class OrderItem(models.Model):
 
     def __str__(self):
         return f"{self.product.name} x {self.quantity}"
+
+
+class Purchase(models.Model):
+    """Record of a mock purchase (used by the Mock Checkout Process)."""
+    customer = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='purchases')
+    product = models.ForeignKey('products.Product', on_delete=models.CASCADE, related_name='purchases')
+    quantity = models.PositiveIntegerField(default=1)
+    amount = models.DecimalField(decimal_places=2, max_digits=12, validators=[MinValueValidator(0)])
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        ordering = ['-created_at']
+
+    def __str__(self):
+        return f"Purchase #{self.id} - {self.customer.username} - {self.product.name} x{self.quantity}"

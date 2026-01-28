@@ -1,33 +1,84 @@
 {% extends 'base.html' %}
+{% load static %}
 
-{% block title %}Products{% endblock %}
+{% block title %}Products - Inkingi Wood Ltd{% endblock %}
 
 {% block content %}
-<div class="container my-5">
-  <div class="row g-3">
-    {% for product in products %}
-      <div class="col-md-3">
-        <div class="card product-card h-100 p-3 shadow-sm">
-          {% if product.image %}
-            <img src="{{ product.image.url }}" class="card-img-top card-img-cover mb-2">
-          {% endif %}
-          <h5 class="fw-bold mb-1">{{ product.name }}</h5>
-          <p class="mb-1">{{ product.price|floatformat:2 }} RWF <small class="text-muted">/ {{ product.unit }}</small></p>
-          <p class="small-muted mb-2">{% if product.stock > 0 %}{{ product.stock }} available{% else %}<span class="text-danger">Out of stock</span>{% endif %}</p>
+<section class="products-page py-5">
+  <div class="container">
+    <header class="mb-5">
+      <h1 class="display-5 fw-bold mb-2">Our Products</h1>
+      <p class="lead text-muted">Browse our premium wooden products from local vendors</p>
+    </header>
 
-          <div class="d-grid gap-2 card-actions">
-            <a href="{% url 'products:product_detail' product.id %}" class="btn btn-view btn-sm">View</a>
-            <form method="post" action="{% url 'orders:add_to_cart' product.id %}">
-              {% csrf_token %}
-              <input type="hidden" name="quantity" value="1">
-              <button type="submit" class="btn btn-outline-view btn-sm" {% if product.stock == 0 %}disabled{% endif %}>Add to Cart</button>
-            </form>
+    <div class="row g-4">
+      {% for product in products %}
+        <div class="col-12 col-sm-6 col-lg-4 col-xl-3">
+          <article class="card product-card h-100 shadow-sm border-0 transition-transform">
+            <!-- Product Image -->
+            <div class="card-img-container position-relative overflow-hidden" style="height: 280px;">
+              {% if product.image %}
+                <img 
+                  src="{{ product.image.url }}" 
+                  alt="{{ product.name }}" 
+                  class="card-img-top w-100 h-100 object-fit-cover"
+                  loading="lazy"
+                  decoding="async">
+              {% else %}
+                <img 
+                  src="{% static 'img/placeholder.png' %}" 
+                  alt="No image available for {{ product.name }}" 
+                  class="card-img-top w-100 h-100 object-fit-cover"
+                  loading="lazy">
+              {% endif %}
+            </div>
+
+            <div class="card-body d-flex flex-column">
+              <h2 class="card-title h5 fw-bold text-dark mb-2">{{ product.name }}</h2>
+              
+              <p class="card-text text-muted small mb-2">
+                <strong>Unit:</strong> {{ product.unit }}
+              </p>
+
+              <p class="card-text text-success fw-bold mb-3">
+                {{ product.price|floatformat:2 }} RWF
+              </p>
+
+              <!-- Stock Status -->
+              <p class="mb-3">
+                {% if product.stock > 0 %}
+                  <span class="badge bg-success">{{ product.stock }} in stock</span>
+                {% else %}
+                  <span class="badge bg-danger">Out of stock</span>
+                {% endif %}
+              </p>
+
+              <div class="d-grid gap-2 mt-auto">
+                <a href="{% url 'products:product_detail' product.id %}" class="btn btn-view btn-sm" aria-label="View details for {{ product.name }}">View Details</a>
+                <form method="post" action="{% url 'orders:add_to_cart' product.id %}" class="w-100">
+                  {% csrf_token %}
+                  <input type="hidden" name="quantity" value="1">
+                  <button 
+                    type="submit" 
+                    class="btn btn-outline-view btn-sm w-100" 
+                    {% if product.stock == 0 %}disabled aria-disabled="true"{% endif %}
+                    aria-label="Add {{ product.name }} to cart">
+                    Add to Cart
+                  </button>
+                </form>
+              </div>
+            </div>
+          </article>
+        </div>
+      {% empty %}
+        <div class="col-12">
+          <div class="alert alert-info text-center py-5" role="alert">
+            <p class="mb-3">No products found.</p>
+            <a href="{% url 'products:product_list' %}" class="btn btn-primary">Refresh</a>
           </div>
         </div>
-      </div>
-    {% empty %}
-      <p>No products found.</p>
-    {% endfor %}
+      {% endfor %}
+    </div>
   </div>
-</div>
+</section>
 {% endblock %}

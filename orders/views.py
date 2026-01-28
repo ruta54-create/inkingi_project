@@ -273,4 +273,65 @@ def checkout_cart(request):
     
 
 
+@login_required
+def mock_pay(request, product_id):
+    """Simulate a payment for a single product (no real processing).
+    Creates a Purchase record and reduces stock accordingly, then shows confirmation.
+    """
+    product = Product.objects.filter(id=product_id, status='active').first()
+    if not product:
+        messages.error(request, 'Product not found or unavailable.')
+        return redirect('products:product_list')
+
+    if getattr(request.user, 'user_type', None) != 'customer':
+        messages.error(request, 'Only customers can make purchases.')
+        return redirect('products:product_detail', pk=product.id)
+
+    if request.method != 'POST':
+        messages.error(request, 'Invalid request.')
+        return redirect('products:product_detail', pk=product.id)
+
+    try:
+        qty = int(request.POST.get('quantity', 1))
+    except (TypeError, ValueError):
+        qty = 1
+
+    if qty < 1:
+        messages.error(request, 'Invalid quantity.')
+        return redirect('products:product_detail', pk=product.id)
+
+    if qty > product.stock:
+        messages.error(request, 'Not enough stock available.')
+        return redirect('products:product_detail', pk=product.id)
+
+    amount = product.price * qty
+
+    # Create Purchase record
+    from .models import Purchase
+    purchase = Purchase.objects.create(
+        customer=request.user,
+        product=product,
+        quantity=qty,
+        amount=amount
+    )
+
+    # Decrement stock
+    product.stock = product.stock - qty
+    product.save()
+
+    return render(request, 'orders/payment_success.html', {'purchase': purchase})
+
+
+from django.contrib.admin.views.decorators import staff_member_required
+
+@staff_member_required
+def admin_dashboard(request):
+    """Simple site admin dashboard listing products and mock purchases."""
+    from .models import Purchase
+    products = Product.objects.all().select_related('vendor')
+    purchases = Purchase.objects.select_related('customer', 'product')[:200]
+    return render(request, 'orders/admin_dashboard.html', {'products': products, 'purchases': purchases})
+
+
+
 
