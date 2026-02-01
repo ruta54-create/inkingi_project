@@ -1,0 +1,174 @@
+{% extends 'admin/base_site.html' %}
+
+{% block title %}Webhook Details: {{ object.stripe_event_id }}{% endblock %}
+
+{% block extrahead %}
+{{ block.super }}
+<style>
+.webhook-details {
+    background-color: #f8f9fa;
+    border: 1px solid #dee2e6;
+    border-radius: 6px;
+    padding: 20px;
+    margin: 20px 0;
+}
+.detail-row {
+    display: flex;
+    margin-bottom: 10px;
+    align-items: center;
+}
+.detail-label {
+    font-weight: bold;
+    min-width: 120px;
+    color: #495057;
+}
+.detail-value {
+    flex: 1;
+}
+.status-badge {
+    padding: 4px 8px;
+    border-radius: 4px;
+    font-size: 12px;
+    font-weight: bold;
+}
+.processed {
+    background-color: #d4edda;
+    color: #155724;
+}
+.pending {
+    background-color: #f8d7da;
+    color: #721c24;
+}
+.code-block {
+    white-space: pre-wrap;
+    background: #f8f9fa;
+    padding: 15px;
+    border-radius: 6px;
+    border: 1px solid #e9ecef;
+    font-family: 'Monaco', 'Consolas', monospace;
+    font-size: 13px;
+    max-height: 400px;
+    overflow-y: auto;
+}
+.security-notice {
+    background-color: #d1ecf1;
+    border: 1px solid #bee5eb;
+    border-radius: 4px;
+    padding: 10px;
+    margin: 10px 0;
+    color: #0c5460;
+}
+.tab-container {
+    margin: 20px 0;
+}
+.tab-buttons {
+    border-bottom: 1px solid #dee2e6;
+    margin-bottom: 15px;
+}
+.tab-button {
+    background: none;
+    border: none;
+    padding: 10px 20px;
+    cursor: pointer;
+    border-bottom: 2px solid transparent;
+    margin-right: 10px;
+}
+.tab-button.active {
+    border-bottom-color: #007cba;
+    color: #007cba;
+    font-weight: bold;
+}
+.tab-content {
+    display: none;
+}
+.tab-content.active {
+    display: block;
+}
+</style>
+{% endblock %}
+
+{% block content %}
+<h1>🔗 Webhook Event Details</h1>
+
+<div class="webhook-details">
+    <div class="detail-row">
+        <span class="detail-label">Event ID:</span>
+        <span class="detail-value"><code>{{ object.stripe_event_id }}</code></span>
+    </div>
+    <div class="detail-row">
+        <span class="detail-label">Event Type:</span>
+        <span class="detail-value"><strong>{{ object.event_type }}</strong></span>
+    </div>
+    <div class="detail-row">
+        <span class="detail-label">Status:</span>
+        <span class="detail-value">
+            {% if object.processed %}
+                <span class="status-badge processed">✓ PROCESSED</span>
+            {% else %}
+                <span class="status-badge pending">⚠ PENDING</span>
+            {% endif %}
+        </span>
+    </div>
+    <div class="detail-row">
+        <span class="detail-label">Received:</span>
+        <span class="detail-value">{{ object.received_at|date:"F d, Y H:i:s T" }}</span>
+    </div>
+    <div class="detail-row">
+        <span class="detail-label">Related Order:</span>
+        <span class="detail-value">
+            {% if object.order %}
+                <a href="{% url 'admin:orders_order_change' object.order.id %}">Order #{{ object.order.id }}</a>
+                ({{ object.order.customer.username }} - ${{ object.order.total }})
+            {% else %}
+                <span style="color: #6c757d;">No associated order</span>
+            {% endif %}
+        </span>
+    </div>
+</div>
+
+<div class="tab-container">
+    <div class="tab-buttons">
+        <button class="tab-button active" onclick="showTab('payload')">📄 Payload</button>
+        <button class="tab-button" onclick="showTab('headers')">🔒 Headers</button>
+    </div>
+    
+    <div id="payload-tab" class="tab-content active">
+        <h2>Event Payload</h2>
+        <div class="code-block">{{ pretty_payload }}</div>
+    </div>
+    
+    <div id="headers-tab" class="tab-content">
+        <h2>HTTP Headers</h2>
+        <div class="security-notice">
+            <strong>🔒 Security Notice:</strong> Sensitive headers (authorization, tokens, signatures, etc.) have been automatically redacted for security purposes. This helps protect API keys and authentication tokens from being exposed in logs.
+        </div>
+        <div class="code-block">{{ pretty_headers }}</div>
+    </div>
+</div>
+
+<div style="margin-top: 30px;">
+    <a href="javascript:history.back()" class="button default">← Back to Webhook Events</a>
+    {% if not object.processed %}
+        <a href="{% url 'admin:orders_stripewebhookevent_reprocess_confirmation' %}?ids={{ object.id }}" class="button" style="background-color: #ffc107; margin-left: 10px;">
+            🔄 Reprocess This Event
+        </a>
+    {% endif %}
+</div>
+
+<script>
+function showTab(tabName) {
+    // Hide all tab contents
+    const contents = document.querySelectorAll('.tab-content');
+    contents.forEach(content => content.classList.remove('active'));
+    
+    // Remove active class from all buttons
+    const buttons = document.querySelectorAll('.tab-button');
+    buttons.forEach(button => button.classList.remove('active'));
+    
+    // Show selected tab and mark button as active
+    document.getElementById(tabName + '-tab').classList.add('active');
+    event.target.classList.add('active');
+}
+</script>
+
+{% endblock %}

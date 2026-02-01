@@ -69,6 +69,68 @@
             -webkit-text-fill-color: transparent;
             background-clip: text;
         }
+        
+        /* Professional Dropdown Styles */
+        .dropdown-menu {
+            border-radius: 12px;
+            padding: 0.75rem 0;
+            margin-top: 0.5rem;
+            min-width: 280px;
+        }
+        
+        .dropdown-item {
+            padding: 0.75rem 1.5rem;
+            transition: all 0.3s ease;
+            border-radius: 0;
+        }
+        
+        .dropdown-item:hover {
+            background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+            transform: translateX(5px);
+            color: #ff7a18;
+        }
+        
+        .dropdown-item i {
+            width: 20px;
+            text-align: center;
+        }
+        
+        .dropdown-divider {
+            margin: 0.5rem 1rem;
+            border-color: #e9ecef;
+        }
+        
+        /* Mobile dropdown improvements */
+        @media (max-width: 991.98px) {
+            .dropdown-menu {
+                border: none;
+                box-shadow: none;
+                background: transparent;
+                padding: 0;
+                margin-top: 0;
+                min-width: auto;
+            }
+            
+            .dropdown-item {
+                padding: 0.5rem 1rem;
+                color: rgba(0,0,0,.55);
+            }
+            
+            .dropdown-item:hover {
+                background: rgba(255, 122, 24, 0.1);
+                transform: none;
+                color: #ff7a18;
+            }
+        }
+        
+        /* Dropdown toggle arrow animation */
+        .dropdown-toggle::after {
+            transition: transform 0.3s ease;
+        }
+        
+        .dropdown-toggle[aria-expanded="true"]::after {
+            transform: rotate(180deg);
+        }
     </style>
 </head>
 <body class="bg-light">
@@ -85,8 +147,63 @@
                 <li class="nav-item">
                     <a class="nav-link {% if request.path == '/' %}active{% endif %}" href="{% url 'home_page' %}">Home</a>
                 </li>
-                <li class="nav-item">
-                    <a class="nav-link {% if 'products' in request.path %}active{% endif %}" href="{% url 'products:product_list' %}">Products</a>
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle {% if 'products' in request.path %}active{% endif %}" 
+                       href="{% url 'products:product_list' %}" 
+                       id="productsDropdown" 
+                       role="button" 
+                       data-bs-toggle="dropdown" 
+                       aria-expanded="false">
+                        Products
+                    </a>
+                    <ul class="dropdown-menu shadow-lg border-0" aria-labelledby="productsDropdown">
+                        <li>
+                            <a class="dropdown-item fw-bold text-primary" href="{% url 'products:product_list' %}">
+                                <i class="bi bi-grid-3x3-gap me-2"></i>All Products
+                            </a>
+                        </li>
+                        <li><hr class="dropdown-divider"></li>
+                        <li>
+                            <a class="dropdown-item" href="{% url 'products:product_list' %}?category=furniture">
+                                <i class="bi bi-house-door me-2 text-warning"></i>Furniture
+                            </a>
+                        </li>
+                        <li>
+                            <a class="dropdown-item" href="{% url 'products:product_list' %}?category=home-office">
+                                <i class="bi bi-laptop me-2 text-info"></i>Home & Office
+                            </a>
+                        </li>
+                        <li>
+                            <a class="dropdown-item" href="{% url 'products:product_list' %}?category=outdoor-garden">
+                                <i class="bi bi-tree me-2 text-success"></i>Outdoor & Garden
+                            </a>
+                        </li>
+                        <li>
+                            <a class="dropdown-item" href="{% url 'products:product_list' %}?category=doors-construction">
+                                <i class="bi bi-door-open me-2 text-secondary"></i>Doors & Construction
+                            </a>
+                        </li>
+                        <li>
+                            <a class="dropdown-item" href="{% url 'products:product_list' %}?category=handcrafted">
+                                <i class="bi bi-palette me-2 text-danger"></i>Handcrafted Products
+                            </a>
+                        </li>
+                        <li>
+                            <a class="dropdown-item" href="{% url 'products:product_list' %}?category=custom-made">
+                                <i class="bi bi-tools me-2 text-dark"></i>Custom Made
+                            </a>
+                        </li>
+                        <li>
+                            <a class="dropdown-item" href="{% url 'products:product_list' %}?category=raw-materials">
+                                <i class="bi bi-stack me-2 text-muted"></i>Raw Materials
+                            </a>
+                        </li>
+                        <li>
+                            <a class="dropdown-item" href="{% url 'products:product_list' %}?category=kids-school">
+                                <i class="bi bi-backpack me-2 text-primary"></i>Kids & School
+                            </a>
+                        </li>
+                    </ul>
                 </li>
                 <li class="nav-item">
                     <a class="nav-link position-relative {% if 'cart' in request.path %}active{% endif %}" href="{% url 'orders:cart_view' %}">

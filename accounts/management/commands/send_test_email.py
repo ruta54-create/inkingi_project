@@ -15,7 +15,12 @@ class Command(BaseCommand):
         message = 'This is a test email sent from the Inkingi Woods application to verify SMTP settings.'
         from_email = settings.DEFAULT_FROM_EMAIL
         try:
-            send_mail(subject, message, from_email, [recipient])
+            from django.template.loader import render_to_string
+            from django.core.mail import EmailMessage
+            html = render_to_string('emails/test_email.html', {'message': message, 'recipient': recipient})
+            msg = EmailMessage(subject=subject, body=html, from_email=from_email, to=[recipient])
+            msg.content_subtype = 'html'
+            msg.send()
             self.stdout.write(self.style.SUCCESS(f'Successfully sent test email to {recipient}'))
         except Exception as e:
             raise CommandError(f'Failed to send test email: {e}')

@@ -1,0 +1,11 @@
+<!doctype html>
+<html>
+  <body>
+    <h2>Purchase Refunded</h2>
+    <p>Hello {{ user.get_full_name|default:user.username }},</p>
+    <p>Your purchase <strong>#{{ purchase.id }}</strong> for <strong>{{ purchase.product.name }}</strong> ({{ purchase.quantity }}) has been refunded.</p>
+    <p><strong>Reason:</strong> {{ purchase.refund_reason|default:'(no reason provided)' }}</p>
+    <p>If you believe this was a mistake, please contact support.</p>
+    <p>Best regards,<br>Inkingi Woods Ltd</p>
+  </body>
+</html>

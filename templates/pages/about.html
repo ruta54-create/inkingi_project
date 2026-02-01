@@ -1,4 +1,5 @@
 {% extends 'base.html' %}
+{% load static %}
 
 {% block title %}About Us - Inkingi Wood{% endblock %}
 
@@ -87,187 +88,219 @@
         </div>
     </div>
 
-    <!-- Our Team Section -->
+    <!-- Our Team Leadership Section -->
     <div class="mb-5 pt-4">
         <div class="text-center mb-5">
             <h2 class="display-5 mb-3">Meet Our Leadership Team</h2>
             <p class="lead">The passionate individuals behind Inkingi Wood's success</p>
         </div>
 
-        <div class="row">
-            <!-- Team Member 1: Founder/CEO -->
-            <div class="col-lg-4 col-md-6 mb-4">
-                <div class="card h-100 border-0 shadow-lg">
-                    <div class="card-img-top overflow-hidden" style="height: 300px;">
-                        <img src="https://images.unsplash.com/photo-1560250097-0b93528c311a?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80" 
-                             alt="Jean Claude, Founder & CEO" 
+        <div class="row justify-content-center">
+            <!-- Team Member 1: Boo -->
+            <div class="col-lg-3 col-md-6 mb-4">
+                <div class="card h-100 border-0 shadow-lg team-card">
+                    <div class="card-img-top overflow-hidden" style="height: 280px;">
+                        <img src="{% static 'images/boo.jpeg' %}" 
+                             alt="Boo - Chief Executive Officer" 
                              class="img-fluid w-100 h-100" 
-                             style="object-fit: cover;">
+                             style="object-fit: cover; object-position: center;">
                     </div>
                     <div class="card-body text-center p-4">
-                        <h3 class="h4 mb-1">Jean Claude N.</h3>
-                        <p class="text-muted mb-3">Founder & Chief Executive Officer</p>
+                        <h3 class="h4 mb-1">NKURUNZIZA Emmanuel</h3>
+                        <p class="text-muted mb-3">Chief Executive Officer</p>
                         <p class="mb-3">
-                            With 15+ years in sustainable forestry and business development, Jean Claude founded Inkingi Wood 
-                            to preserve Rwandan woodworking heritage while creating economic opportunities for local artisans.
+                            Leading Inkingi Wood with vision and passion for sustainable craftsmanship. 
+                            Dedicated to preserving Rwandan woodworking heritage while creating global opportunities.
                         </p>
-                        <div class="mt-3">
-                            <span class="badge bg-primary me-2">Business Strategy</span>
-                            <span class="badge bg-success me-2">Sustainability</span>
-                            <span class="badge bg-warning">Artisan Relations</span>
+                        <div class="mt-3 mb-3">
+                            <span class="badge bg-primary me-1">Leadership</span>
+                            <span class="badge bg-success me-1">Strategy</span>
+                            <span class="badge bg-warning">Vision</span>
+                        </div>
+                        
+                        <!-- Contact Information -->
+                        <div class="contact-info mt-3">
+                            <div class="contact-item mb-2">
+                                <a href="tel:+250788123001" class="contact-link">
+                                    <i class="bi bi-telephone-fill me-2"></i>
+                                    <span>+250 788 123 001</span>
+                                </a>
+                            </div>
+                            <div class="contact-item mb-2">
+                                <a href="mailto:boo@inkingiwood.com" class="contact-link">
+                                    <i class="bi bi-envelope-fill me-2"></i>
+                                    <span>niyoclarisee@gmail.com</span>
+                                </a>
+                            </div>
+                            <div class="social-links mt-3">
+                                <a href="https://instagram.com/boo_inkingiwood" target="_blank" class="social-link me-2" title="Follow Boo on Instagram">
+                                    <i class="bi bi-instagram"></i>
+                                </a>
+                                <a href="https://linkedin.com/in/boo-inkingiwood" target="_blank" class="social-link me-2" title="Connect with Boo on LinkedIn">
+                                    <i class="bi bi-linkedin"></i>
+                                </a>
+                                <a href="https://twitter.com/boo_inkingiwood" target="_blank" class="social-link" title="Follow Boo on Twitter">
+                                    <i class="bi bi-twitter"></i>
+                                </a>
+                            </div>
                         </div>
                     </div>
                 </div>
             </div>
 
-            <!-- Team Member 2: Operations -->
-            <div class="col-lg-4 col-md-6 mb-4">
-                <div class="card h-100 border-0 shadow-lg">
-                    <div class="card-img-top overflow-hidden" style="height: 300px;">
-                        <img src="https://images.unsplash.com/photo-1582750433449-648ed127bb54?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80" 
-                             alt="Marie A., Operations Director" 
+            <!-- Team Member 2: Citi -->
+            <div class="col-lg-3 col-md-6 mb-4">
+                <div class="card h-100 border-0 shadow-lg team-card">
+                    <div class="card-img-top overflow-hidden" style="height: 280px;">
+                        <img src="{% static 'images/citi.jpeg' %}" 
+                             alt="Citi - Operations Director" 
                              class="img-fluid w-100 h-100" 
-                             style="object-fit: cover;">
+                             style="object-fit: cover; object-position: center;">
                     </div>
                     <div class="card-body text-center p-4">
-                        <h3 class="h4 mb-1">Marie A.</h3>
+                        <h3 class="h4 mb-1">IRADUKUNDA Cynthia</h3>
                         <p class="text-muted mb-3">Operations Director</p>
                         <p class="mb-3">
-                            Marie ensures seamless operations from artisan workshop to customer doorstep. Her background in 
-                            supply chain management and logistics guarantees efficient delivery and quality control.
+                            Ensuring seamless operations from artisan workshops to customer delivery. 
+                            Expert in supply chain management and quality assurance processes.
                         </p>
-                        <div class="mt-3">
-                            <span class="badge bg-primary me-2">Supply Chain</span>
-                            <span class="badge bg-success me-2">Quality Control</span>
+                        <div class="mt-3 mb-3">
+                            <span class="badge bg-primary me-1">Operations</span>
+                            <span class="badge bg-success me-1">Quality</span>
                             <span class="badge bg-warning">Logistics</span>
                         </div>
+                        
+                        <!-- Contact Information -->
+                        <div class="contact-info mt-3">
+                            <div class="contact-item mb-2">
+                                <a href="tel:+250788123002" class="contact-link">
+                                    <i class="bi bi-telephone-fill me-2"></i>
+                                    <span>+250 788 123 002</span>
+                                </a>
+                            </div>
+                            <div class="contact-item mb-2">
+                                <a href="mailto:citi@inkingiwood.com" class="contact-link">
+                                    <i class="bi bi-envelope-fill me-2"></i>
+                                    <span>iraducynthia@gmail.com</span>
+                                </a>
+                            </div>
+                            <div class="social-links mt-3">
+                                <a href="https://instagram.com/citi_inkingiwood" target="_blank" class="social-link me-2" title="Follow Citi on Instagram">
+                                    <i class="bi bi-instagram"></i>
+                                </a>
+                                <a href="https://linkedin.com/in/citi-inkingiwood" target="_blank" class="social-link me-2" title="Connect with Citi on LinkedIn">
+                                    <i class="bi bi-linkedin"></i>
+                                </a>
+                                <a href="https://twitter.com/citi_inkingiwood" target="_blank" class="social-link" title="Follow Citi on Twitter">
+                                    <i class="bi bi-twitter"></i>
+                                </a>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
 
-            <!-- Team Member 3: Artisan Relations -->
-            <div class="col-lg-4 col-md-6 mb-4">
-                <div class="card h-100 border-0 shadow-lg">
-                    <div class="card-img-top overflow-hidden" style="height: 300px;">
-                        <img src="https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80" 
-                             alt="David K., Artisan Relations Manager" 
+            <!-- Team Member 3: Eee -->
+            <div class="col-lg-3 col-md-6 mb-4">
+                <div class="card h-100 border-0 shadow-lg team-card">
+                    <div class="card-img-top overflow-hidden" style="height: 280px;">
+                        <img src="{% static 'images/eee.jpeg' %}" 
+                             alt="Eee - Artisan Relations Manager" 
                              class="img-fluid w-100 h-100" 
-                             style="object-fit: cover;">
+                             style="object-fit: cover; object-position: center;">
                     </div>
                     <div class="card-body text-center p-4">
-                        <h3 class="h4 mb-1">David K.</h3>
+                        <h3 class="h4 mb-1">RUTAGENGWA Egide</h3>
                         <p class="text-muted mb-3">Artisan Relations Manager</p>
                         <p class="mb-3">
-                            A third-generation woodworker, David connects with artisans across Rwanda, providing training, 
-                            resources, and fair market access. He's passionate about preserving traditional woodworking techniques.
+                            Connecting with artisans across Rwanda, providing training and resources. 
+                            Passionate about preserving traditional woodworking techniques and empowering craftsmen.
                         </p>
-                        <div class="mt-3">
-                            <span class="badge bg-primary me-2">Training</span>
-                            <span class="badge bg-success me-2">Artisan Support</span>
-                            <span class="badge bg-warning">Traditional Crafts</span>
+                        <div class="mt-3 mb-3">
+                            <span class="badge bg-primary me-1">Training</span>
+                            <span class="badge bg-success me-1">Artisan Support</span>
+                            <span class="badge bg-warning">Crafts</span>
+                        </div>
+                        
+                        <!-- Contact Information -->
+                        <div class="contact-info mt-3">
+                            <div class="contact-item mb-2">
+                                <a href="tel:+250788123003" class="contact-link">
+                                    <i class="bi bi-telephone-fill me-2"></i>
+                                    <span>+250 788 123 003</span>
+                                </a>
+                            </div>
+                            <div class="contact-item mb-2">
+                                <a href="mailto:eee@inkingiwood.com" class="contact-link">
+                                    <i class="bi bi-envelope-fill me-2"></i>
+                                    <span>rutagengwaegide54@gmail.com</span>
+                                </a>
+                            </div>
+                            <div class="social-links mt-3">
+                                <a href="https://instagram.com/eee_inkingiwood" target="_blank" class="social-link me-2" title="Follow Eee on Instagram">
+                                    <i class="bi bi-instagram"></i>
+                                </a>
+                                <a href="https://linkedin.com/in/eee-inkingiwood" target="_blank" class="social-link me-2" title="Connect with Eee on LinkedIn">
+                                    <i class="bi bi-linkedin"></i>
+                                </a>
+                                <a href="https://twitter.com/eee_inkingiwood" target="_blank" class="social-link" title="Follow Eee on Twitter">
+                                    <i class="bi bi-twitter"></i>
+                                </a>
+                            </div>
                         </div>
                     </div>
                 </div>
             </div>
 
-            <!-- Team Member 4: Customer Experience -->
-            <div class="col-lg-4 col-md-6 mb-4">
-                <div class="card h-100 border-0 shadow-lg">
-                    <div class="card-img-top overflow-hidden" style="height: 300px;">
-                        <img src="https://images.unsplash.com/photo-1580489944761-15a19d654956?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80" 
-                             alt="Grace M., Customer Experience Lead" 
+            <!-- Team Member 4: Emmy -->
+            <div class="col-lg-3 col-md-6 mb-4">
+                <div class="card h-100 border-0 shadow-lg team-card">
+                    <div class="card-img-top overflow-hidden" style="height: 280px;">
+                        <img src="{% static 'images/emmy.jpeg' %}" 
+                             alt="Emmy - Customer Experience Lead" 
                              class="img-fluid w-100 h-100" 
-                             style="object-fit: cover;">
+                             style="object-fit: cover; object-position: center;">
                     </div>
                     <div class="card-body text-center p-4">
-                        <h3 class="h4 mb-1">Grace M.</h3>
+                        <h3 class="h4 mb-1">NIYONSHUYTI Clarisse </h3>
                         <p class="text-muted mb-3">Customer Experience Lead</p>
                         <p class="mb-3">
-                            Grace leads our customer support team with warmth and expertise. She ensures every customer 
-                            receives personalized attention and satisfaction throughout their Inkingi Wood journey.
+                            Leading our customer support with warmth and expertise. 
+                            Ensuring every customer receives personalized attention throughout their Inkingi Wood journey.
                         </p>
-                        <div class="mt-3">
-                            <span class="badge bg-primary me-2">Customer Service</span>
-                            <span class="badge bg-success me-2">Client Relations</span>
-                            <span class="badge bg-warning">Experience Design</span>
+                        <div class="mt-3 mb-3">
+                            <span class="badge bg-primary me-1">Customer Care</span>
+                            <span class="badge bg-success me-1">Relations</span>
+                            <span class="badge bg-warning">Experience</span>
+                        </div>
+                        
+                        <!-- Contact Information -->
+                        <div class="contact-info mt-3">
+                            <div class="contact-item mb-2">
+                                <a href="tel:+250788123004" class="contact-link">
+                                    <i class="bi bi-telephone-fill me-2"></i>
+                                    <span>+250 788 123 004</span>
+                                </a>
+                            </div>
+                            <div class="contact-item mb-2">
+                                <a href="mailto:emmy@inkingiwood.com" class="contact-link">
+                                    <i class="bi bi-envelope-fill me-2"></i>
+                                    <span>niyoclarisee@gmail.com<</span>
+                                </a>
+                            </div>
+                            <div class="social-links mt-3">
+                                <a href="https://instagram.com/emmy_inkingiwood" target="_blank" class="social-link me-2" title="Follow Emmy on Instagram">
+                                    <i class="bi bi-instagram"></i>
+                                </a>
+                                <a href="https://linkedin.com/in/emmy-inkingiwood" target="_blank" class="social-link me-2" title="Connect with Emmy on LinkedIn">
+                                    <i class="bi bi-linkedin"></i>
+                                </a>
+                                <a href="https://twitter.com/emmy_inkingiwood" target="_blank" class="social-link" title="Follow Emmy on Twitter">
+                                    <i class="bi bi-twitter"></i>
+                                </a>
+                            </div>
                         </div>
                     </div>
-                </div>
-            </div>
-
-            <!-- Team Member 5: Marketing -->
-            <div class="col-lg-4 col-md-6 mb-4">
-                <div class="card h-100 border-0 shadow-lg">
-                    <div class="card-img-top overflow-hidden" style="height: 300px;">
-                        <img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80" 
-                             alt="Eric T., Marketing Director" 
-                             class="img-fluid w-100 h-100" 
-                             style="object-fit: cover;">
-                    </div>
-                    <div class="card-body text-center p-4">
-                        <h3 class="h4 mb-1">Eric T.</h3>
-                        <p class="text-muted mb-3">Marketing Director</p>
-                        <p class="mb-3">
-                            Eric crafts compelling stories about our artisans and products. His digital marketing expertise 
-                            brings Rwandan woodwork to global audiences while staying true to our authentic roots.
-                        </p>
-                        <div class="mt-3">
-                            <span class="badge bg-primary me-2">Digital Marketing</span>
-                            <span class="badge bg-success me-2">Brand Strategy</span>
-                            <span class="badge bg-warning">Storytelling</span>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Team Member 6: Sustainability Officer -->
-            <div class="col-lg-4 col-md-6 mb-4">
-                <div class="card h-100 border-0 shadow-lg">
-                    <div class="card-img-top overflow-hidden" style="height: 300px;">
-                        <img src="https://images.unsplash.com/photo-1506919258185-6078bba55d2a?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80" 
-                             alt="Samuel R., Sustainability Officer" 
-                             class="img-fluid w-100 h-100" 
-                             style="object-fit: cover;">
-                    </div>
-                    <div class="card-body text-center p-4">
-                        <h3 class="h4 mb-1">Samuel R.</h3>
-                        <p class="text-muted mb-3">Sustainability Officer</p>
-                        <p class="mb-3">
-                            Samuel ensures our operations align with environmental best practices. He manages our 
-                            reforestation programs and certifies all wood sources as sustainably harvested.
-                        </p>
-                        <div class="mt-3">
-                            <span class="badge bg-primary me-2">Environmental Science</span>
-                            <span class="badge bg-success me-2">Reforestation</span>
-                            <span class="badge bg-warning">Certifications</span>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- Our Artisan Community -->
-    <div class="card border-0 shadow-lg mb-5">
-        <div class="card-body p-5">
-            <div class="row align-items-center">
-                <div class="col-lg-6 mb-4 mb-lg-0">
-                    <h2 class="h3 mb-3">Our Artisan Community</h2>
-                    <p class="mb-4">
-                        Behind every Inkingi Wood product is a skilled Rwandan artisan. We work with over 50 master craftsmen 
-                        and women across Rwanda, each bringing unique skills and traditional knowledge.
-                    </p>
-                    <ul class="list-unstyled">
-                        <li class="mb-2"><i class="bi bi-check-circle-fill text-success me-2"></i> Fair trade partnerships</li>
-                        <li class="mb-2"><i class="bi bi-check-circle-fill text-success me-2"></i> Skills development workshops</li>
-                        <li class="mb-2"><i class="bi bi-check-circle-fill text-success me-2"></i> Healthcare and education support</li>
-                        <li class="mb-2"><i class="bi bi-check-circle-fill text-success me-2"></i> Direct market access</li>
-                    </ul>
-                </div>
-                <div class="col-lg-6">
-                    <img src="https://images.unsplash.com/photo-1513475382585-d06e58bcb0e0?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80" 
-                         alt="Artisan community working together" 
-                         class="img-fluid rounded shadow">
                 </div>
             </div>
         </div>
@@ -280,7 +313,7 @@
         <a href="{% url 'products:product_list' %}" class="btn btn-primary btn-lg me-3">
             <i class="bi bi-shop me-2"></i>Shop Our Collection
         </a>
-        <a href="/contact/" class="btn btn-outline-primary btn-lg">
+        <a href="{% url 'pages:contact' %}" class="btn btn-outline-primary btn-lg">
             <i class="bi bi-envelope me-2"></i>Contact Our Team
         </a>
     </div>
@@ -290,18 +323,157 @@
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
 
 <style>
-    .card {
-        transition: transform 0.3s ease-in-out;
+    .team-card {
+        transition: transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
     }
-    .card:hover {
-        transform: translateY(-5px);
+    .team-card:hover {
+        transform: translateY(-8px);
+        box-shadow: 0 10px 25px rgba(0,0,0,0.15) !important;
     }
     .badge {
-        font-size: 0.75rem;
-        padding: 0.35em 0.65em;
+        font-size: 0.7rem;
+        padding: 0.3em 0.6em;
+        margin: 0.1em;
     }
     .img-fluid {
         border-radius: 8px;
+        transition: transform 0.3s ease-in-out;
+    }
+    .team-card:hover .img-fluid {
+        transform: scale(1.05);
+    }
+    .card-img-top {
+        border-radius: 8px 8px 0 0;
+    }
+    .team-card .card-body {
+        background: linear-gradient(135deg, #f8f9fa 0%, #ffffff 100%);
+    }
+    
+    /* Contact Information Styling */
+    .contact-info {
+        border-top: 1px solid #e9ecef;
+        padding-top: 15px;
+        margin-top: 15px;
+    }
+    
+    .contact-item {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin-bottom: 8px;
+    }
+    
+    .contact-link {
+        color: #495057;
+        text-decoration: none;
+        font-size: 0.85rem;
+        display: flex;
+        align-items: center;
+        transition: all 0.3s ease;
+        padding: 5px 10px;
+        border-radius: 20px;
+        background: rgba(0, 123, 255, 0.05);
+    }
+    
+    .contact-link:hover {
+        color: #007bff;
+        background: rgba(0, 123, 255, 0.1);
+        transform: translateY(-1px);
+        text-decoration: none;
+    }
+    
+    .contact-link i {
+        color: #007bff;
+        font-size: 0.9rem;
+    }
+    
+    /* Social Media Links */
+    .social-links {
+        display: flex;
+        justify-content: center;
+        gap: 8px;
+        margin-top: 12px;
+    }
+    
+    .social-link {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 35px;
+        height: 35px;
+        border-radius: 50%;
+        color: white;
+        text-decoration: none;
+        font-size: 1rem;
+        transition: all 0.3s ease;
+        position: relative;
+        overflow: hidden;
+    }
+    
+    .social-link:hover {
+        transform: translateY(-3px) scale(1.1);
+        box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+        text-decoration: none;
+        color: white;
+    }
+    
+    /* Instagram gradient */
+    .social-link:nth-child(1) {
+        background: linear-gradient(45deg, #f09433 0%,#e6683c 25%,#dc2743 50%,#cc2366 75%,#bc1888 100%);
+    }
+    
+    /* LinkedIn blue */
+    .social-link:nth-child(2) {
+        background: #0077b5;
+    }
+    
+    /* Twitter blue */
+    .social-link:nth-child(3) {
+        background: #1da1f2;
+    }
+    
+    .social-link::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: rgba(255,255,255,0.1);
+        opacity: 0;
+        transition: opacity 0.3s ease;
+    }
+    
+    .social-link:hover::before {
+        opacity: 1;
+    }
+    
+    /* Responsive adjustments */
+    @media (max-width: 768px) {
+        .contact-link {
+            font-size: 0.8rem;
+            padding: 4px 8px;
+        }
+        
+        .social-link {
+            width: 32px;
+            height: 32px;
+            font-size: 0.9rem;
+        }
+        
+        .contact-info {
+            padding-top: 12px;
+            margin-top: 12px;
+        }
+    }
+    
+    /* Hover effect for entire team card */
+    .team-card:hover .contact-link {
+        background: rgba(0, 123, 255, 0.08);
+    }
+    
+    .team-card:hover .social-link {
+        transform: translateY(-2px);
     }
 </style>
 {% endblock %}

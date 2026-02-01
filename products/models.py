@@ -30,42 +30,61 @@ class Product(models.Model):
     stock = models.PositiveIntegerField(default=0)
 
     # ===== WOOD PRODUCT UNITS =====
-   # UNIT_PCS = 'pcs'
+    # Common unit suggestions for vendors
     UNIT_METER = 'meter'
     UNIT_SQM = 'sqm'
     UNIT_CBM = 'cbm'
-    #UNIT_BUNDLE = 'bundle'
-    #UNIT_SET = 'set'
+    UNIT_PCS = 'pcs'
+    UNIT_KG = 'kg'
+    UNIT_BUNDLE = 'bundle'
+    UNIT_SET = 'set'
 
-    UNIT_CHOICES = [
-       # (UNIT_PCS, 'Pieces'),
-        (UNIT_METER, ' Per Meter (m)'),
-        (UNIT_SQM, 'per Square Meter (m²)'),
-        #(UNIT_CBM, 'Cubic Meter (m³)'),
-       # (UNIT_BUNDLE, 'Bundle'),
-       # (UNIT_SET, 'Set'),
+    # Suggested units for reference (not enforced)
+    SUGGESTED_UNITS = [
+        'pcs',           # Pieces
+        'meter',         # Per Meter (m)
+        'sqm',           # Square Meter (m²)
+        'cbm',           # Cubic Meter (m³)
+        'kg',            # Kilogram
+        'bundle',        # Bundle
+        'set',           # Set
+        'pair',          # Pair
+        'dozen',         # Dozen
+        'ft',            # Feet
+        'inch',          # Inch
+        'cm',            # Centimeter
+        'liter',         # Liter
+        'board',         # Board
+        'plank',         # Plank
     ]
 
     unit = models.CharField(
-        max_length=20,
-        choices=UNIT_CHOICES,
-        default=UNIT_METER
+        max_length=50,  # Increased length for custom units
+        default='pcs',
+        help_text='Enter measurement unit (e.g., pcs, meter, sqm, kg, bundle, etc.)'
     )
 
     # ===== PRODUCT CATEGORIES =====
-    CATEGORY_BED = 'bed'
-    CATEGORY_CHAIR = 'chair'
-    CATEGORY_TABLE = 'table'
-    CATEGORY_KITCHEN = 'kitchen_tools'
-    CATEGORY_ARTISAN = 'artisan_designer'
+    # Professional categories matching the navigation dropdown
+    CATEGORY_FURNITURE = 'furniture'
+    CATEGORY_HOME_OFFICE = 'home_office'
+    CATEGORY_OUTDOOR_GARDEN = 'outdoor_garden'
+    CATEGORY_DOORS_CONSTRUCTION = 'doors_construction'
+    CATEGORY_HANDCRAFTED = 'handcrafted'
+    CATEGORY_CUSTOM_MADE = 'custom_made'
+    CATEGORY_RAW_MATERIALS = 'raw_materials'
+    CATEGORY_KIDS_SCHOOL = 'kids_school'
     CATEGORY_OTHER = 'other'
 
     CATEGORY_CHOICES = [
-        (CATEGORY_BED, 'Bed'),
-        (CATEGORY_CHAIR, 'Chair'),
-        (CATEGORY_TABLE, 'Table'),
-        (CATEGORY_KITCHEN, 'Kitchen Tools'),
-        (CATEGORY_ARTISAN, 'Artisan / Wooden Designer'),
+        (CATEGORY_FURNITURE, 'Furniture'),
+        (CATEGORY_HOME_OFFICE, 'Home & Office'),
+        (CATEGORY_OUTDOOR_GARDEN, 'Outdoor & Garden'),
+        (CATEGORY_DOORS_CONSTRUCTION, 'Doors & Construction'),
+        (CATEGORY_HANDCRAFTED, 'Handcrafted Products'),
+        (CATEGORY_CUSTOM_MADE, 'Custom Made'),
+        (CATEGORY_RAW_MATERIALS, 'Raw Materials'),
+        (CATEGORY_KIDS_SCHOOL, 'Kids & School'),
         (CATEGORY_OTHER, 'Other'),
     ]
 

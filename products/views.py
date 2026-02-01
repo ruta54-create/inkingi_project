@@ -16,14 +16,16 @@ def home(request):
 
 def product_list(request):
     """
-    Task 4.2: Handles product listing, sorting, and pagination.
+    Task 4.2: Handles product listing, sorting, pagination, and category filtering.
     """
     products = Product.objects.filter(status='active')
 
-
     # Search query
     q = request.GET.get('q', '').strip()
-
+    
+    # Category filter
+    category = request.GET.get('category', '').strip()
+    
     sort_by = request.GET.get('sort', '-created_at') 
     
     if sort_by == 'price_asc':
@@ -41,8 +43,25 @@ def product_list(request):
         products = products.filter(
             Q(name__icontains=q) | Q(description__icontains=q) | Q(vendor__username__icontains=q)
         )
+    
+    # Apply category filter if provided
+    if category:
+        # Map the URL category names to model category values
+        category_mapping = {
+            'furniture': ['furniture'],
+            'home-office': ['home_office'],
+            'outdoor-garden': ['outdoor_garden'],
+            'doors-construction': ['doors_construction'],
+            'handcrafted': ['handcrafted'],
+            'custom-made': ['custom_made'],
+            'raw-materials': ['raw_materials'],
+            'kids-school': ['kids_school'],
+        }
+        
+        if category in category_mapping:
+            products = products.filter(category__in=category_mapping[category])
 
-    # 
+    # Pagination
     paginator = Paginator(products, 12) 
     page_number = request.GET.get('page')
     page_obj = paginator.get_page(page_number)
@@ -51,6 +70,7 @@ def product_list(request):
         'page_obj': page_obj,
         'sort_by': sort_by,
         'q': q,
+        'category': category,
     }
     
     return render(request, 'products/product_list.html', context)

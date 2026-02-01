@@ -36,9 +36,56 @@
 
                     <div class="row">
                         <div class="col-md-6 mb-3">
-                            <label class="form-label">Unit (e.g., pcs, kg)</label>
+                            <label class="form-label">
+                                Unit of Measurement <span class="text-muted">(Custom)</span>
+                            </label>
                             {{ form.unit }}
+                            
+                            <!-- Datalist for autocomplete suggestions -->
+                            <datalist id="unit-suggestions">
+                                <option value="pcs">Pieces</option>
+                                <option value="meter">Per Meter (m)</option>
+                                <option value="sqm">Square Meter (m²)</option>
+                                <option value="cbm">Cubic Meter (m³)</option>
+                                <option value="kg">Kilogram</option>
+                                <option value="bundle">Bundle</option>
+                                <option value="set">Set</option>
+                                <option value="pair">Pair</option>
+                                <option value="dozen">Dozen</option>
+                                <option value="ft">Feet</option>
+                                <option value="inch">Inch</option>
+                                <option value="cm">Centimeter</option>
+                                <option value="liter">Liter</option>
+                                <option value="board">Board</option>
+                                <option value="plank">Plank</option>
+                            </datalist>
+                            
+                            <div class="form-text">
+                                <small class="text-muted">
+                                    <i class="bi bi-info-circle me-1"></i>
+                                    Type your custom unit or select from suggestions. 
+                                    <br>Examples: pcs, meter, sqm, kg, bundle, set, pair, etc.
+                                </small>
+                            </div>
+                            
+                            <!-- Quick suggestion buttons -->
+                            <div class="mt-2">
+                                <small class="text-muted d-block mb-1">Quick suggestions:</small>
+                                <div class="btn-group-sm" role="group">
+                                    <button type="button" class="btn btn-outline-secondary btn-sm unit-suggestion" data-unit="pcs">Pieces</button>
+                                    <button type="button" class="btn btn-outline-secondary btn-sm unit-suggestion" data-unit="meter">Meter</button>
+                                    <button type="button" class="btn btn-outline-secondary btn-sm unit-suggestion" data-unit="sqm">m²</button>
+                                    <button type="button" class="btn btn-outline-secondary btn-sm unit-suggestion" data-unit="kg">Kg</button>
+                                    <button type="button" class="btn btn-outline-secondary btn-sm unit-suggestion" data-unit="bundle">Bundle</button>
+                                </div>
+                            </div>
+                            
                             {% for e in form.unit.errors %}<div class="text-danger small">{{ e }}</div>{% endfor %}
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">Category</label>
+                            {{ form.category }}
+                            {% for e in form.category.errors %}<div class="text-danger small">{{ e }}</div>{% endfor %}
                         </div>
                     </div>
                     <div class="mb-3">
@@ -52,4 +99,52 @@
         </div>
     </div>
 </div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function(){
+    // Unit suggestion buttons functionality
+    const unitInput = document.querySelector('input[name="unit"]');
+    const unitSuggestionButtons = document.querySelectorAll('.unit-suggestion');
+    
+    if (unitInput && unitSuggestionButtons.length > 0) {
+        unitSuggestionButtons.forEach(button => {
+            button.addEventListener('click', function(e) {
+                e.preventDefault();
+                const unit = this.getAttribute('data-unit');
+                unitInput.value = unit;
+                unitInput.focus();
+                
+                // Visual feedback
+                unitSuggestionButtons.forEach(btn => btn.classList.remove('btn-primary'));
+                unitSuggestionButtons.forEach(btn => btn.classList.add('btn-outline-secondary'));
+                this.classList.remove('btn-outline-secondary');
+                this.classList.add('btn-primary');
+                
+                // Reset button style after 2 seconds
+                setTimeout(() => {
+                    this.classList.remove('btn-primary');
+                    this.classList.add('btn-outline-secondary');
+                }, 2000);
+            });
+        });
+        
+        // Auto-suggest as user types
+        unitInput.addEventListener('input', function() {
+            const value = this.value.toLowerCase();
+            
+            // Highlight matching suggestion buttons
+            unitSuggestionButtons.forEach(button => {
+                const buttonUnit = button.getAttribute('data-unit').toLowerCase();
+                if (buttonUnit.includes(value) && value.length > 0) {
+                    button.classList.add('btn-outline-primary');
+                    button.classList.remove('btn-outline-secondary');
+                } else {
+                    button.classList.add('btn-outline-secondary');
+                    button.classList.remove('btn-outline-primary');
+                }
+            });
+        });
+    }
+});
+</script>
 {% endblock %}

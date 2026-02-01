@@ -26,6 +26,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'accounts',
     'products',
+    'company_admin',
     'orders',
     'pages',
     'crispy_forms', 
@@ -170,6 +171,14 @@ else:
     if DEBUG:
         EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
         DEFAULT_FROM_EMAIL = 'webmaster@localhost'
+
+        # Stripe settings (read from environment). Provide defaults for development.
+        STRIPE_API_KEY = os.environ.get('STRIPE_API_KEY', '')
+        STRIPE_PUBLIC_KEY = os.environ.get('STRIPE_PUBLIC_KEY', '')
+        STRIPE_WEBHOOK_SECRET = os.environ.get('STRIPE_WEBHOOK_SECRET', '')
+        STRIPE_CURRENCY = os.environ.get('STRIPE_CURRENCY', 'usd')
+        STRIPE_SUCCESS_URL = os.environ.get('STRIPE_SUCCESS_URL', 'http://localhost:8000/orders/stripe/success/{order_id}/')
+        STRIPE_CANCEL_URL = os.environ.get('STRIPE_CANCEL_URL', 'http://localhost:8000/orders/stripe/cancel/{order_id}/')
     else:
         # In production we expect EMAIL_HOST to be set; if not, fall back to SMTP backend
         EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'

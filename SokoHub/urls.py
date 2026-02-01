@@ -29,6 +29,9 @@ urlpatterns = [
     path('logout/', accounts_views.logout_view, name='logout'),
     path('register/', accounts_views.register_view, name='register'),
     path('orders/', include('orders.urls')),
+    path('company-admin/', include(('company_admin.urls', 'company_admin'), namespace='company_admin')),
+    # Alias with underscore to support old links
+    path('company_admin/', include(('company_admin.urls', 'company_admin'), namespace='company_admin_underscore')),
     path('', home, name='home_page'),
     path('products/', include(('products.urls', 'products'), namespace='products')),
     path('pages/', include('pages.urls')),

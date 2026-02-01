@@ -1,19 +1,65 @@
 {% extends 'base.html' %}
 {% load crispy_forms_tags %}
+{% load static %}
+
+{% block title %}Add Product - Inkingi Wood Ltd{% endblock %}
 
 {% block content %}
-<div class="container mt-4">
-    <h2 class="mb-3">Add Product</h2>
+<section class="add-product-page py-5">
+  <div class="container">
+    <div class="row justify-content-center">
+      <div class="col-12 col-lg-8">
+        <header class="mb-5 text-center">
+          <h1 class="display-5 fw-bold mb-2">Add New Product</h1>
+          <p class="lead text-muted">List your wooden products on Inkingi Wood marketplace</p>
+        </header>
 
-    <div class="card p-4 shadow-sm">
-        <form method="POST" enctype="multipart/form-data">
-            {% csrf_token %}
-            {{ form|crispy }}
+        <div class="card shadow-sm border-0">
+          <div class="card-body p-5">
+            <form method="POST" enctype="multipart/form-data" novalidate>
+              {% csrf_token %}
 
-            <button type="submit" class="btn btn-primary mt-3 w-100">
-                Add Product
-            </button>
-        </form>
+              {% if form.non_field_errors %}
+                <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                  {% for error in form.non_field_errors %}
+                    <div>{{ error }}</div>
+                  {% endfor %}
+                  <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+              {% endif %}
+
+              <div class="form-section mb-5">
+                <h5 class="fw-bold mb-4">Product Information</h5>
+                {{ form|crispy }}
+              </div>
+
+              <hr class="my-5">
+
+              <div class="d-grid gap-2">
+                <button type="submit" class="btn btn-view btn-lg fw-bold">
+                  Add Product
+                </button>
+                <a href="{% url 'products:product_list' %}" class="btn btn-outline-secondary">
+                  Cancel
+                </a>
+              </div>
+            </form>
+          </div>
+        </div>
+
+        <!-- Help Text -->
+        <div class="alert alert-info mt-5" role="alert">
+          <h6 class="alert-heading fw-bold">Tips for a Great Product Listing:</h6>
+          <ul class="mb-0 small">
+            <li>Use clear, descriptive product names</li>
+            <li>Upload high-quality product images</li>
+            <li>Provide accurate pricing and stock information</li>
+            <li>Include detailed product descriptions</li>
+            <li>Set the correct product unit (kg, pieces, sets, etc.)</li>
+          </ul>
+        </div>
+      </div>
     </div>
-</div>
+  </div>
+</section>
 {% endblock %}

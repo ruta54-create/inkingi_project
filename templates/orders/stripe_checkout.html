@@ -1,0 +1,7 @@
+<h2>Buy {{ product.name }}</h2>
+<form method="post">
+  {% csrf_token %}
+  <label>Quantity</label>
+  <input type="number" name="quantity" value="1" min="1" max="{{ product.stock }}" />
+  <button type="submit" class="btn btn-primary">Pay with Card (Stripe)</button>
+</form>

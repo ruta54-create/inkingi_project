@@ -1,0 +1,25 @@
+{% extends 'base.html' %}
+{% block title %}Purchase Details{% endblock %}
+
+{% block content %}
+<div class="container my-5">
+  <h1 class="mb-4">Purchase #{{ purchase.id }}</h1>
+  <div class="card mb-4">
+    <div class="card-body">
+      <h5 class="card-title">{{ purchase.product.name }}</h5>
+      <p class="mb-1"><strong>Customer:</strong> {{ purchase.customer.username }}</p>
+      <p class="mb-1"><strong>Quantity:</strong> {{ purchase.quantity }}</p>
+      <p class="mb-1"><strong>Amount:</strong> {{ purchase.amount|floatformat:2 }} RWF</p>
+      <p class="mb-1"><strong>Payment method:</strong> {{ purchase.get_payment_method_display }}</p>
+      {% if purchase.transaction_id %}
+        <p class="mb-1"><strong>Transaction:</strong> {{ purchase.transaction_id }}</p>
+      {% endif %}
+      <p class="mb-1"><strong>Created:</strong> {{ purchase.created_at|date:"d M Y, H:i" }}</p>
+      {% if purchase.refunded %}
+        <p class="mb-1 text-muted">This purchase has been refunded.</p>
+      {% endif %}
+    </div>
+  </div>
+  <a href="{% url 'orders:my_orders' %}" class="btn btn-outline-secondary">Back to My Orders</a>
+</div>
+{% endblock %}

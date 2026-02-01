@@ -1,0 +1,1 @@
+Recommend harden header redaction (security first). Which should I do now: (1) admin UI improvements, (2) harden header redaction, or (3) add admin reprocess confirmation?

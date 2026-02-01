@@ -1,0 +1,444 @@
+{% extends "base.html" %}
+{% load static %}
+{% load order_extras %}
+
+{% block title %}Secure Payment - {{ gateway.name }}{% endblock %}
+
+{% block content %}
+<section class="payment-processing py-5">
+  <div class="container">
+    <!-- Progress Indicator -->
+    <div class="row mb-5">
+      <div class="col-12">
+        <div class="checkout-progress">
+          <div class="progress-step completed">
+            <div class="step-number">1</div>
+            <div class="step-label">Review Order</div>
+          </div>
+          <div class="progress-line completed"></div>
+          <div class="progress-step active">
+            <div class="step-number">2</div>
+            <div class="step-label">Payment</div>
+          </div>
+          <div class="progress-line"></div>
+          <div class="progress-step">
+            <div class="step-number">3</div>
+            <div class="step-label">Confirmation</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="row justify-content-center">
+      <div class="col-12 col-lg-10">
+        
+        <!-- Payment Gateway Header -->
+        <div class="text-center mb-5">
+          <div class="payment-gateway-logo mb-3" style="color: {{ gateway.color }};">
+            <i class="bi bi-shield-check" style="font-size: 4rem;"></i>
+          </div>
+          <h1 class="display-5 fw-bold mb-2">Secure Payment</h1>
+          <p class="lead text-muted">{{ gateway.name }} - {{ gateway.instructions }}</p>
+        </div>
+
+        <div class="row">
+          <!-- Order Summary -->
+          <div class="col-lg-5 mb-4 mb-lg-0">
+            <div class="card shadow-lg border-0">
+              <div class="card-header text-white p-4" style="background: {{ gateway.color }};">
+                <h5 class="mb-0 fw-bold">
+                  <i class="bi bi-receipt me-2"></i>Order Summary
+                </h5>
+              </div>
+              
+              <div class="card-body p-0">
+                <!-- Order Details -->
+                <div class="p-4 border-bottom">
+                  <div class="d-flex justify-content-between mb-2">
+                    <span class="text-muted">Order ID:</span>
+                    <span class="fw-bold">#{{ order.id }}</span>
+                  </div>
+                  <div class="d-flex justify-content-between mb-2">
+                    <span class="text-muted">Date:</span>
+                    <span>{{ order.created_at|date:"M d, Y H:i" }}</span>
+                  </div>
+                  <div class="d-flex justify-content-between">
+                    <span class="text-muted">Payment Method:</span>
+                    <span class="fw-bold">{{ order.get_payment_method_display }}</span>
+                  </div>
+                </div>
+
+                <!-- Items -->
+                <div class="p-4 border-bottom">
+                  <h6 class="fw-bold mb-3">Items</h6>
+                  {% for item in items %}
+                  <div class="d-flex justify-content-between align-items-center mb-2">
+                    <div>
+                      <div class="fw-bold">{{ item.product.name }}</div>
+                      <small class="text-muted">{{ item.quantity }} × {{ item.price|floatformat:0 }} RWF</small>
+                    </div>
+                    <div class="fw-bold">{{ item.price|mul:item.quantity|floatformat:0 }} RWF</div>
+                  </div>
+                  {% endfor %}
+                </div>
+
+                <!-- Totals -->
+                <div class="p-4">
+                  <div class="d-flex justify-content-between mb-2">
+                    <span>Subtotal:</span>
+                    <span>{{ order.subtotal|floatformat:0 }} RWF</span>
+                  </div>
+                  <div class="d-flex justify-content-between mb-2">
+                    <span>Delivery:</span>
+                    <span>
+                      {% if order.delivery_cost > 0 %}
+                        {{ order.delivery_cost|floatformat:0 }} RWF
+                      {% else %}
+                        Free
+                      {% endif %}
+                    </span>
+                  </div>
+                  <hr>
+                  <div class="d-flex justify-content-between fw-bold h5" style="color: {{ gateway.color }};">
+                    <span>Total:</span>
+                    <span>{{ order.total|floatformat:0 }} RWF</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Payment Form -->
+          <div class="col-lg-7">
+            <div class="card shadow-lg border-0">
+              <div class="card-header text-white p-4" style="background: {{ gateway.color }};">
+                <h5 class="mb-0 fw-bold">
+                  <i class="bi bi-credit-card me-2"></i>{{ gateway.name }} Payment
+                </h5>
+              </div>
+              
+              <div class="card-body p-5">
+                {% if order.payment_method == 'cash' %}
+                  <!-- Cash on Delivery -->
+                  <div class="text-center">
+                    <i class="bi bi-cash-stack text-success mb-3" style="font-size: 3rem;"></i>
+                    <h4 class="fw-bold mb-3">Cash on Delivery Selected</h4>
+                    <p class="text-muted mb-4">Your order is confirmed. You will pay when you receive your items.</p>
+                    
+                    <form method="post" action="{% url 'orders:payment_confirm' order.id %}">
+                      {% csrf_token %}
+                      <input type="hidden" name="payment_reference" value="COD-{{ order.id }}">
+                      <button type="submit" class="btn btn-success btn-lg fw-bold">
+                        <i class="bi bi-check-circle me-2"></i>Confirm Order
+                      </button>
+                    </form>
+                  </div>
+                
+                {% else %}
+                  <!-- Electronic Payment Form -->
+                  <form method="post" action="{% url 'orders:payment_confirm' order.id %}" id="paymentForm">
+                    {% csrf_token %}
+                    
+                    {% if order.payment_method in 'momo,airtel,tigo' %}
+                      <!-- Mobile Money Payment -->
+                      <div class="mb-4">
+                        <label for="mobile_number" class="form-label fw-bold">
+                          <i class="bi bi-phone me-2"></i>Mobile Number
+                        </label>
+                        <input 
+                          type="tel" 
+                          class="form-control form-control-lg" 
+                          id="mobile_number" 
+                          name="payment_reference"
+                          value="{{ order.payment_reference }}"
+                          placeholder="+250 788 123 456" 
+                          required>
+                        <small class="form-text text-muted">
+                          Enter the mobile number registered with {{ gateway.name }}
+                        </small>
+                      </div>
+
+                      <div class="mb-4">
+                        <label for="payment_pin" class="form-label fw-bold">
+                          <i class="bi bi-shield-lock me-2"></i>PIN
+                        </label>
+                        <input 
+                          type="password" 
+                          class="form-control form-control-lg" 
+                          id="payment_pin" 
+                          name="payment_pin"
+                          placeholder="Enter your {{ gateway.name }} PIN" 
+                          maxlength="4"
+                          required>
+                        <small class="form-text text-muted">
+                          Your 4-digit {{ gateway.name }} PIN
+                        </small>
+                      </div>
+
+                    {% elif order.payment_method == 'card' %}
+                      <!-- Card Payment -->
+                      <div class="row mb-3">
+                        <div class="col-12">
+                          <label for="card_number" class="form-label fw-bold">
+                            <i class="bi bi-credit-card me-2"></i>Card Number
+                          </label>
+                          <input 
+                            type="text" 
+                            class="form-control form-control-lg" 
+                            id="card_number" 
+                            name="payment_reference"
+                            placeholder="1234 5678 9012 3456" 
+                            maxlength="19"
+                            required>
+                        </div>
+                      </div>
+                      
+                      <div class="row mb-3">
+                        <div class="col-md-6">
+                          <label for="expiry" class="form-label fw-bold">Expiry Date</label>
+                          <input 
+                            type="text" 
+                            class="form-control form-control-lg" 
+                            id="expiry" 
+                            placeholder="MM/YY" 
+                            maxlength="5"
+                            required>
+                        </div>
+                        <div class="col-md-6">
+                          <label for="cvv" class="form-label fw-bold">CVV</label>
+                          <input 
+                            type="password" 
+                            class="form-control form-control-lg" 
+                            id="cvv" 
+                            name="payment_pin"
+                            placeholder="123" 
+                            maxlength="4"
+                            required>
+                        </div>
+                      </div>
+
+                    {% elif order.payment_method == 'bank' %}
+                      <!-- Bank Transfer -->
+                      <div class="mb-4">
+                        <label for="account_number" class="form-label fw-bold">
+                          <i class="bi bi-bank me-2"></i>Account Number
+                        </label>
+                        <input 
+                          type="text" 
+                          class="form-control form-control-lg" 
+                          id="account_number" 
+                          name="payment_reference"
+                          placeholder="Enter your account number" 
+                          required>
+                      </div>
+
+                      <div class="mb-4">
+                        <label for="bank_pin" class="form-label fw-bold">
+                          <i class="bi bi-shield-lock me-2"></i>Online Banking PIN
+                        </label>
+                        <input 
+                          type="password" 
+                          class="form-control form-control-lg" 
+                          id="bank_pin" 
+                          name="payment_pin"
+                          placeholder="Enter your online banking PIN" 
+                          required>
+                      </div>
+                    {% endif %}
+
+                    <!-- Security Notice -->
+                    <div class="alert alert-info mb-4">
+                      <div class="d-flex align-items-center">
+                        <i class="bi bi-shield-check me-3" style="font-size: 1.5rem;"></i>
+                        <div>
+                          <strong>Secure Payment</strong><br>
+                          <small>This is a learning simulation. No real payment will be processed.</small>
+                        </div>
+                      </div>
+                    </div>
+
+                    <!-- Processing Time -->
+                    <div class="mb-4 text-center">
+                      <small class="text-muted">
+                        <i class="bi bi-clock me-1"></i>
+                        Estimated processing time: {{ gateway.processing_time }}
+                      </small>
+                    </div>
+
+                    <!-- Submit Button -->
+                    <div class="d-grid gap-2">
+                      <button type="submit" class="btn btn-lg fw-bold text-white" style="background: {{ gateway.color }};" id="payBtn">
+                        <i class="bi bi-lock me-2"></i>Pay {{ order.total|floatformat:0 }} RWF Securely
+                      </button>
+                      <a href="{% url 'orders:checkout' order.items.first.product.id %}" class="btn btn-outline-secondary">
+                        <i class="bi bi-arrow-left me-2"></i>Back to Checkout
+                      </a>
+                    </div>
+                  </form>
+                {% endif %}
+              </div>
+            </div>
+
+            <!-- Security Features -->
+            <div class="row mt-4">
+              <div class="col-md-4 text-center">
+                <i class="bi bi-shield-check text-success mb-2" style="font-size: 2rem;"></i>
+                <h6 class="fw-bold">SSL Encrypted</h6>
+                <small class="text-muted">256-bit encryption</small>
+              </div>
+              <div class="col-md-4 text-center">
+                <i class="bi bi-lock text-success mb-2" style="font-size: 2rem;"></i>
+                <h6 class="fw-bold">Secure Processing</h6>
+                <small class="text-muted">PCI DSS compliant</small>
+              </div>
+              <div class="col-md-4 text-center">
+                <i class="bi bi-check-circle text-success mb-2" style="font-size: 2rem;"></i>
+                <h6 class="fw-bold">Verified Merchant</h6>
+                <small class="text-muted">Trusted by thousands</small>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<style>
+/* Progress Styles */
+.checkout-progress {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 2rem;
+}
+
+.progress-step {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  position: relative;
+}
+
+.step-number {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: #e9ecef;
+  color: #6c757d;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: bold;
+  margin-bottom: 8px;
+  transition: all 0.3s ease;
+}
+
+.progress-step.active .step-number {
+  background: #0d6efd;
+  color: white;
+}
+
+.progress-step.completed .step-number {
+  background: #28a745;
+  color: white;
+}
+
+.step-label {
+  font-size: 0.875rem;
+  color: #6c757d;
+  font-weight: 500;
+}
+
+.progress-step.active .step-label,
+.progress-step.completed .step-label {
+  color: #0d6efd;
+  font-weight: 600;
+}
+
+.progress-line {
+  width: 100px;
+  height: 2px;
+  background: #e9ecef;
+  margin: 0 20px;
+  margin-top: -20px;
+}
+
+.progress-line.completed {
+  background: #28a745;
+}
+
+/* Form Enhancements */
+.form-control:focus {
+  border-color: #0d6efd;
+  box-shadow: 0 0 0 0.2rem rgba(13, 110, 253, 0.25);
+}
+
+/* Card formatting */
+#card_number {
+  letter-spacing: 2px;
+}
+
+#expiry {
+  letter-spacing: 1px;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .checkout-progress {
+    flex-direction: column;
+    gap: 20px;
+  }
+  
+  .progress-line {
+    width: 2px;
+    height: 30px;
+    margin: 10px 0;
+  }
+}
+</style>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+  const form = document.getElementById('paymentForm');
+  const payBtn = document.getElementById('payBtn');
+  
+  // Card number formatting
+  const cardNumber = document.getElementById('card_number');
+  if (cardNumber) {
+    cardNumber.addEventListener('input', function(e) {
+      let value = e.target.value.replace(/\s+/g, '').replace(/[^0-9]/gi, '');
+      let formattedValue = value.match(/.{1,4}/g)?.join(' ') || value;
+      e.target.value = formattedValue;
+    });
+  }
+  
+  // Expiry date formatting
+  const expiry = document.getElementById('expiry');
+  if (expiry) {
+    expiry.addEventListener('input', function(e) {
+      let value = e.target.value.replace(/\D/g, '');
+      if (value.length >= 2) {
+        value = value.substring(0, 2) + '/' + value.substring(2, 4);
+      }
+      e.target.value = value;
+    });
+  }
+  
+  // Form submission with loading state
+  if (form) {
+    form.addEventListener('submit', function(e) {
+      if (payBtn) {
+        payBtn.innerHTML = '<i class="bi bi-hourglass-split me-2"></i>Processing Payment...';
+        payBtn.disabled = true;
+      }
+      
+      // Simulate processing delay for realism
+      setTimeout(function() {
+        // Form will submit naturally
+      }, 1000);
+    });
+  }
+});
+</script>
+{% endblock %}

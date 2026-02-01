@@ -1,101 +1,446 @@
 {% extends 'base.html' %}
+{% load static %}
 
-{% block title %}Add Product{% endblock %}
+{% block title %}Add New Product - Vendor Dashboard{% endblock %}
 
 {% block content %}
-<div class="container">
+<div class="container py-4">
     <div class="row justify-content-center">
-        <div class="col-12 col-md-8">
-            <h2 class="mb-4">Add New Product</h2>
-            <div class="card p-4">
-                <form method="post" enctype="multipart/form-data">
-                    {% csrf_token %}
+        <div class="col-12 col-lg-10">
+            
+            <!-- Header Section -->
+            <div class="text-center mb-5">
+                <h1 class="display-6 fw-bold text-primary mb-2">
+                    <i class="bi bi-plus-circle me-2"></i>Add New Product
+                </h1>
+                <p class="lead text-muted">Create a professional product listing to reach more customers</p>
+            </div>
 
-                    {% if messages %}
-                        {% for message in messages %}
-                            <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
-                                {{ message }}
-                                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-                            </div>
-                        {% endfor %}
-                    {% endif %}
+            <!-- Professional Form Card -->
+            <div class="card shadow-lg border-0">
+                <div class="card-header bg-primary text-white p-4">
+                    <h4 class="mb-0 fw-bold">
+                        <i class="bi bi-box-seam me-2"></i>Product Information
+                    </h4>
+                    <p class="mb-0 opacity-75">Fill in all the details to create an attractive product listing</p>
+                </div>
+                
+                <div class="card-body p-5">
+                    <form method="post" enctype="multipart/form-data" id="productForm">
+                        {% csrf_token %}
 
-                    {{ form.non_field_errors }}
+                        {% if messages %}
+                            {% for message in messages %}
+                                <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+                                    <i class="bi bi-{% if message.tags == 'success' %}check-circle{% elif message.tags == 'error' %}exclamation-triangle{% else %}info-circle{% endif %} me-2"></i>
+                                    {{ message }}
+                                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                                </div>
+                            {% endfor %}
+                        {% endif %}
 
-                    <div class="mb-3">
-                        <label class="form-label">Name</label>
-                        {{ form.name }}
-                        {% for e in form.name.errors %}<div class="text-danger small">{{ e }}</div>{% endfor %}
-                    </div>
+                        {{ form.non_field_errors }}
 
-                    <div class="mb-3">
-                        <label class="form-label">Description</label>
-                        {{ form.description }}
-                        {% for e in form.description.errors %}<div class="text-danger small">{{ e }}</div>{% endfor %}
-                    </div>
-
-                    <div class="row">
-                        <div class="col-md-6 mb-3">
-                            <label class="form-label">Price</label>
-                            {{ form.price }}
-                            {% for e in form.price.errors %}<div class="text-danger small">{{ e }}</div>{% endfor %}
+                        <!-- Product Name -->
+                        <div class="mb-4">
+                            <label class="form-label fw-bold">
+                                <i class="bi bi-tag me-2 text-primary"></i>{{ form.name.label }}
+                                <span class="text-danger">*</span>
+                            </label>
+                            {{ form.name }}
+                            {% if form.name.help_text %}
+                                <div class="form-text">
+                                    <i class="bi bi-info-circle me-1"></i>{{ form.name.help_text }}
+                                </div>
+                            {% endif %}
+                            {% for e in form.name.errors %}<div class="text-danger small mt-1"><i class="bi bi-exclamation-circle me-1"></i>{{ e }}</div>{% endfor %}
                         </div>
-                        <div class="col-md-6 mb-3">
-                            <label class="form-label">Stock</label>
-                            {{ form.stock }}
-                            {% for e in form.stock.errors %}<div class="text-danger small">{{ e }}</div>{% endfor %}
-                        </div>
-                    </div>
 
-                    <div class="row">
-                        <div class="col-md-6 mb-3">
-                           <label class="form-label">
-                           Unit (e.g., pcs, meter, m², m³)
-                                </label>
-
-                            {{ form.unit }}
-                            {% for e in form.unit.errors %}<div class="text-danger small">{{ e }}</div>{% endfor %}
-                        </div>
-                    </div>
-
-                    <div class="row">
-                        <div class="col-md-6 mb-3">
-                            <label class="form-label">Category</label>
+                        <!-- Category Selection -->
+                        <div class="mb-4">
+                            <label class="form-label fw-bold">
+                                <i class="bi bi-grid-3x3-gap me-2 text-primary"></i>{{ form.category.label }}
+                                <span class="text-danger">*</span>
+                            </label>
                             {{ form.category }}
-                            {% for e in form.category.errors %}<div class="text-danger small">{{ e }}</div>{% endfor %}
+                            {% if form.category.help_text %}
+                                <div class="form-text">
+                                    <i class="bi bi-info-circle me-1"></i>{{ form.category.help_text }}
+                                </div>
+                            {% endif %}
+                            
+                            <!-- Category Guide -->
+                            <div class="mt-3 p-3 bg-light rounded">
+                                <h6 class="fw-bold mb-2">
+                                    <i class="bi bi-lightbulb me-1 text-warning"></i>Category Guide
+                                </h6>
+                                <div class="row small">
+                                    <div class="col-md-6">
+                                        <ul class="list-unstyled mb-0">
+                                            <li><strong>Furniture:</strong> Chairs, tables, beds, cabinets</li>
+                                            <li><strong>Home & Office:</strong> Desks, shelves, storage</li>
+                                            <li><strong>Outdoor & Garden:</strong> Garden furniture, planters</li>
+                                            <li><strong>Doors & Construction:</strong> Doors, frames, panels</li>
+                                        </ul>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <ul class="list-unstyled mb-0">
+                                            <li><strong>Handcrafted:</strong> Artistic, decorative items</li>
+                                            <li><strong>Custom Made:</strong> Made-to-order products</li>
+                                            <li><strong>Raw Materials:</strong> Lumber, planks, boards</li>
+                                            <li><strong>Kids & School:</strong> Children's furniture, toys</li>
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div>
+                            {% for e in form.category.errors %}<div class="text-danger small mt-1"><i class="bi bi-exclamation-circle me-1"></i>{{ e }}</div>{% endfor %}
+                        </div>
+
+                        <!-- Product Description -->
+                        <div class="mb-4">
+                            <label class="form-label fw-bold">
+                                <i class="bi bi-card-text me-2 text-primary"></i>{{ form.description.label }}
+                                <span class="text-danger">*</span>
+                            </label>
+                            {{ form.description }}
+                            {% if form.description.help_text %}
+                                <div class="form-text">
+                                    <i class="bi bi-info-circle me-1"></i>{{ form.description.help_text }}
+                                </div>
+                            {% endif %}
+                            {% for e in form.description.errors %}<div class="text-danger small mt-1"><i class="bi bi-exclamation-circle me-1"></i>{{ e }}</div>{% endfor %}
+                        </div>
+
+                        <!-- Price and Stock Row -->
+                        <div class="row mb-4">
+                            <div class="col-md-6">
+                                <label class="form-label fw-bold">
+                                    <i class="bi bi-currency-exchange me-2 text-success"></i>{{ form.price.label }}
+                                    <span class="text-danger">*</span>
+                                </label>
+                                <div class="input-group">
+                                    {{ form.price }}
+                                    <span class="input-group-text">RWF</span>
+                                </div>
+                                {% if form.price.help_text %}
+                                    <div class="form-text">
+                                        <i class="bi bi-info-circle me-1"></i>{{ form.price.help_text }}
+                                    </div>
+                                {% endif %}
+                                {% for e in form.price.errors %}<div class="text-danger small mt-1"><i class="bi bi-exclamation-circle me-1"></i>{{ e }}</div>{% endfor %}
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label fw-bold">
+                                    <i class="bi bi-boxes me-2 text-info"></i>{{ form.stock.label }}
+                                    <span class="text-danger">*</span>
+                                </label>
+                                {{ form.stock }}
+                                {% if form.stock.help_text %}
+                                    <div class="form-text">
+                                        <i class="bi bi-info-circle me-1"></i>{{ form.stock.help_text }}
+                                    </div>
+                                {% endif %}
+                                {% for e in form.stock.errors %}<div class="text-danger small mt-1"><i class="bi bi-exclamation-circle me-1"></i>{{ e }}</div>{% endfor %}
+                            </div>
+                        </div>
+
+                        <!-- Unit of Measurement -->
+                        <div class="mb-4">
+                            <label class="form-label fw-bold">
+                                <i class="bi bi-rulers me-2 text-warning"></i>{{ form.unit.label }}
+                                <span class="text-danger">*</span>
+                            </label>
+                            {{ form.unit }}
+                            
+                            <!-- Datalist for autocomplete suggestions -->
+                            <datalist id="unit-suggestions">
+                                <option value="pcs">Pieces</option>
+                                <option value="meter">Per Meter (m)</option>
+                                <option value="sqm">Square Meter (m²)</option>
+                                <option value="cbm">Cubic Meter (m³)</option>
+                                <option value="kg">Kilogram</option>
+                                <option value="bundle">Bundle</option>
+                                <option value="set">Set</option>
+                                <option value="pair">Pair</option>
+                                <option value="dozen">Dozen</option>
+                                <option value="ft">Feet</option>
+                                <option value="inch">Inch</option>
+                                <option value="cm">Centimeter</option>
+                                <option value="liter">Liter</option>
+                                <option value="board">Board</option>
+                                <option value="plank">Plank</option>
+                            </datalist>
+                            
+                            {% if form.unit.help_text %}
+                                <div class="form-text">
+                                    <i class="bi bi-info-circle me-1"></i>{{ form.unit.help_text }}
+                                </div>
+                            {% endif %}
+                            
+                            <!-- Quick suggestion buttons -->
+                            <div class="mt-3">
+                                <small class="text-muted d-block mb-2 fw-bold">Quick suggestions:</small>
+                                <div class="d-flex flex-wrap gap-2">
+                                    <button type="button" class="btn btn-outline-primary btn-sm unit-suggestion" data-unit="pcs">
+                                        <i class="bi bi-box me-1"></i>Pieces
+                                    </button>
+                                    <button type="button" class="btn btn-outline-primary btn-sm unit-suggestion" data-unit="meter">
+                                        <i class="bi bi-rulers me-1"></i>Meter
+                                    </button>
+                                    <button type="button" class="btn btn-outline-primary btn-sm unit-suggestion" data-unit="sqm">
+                                        <i class="bi bi-square me-1"></i>m²
+                                    </button>
+                                    <button type="button" class="btn btn-outline-primary btn-sm unit-suggestion" data-unit="kg">
+                                        <i class="bi bi-speedometer me-1"></i>Kg
+                                    </button>
+                                    <button type="button" class="btn btn-outline-primary btn-sm unit-suggestion" data-unit="bundle">
+                                        <i class="bi bi-collection me-1"></i>Bundle
+                                    </button>
+                                    <button type="button" class="btn btn-outline-primary btn-sm unit-suggestion" data-unit="set">
+                                        <i class="bi bi-stack me-1"></i>Set
+                                    </button>
+                                </div>
+                            </div>
+                            
+                            {% for e in form.unit.errors %}<div class="text-danger small mt-1"><i class="bi bi-exclamation-circle me-1"></i>{{ e }}</div>{% endfor %}
+                        </div>
+
+                        <!-- Product Image -->
+                        <div class="mb-4">
+                            <label class="form-label fw-bold">
+                                <i class="bi bi-image me-2 text-secondary"></i>{{ form.image.label }}
+                            </label>
+                            {{ form.image }}
+                            {% if form.image.help_text %}
+                                <div class="form-text">
+                                    <i class="bi bi-info-circle me-1"></i>{{ form.image.help_text }}
+                                </div>
+                            {% endif %}
+                            
+                            <!-- Image Preview -->
+                            <div class="mt-3">
+                                <img id="imagePreview" src="#" class="img-fluid rounded shadow-sm" 
+                                     style="display:none; max-height:300px; max-width:100%;" alt="Image preview" />
+                            </div>
+                            
+                            <!-- Image Guidelines -->
+                            <div class="mt-3 p-3 bg-light rounded">
+                                <h6 class="fw-bold mb-2">
+                                    <i class="bi bi-camera me-1 text-info"></i>Image Guidelines
+                                </h6>
+                                <ul class="small mb-0">
+                                    <li>Use high-quality, well-lit photos</li>
+                                    <li>Show the product from multiple angles if possible</li>
+                                    <li>Include size reference (ruler, hand, etc.)</li>
+                                    <li>Avoid cluttered backgrounds</li>
+                                    <li>Maximum file size: 5MB</li>
+                                </ul>
+                            </div>
+                            
+                            {% for e in form.image.errors %}<div class="text-danger small mt-1"><i class="bi bi-exclamation-circle me-1"></i>{{ e }}</div>{% endfor %}
+                        </div>
+
+                        <!-- Form Actions -->
+                        <div class="d-grid gap-2 d-md-flex justify-content-md-end mt-5">
+                            <a href="{% url 'products:vendor_products' %}" class="btn btn-outline-secondary btn-lg me-md-2">
+                                <i class="bi bi-arrow-left me-2"></i>Cancel
+                            </a>
+                            <button class="btn btn-primary btn-lg" type="submit" id="submitBtn">
+                                <i class="bi bi-plus-circle me-2"></i>Add Product
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Tips Section -->
+            <div class="row mt-5">
+                <div class="col-md-4">
+                    <div class="card border-0 bg-light h-100">
+                        <div class="card-body text-center p-4">
+                            <i class="bi bi-lightbulb text-warning mb-3" style="font-size: 2rem;"></i>
+                            <h5 class="fw-bold">Pro Tip</h5>
+                            <p class="small mb-0">Use descriptive names and detailed descriptions to help customers find your products easily.</p>
                         </div>
                     </div>
-
-                        
-
-                    <div class="mb-3">
-                        <label class="form-label">Image (optional)</label>
-                        {{ form.image }}
-                        <img id="imagePreview" src="#" class="img-fluid mb-3" style="display:none; max-height:200px;" alt="Image preview" />
-                        {% for e in form.image.errors %}<div class="text-danger small">{{ e }}</div>{% endfor %}
+                </div>
+                <div class="col-md-4">
+                    <div class="card border-0 bg-light h-100">
+                        <div class="card-body text-center p-4">
+                            <i class="bi bi-camera text-info mb-3" style="font-size: 2rem;"></i>
+                            <h5 class="fw-bold">Quality Photos</h5>
+                            <p class="small mb-0">Products with high-quality images get 3x more views and sales than those without.</p>
+                        </div>
                     </div>
-
-                    <button class="btn btn-primary w-100 mt-3" type="submit">Add Product</button>
-                </form>
+                </div>
+                <div class="col-md-4">
+                    <div class="card border-0 bg-light h-100">
+                        <div class="card-body text-center p-4">
+                            <i class="bi bi-graph-up text-success mb-3" style="font-size: 2rem;"></i>
+                            <h5 class="fw-bold">Competitive Pricing</h5>
+                            <p class="small mb-0">Research similar products to set competitive prices that attract customers.</p>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
 </div>
+
 <script>
 document.addEventListener('DOMContentLoaded', function(){
+    // Image preview functionality
     const input = document.querySelector('input[type="file"][name="image"]');
     const preview = document.getElementById('imagePreview');
-    if (!input || !preview) return;
-    input.addEventListener('change', function(){
-        const file = this.files && this.files[0];
-        if (!file) { preview.style.display = 'none'; return; }
-        const reader = new FileReader();
-        reader.addEventListener('load', function(e){
-            preview.src = e.target.result;
-            preview.style.display = 'block';
+    if (input && preview) {
+        input.addEventListener('change', function(){
+            const file = this.files && this.files[0];
+            if (!file) { 
+                preview.style.display = 'none'; 
+                return; 
+            }
+            
+            // Check file size (5MB limit)
+            if (file.size > 5 * 1024 * 1024) {
+                alert('File size too large. Please choose an image smaller than 5MB.');
+                this.value = '';
+                preview.style.display = 'none';
+                return;
+            }
+            
+            const reader = new FileReader();
+            reader.addEventListener('load', function(e){
+                preview.src = e.target.result;
+                preview.style.display = 'block';
+            });
+            reader.readAsDataURL(file);
         });
-        reader.readAsDataURL(file);
+    }
+    
+    // Unit suggestion buttons functionality
+    const unitInput = document.querySelector('input[name="unit"]');
+    const unitSuggestionButtons = document.querySelectorAll('.unit-suggestion');
+    
+    if (unitInput && unitSuggestionButtons.length > 0) {
+        unitSuggestionButtons.forEach(button => {
+            button.addEventListener('click', function(e) {
+                e.preventDefault();
+                const unit = this.getAttribute('data-unit');
+                unitInput.value = unit;
+                unitInput.focus();
+                
+                // Visual feedback
+                unitSuggestionButtons.forEach(btn => {
+                    btn.classList.remove('btn-primary');
+                    btn.classList.add('btn-outline-primary');
+                });
+                this.classList.remove('btn-outline-primary');
+                this.classList.add('btn-primary');
+                
+                // Reset button style after 2 seconds
+                setTimeout(() => {
+                    this.classList.remove('btn-primary');
+                    this.classList.add('btn-outline-primary');
+                }, 2000);
+            });
+        });
+        
+        // Auto-suggest as user types
+        unitInput.addEventListener('input', function() {
+            const value = this.value.toLowerCase();
+            
+            // Highlight matching suggestion buttons
+            unitSuggestionButtons.forEach(button => {
+                const buttonUnit = button.getAttribute('data-unit').toLowerCase();
+                if (buttonUnit.includes(value) && value.length > 0) {
+                    button.classList.add('btn-outline-success');
+                    button.classList.remove('btn-outline-primary');
+                } else {
+                    button.classList.add('btn-outline-primary');
+                    button.classList.remove('btn-outline-success');
+                }
+            });
+        });
+    }
+    
+    // Form submission with loading state
+    const form = document.getElementById('productForm');
+    const submitBtn = document.getElementById('submitBtn');
+    
+    if (form && submitBtn) {
+        form.addEventListener('submit', function(e) {
+            submitBtn.innerHTML = '<i class="bi bi-hourglass-split me-2"></i>Adding Product...';
+            submitBtn.disabled = true;
+        });
+    }
+    
+    // Real-time form validation feedback
+    const requiredFields = document.querySelectorAll('input[required], select[required], textarea[required]');
+    requiredFields.forEach(field => {
+        field.addEventListener('blur', function() {
+            if (this.value.trim() === '') {
+                this.classList.add('is-invalid');
+            } else {
+                this.classList.remove('is-invalid');
+                this.classList.add('is-valid');
+            }
+        });
+        
+        field.addEventListener('input', function() {
+            if (this.value.trim() !== '') {
+                this.classList.remove('is-invalid');
+                this.classList.add('is-valid');
+            }
+        });
     });
 });
 </script>
+
+<style>
+/* Custom styles for the add product form */
+.card {
+    transition: all 0.3s ease;
+}
+
+.unit-suggestion {
+    transition: all 0.3s ease;
+}
+
+.unit-suggestion:hover {
+    transform: translateY(-2px);
+}
+
+.form-control:focus, .form-select:focus {
+    border-color: #0d6efd;
+    box-shadow: 0 0 0 0.2rem rgba(13, 110, 253, 0.25);
+}
+
+.is-valid {
+    border-color: #198754;
+}
+
+.is-invalid {
+    border-color: #dc3545;
+}
+
+#imagePreview {
+    transition: all 0.3s ease;
+    border: 3px solid #e9ecef;
+}
+
+#imagePreview:hover {
+    border-color: #0d6efd;
+}
+
+/* Mobile responsiveness */
+@media (max-width: 768px) {
+    .card-body {
+        padding: 2rem !important;
+    }
+    
+    .unit-suggestion {
+        margin-bottom: 0.5rem;
+    }
+}
+</style>
 {% endblock %}

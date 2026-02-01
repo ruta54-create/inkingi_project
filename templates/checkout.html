@@ -1,103 +1,314 @@
 {% extends "base.html" %}
 {% load static %}
 
-{% block title %}Checkout - Inkingi Wood Ltd{% endblock %}
+{% block title %}Secure Checkout - Inkingi Wood{% endblock %}
 
 {% block content %}
 <section class="checkout-page py-5">
   <div class="container">
+    <!-- Progress Indicator -->
+    <div class="row mb-5">
+      <div class="col-12">
+        <div class="checkout-progress">
+          <div class="progress-step completed">
+            <div class="step-number">1</div>
+            <div class="step-label">Review Order</div>
+          </div>
+          <div class="progress-line"></div>
+          <div class="progress-step">
+            <div class="step-number">2</div>
+            <div class="step-label">Payment</div>
+          </div>
+          <div class="progress-line"></div>
+          <div class="progress-step">
+            <div class="step-number">3</div>
+            <div class="step-label">Confirmation</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
     <header class="mb-5 text-center">
-      <h1 class="display-5 fw-bold mb-2">Complete Your Order</h1>
-      <p class="lead text-muted">Review and confirm your purchase details</p>
+      <h1 class="display-5 fw-bold mb-2">Secure Checkout</h1>
+      <p class="lead text-muted">Complete your order with confidence</p>
     </header>
 
     <div class="row">
-      <!-- Product Summary -->
-      <div class="col-lg-5 mb-4 mb-lg-0">
-        <div class="card shadow-sm border-0">
-          <div class="position-relative overflow-hidden" style="height: 350px;">
-            {% if product.image %}
-              <img 
-                src="{{ product.image.url }}" 
-                alt="{{ product.name }}" 
-                class="w-100 h-100 object-fit-cover">
-            {% else %}
-              <img 
-                src="{% static 'img/placeholder.png' %}" 
-                alt="No image available" 
-                class="w-100 h-100 object-fit-cover">
-            {% endif %}
-          </div>
-          <div class="card-body">
-            <h2 class="card-title h4 fw-bold mb-3">{{ product.name }}</h2>
-            
-            <div class="mb-3">
-              <p class="mb-2 text-muted">
-                <strong>Price per unit:</strong> {{ product.price }} RWF
-              </p>
-              <p class="mb-2 text-muted">
-                <strong>Available stock:</strong> {{ product.stock }} units
-              </p>
+      <!-- Order Summary Sidebar -->
+      <div class="col-lg-4 mb-4 mb-lg-0">
+        <div class="order-summary-card sticky-top">
+          <div class="card shadow-lg border-0">
+            <div class="card-header bg-primary text-white p-4">
+              <h5 class="mb-0 fw-bold">
+                <i class="bi bi-bag-check me-2"></i>Order Summary
+              </h5>
             </div>
-
-            <hr>
-
-            <div class="alert alert-success mb-0" role="alert">
-              <strong>Order Total: <span class="h5">{{ total_preview }} RWF</span></strong>
+            
+            <!-- Product Details -->
+            <div class="card-body p-0">
+              <div class="product-summary p-4">
+                <div class="d-flex align-items-center">
+                  <div class="product-image me-3">
+                    {% if product.image %}
+                      <img src="{{ product.image.url }}" alt="{{ product.name }}" 
+                           class="rounded" style="width: 80px; height: 80px; object-fit: cover;">
+                    {% else %}
+                      <div class="placeholder-image rounded d-flex align-items-center justify-content-center"
+                           style="width: 80px; height: 80px; background: #f8f9fa;">
+                        <i class="bi bi-image text-muted"></i>
+                      </div>
+                    {% endif %}
+                  </div>
+                  <div class="product-details flex-grow-1">
+                    <h6 class="mb-1 fw-bold">{{ product.name }}</h6>
+                    <p class="text-muted mb-1 small">{{ product.category|title }}</p>
+                    <p class="text-muted mb-0 small">
+                      <strong>{{ product.price|floatformat:0 }} RWF</strong> per {{ product.unit }}
+                    </p>
+                  </div>
+                </div>
+              </div>
+              
+              <hr class="my-0">
+              
+              <!-- Price Breakdown -->
+              <div class="price-breakdown p-4">
+                <div class="d-flex justify-content-between mb-2">
+                  <span>Subtotal:</span>
+                  <span id="subtotal">{{ total_preview|floatformat:0 }} RWF</span>
+                </div>
+                <div class="d-flex justify-content-between mb-2">
+                  <span>Delivery:</span>
+                  <span id="delivery-cost">Free</span>
+                </div>
+                <div class="d-flex justify-content-between mb-2">
+                  <span>Tax (18% VAT):</span>
+                  <span id="tax-amount">0 RWF</span>
+                </div>
+                <hr>
+                <div class="d-flex justify-content-between fw-bold h5">
+                  <span>Total:</span>
+                  <span id="total-amount" class="text-primary">{{ total_preview|floatformat:0 }} RWF</span>
+                </div>
+                <small class="text-muted">
+                  <i class="fas fa-info-circle me-1"></i>
+                  All prices include 18% VAT as required by Rwanda Revenue Authority
+                </small>
+              </div>
+            </div>
+            
+            <!-- Security Badge -->
+            <div class="card-footer bg-light p-3">
+              <div class="text-center">
+                <small class="text-muted">
+                  <i class="bi bi-shield-check text-success me-1"></i>
+                  Secure SSL Encrypted Checkout
+                </small>
+              </div>
             </div>
           </div>
         </div>
       </div>
 
       <!-- Checkout Form -->
-      <div class="col-lg-7">
-        <form method="post" class="checkout-form" novalidate>
+      <div class="col-lg-8">
+        <form method="post" class="checkout-form" novalidate id="checkoutForm">
           {% csrf_token %}
-          <div class="card shadow-sm border-0">
-            <div class="card-body p-4">
-              <!-- Quantity Field -->
-              <div class="mb-4">
-                <label for="{{ form.quantity.id_for_label }}" class="form-label fw-bold">{{ form.quantity.label }}</label>
-                {{ form.quantity }}
-                {% if form.quantity.errors %}
-                  <div class="alert alert-danger small mt-2" role="alert">
-                    {{ form.quantity.errors }}
-                  </div>
-                {% endif %}
+          
+          <!-- Order Details Section -->
+          <div class="checkout-section mb-4">
+            <div class="card shadow-sm border-0">
+              <div class="card-header bg-light p-4">
+                <h5 class="mb-0 fw-bold">
+                  <i class="bi bi-box-seam me-2"></i>Order Details
+                </h5>
               </div>
-
-              <!-- Delivery Address Field -->
-              <div class="mb-4">
-                <label for="{{ form.delivery_address.id_for_label }}" class="form-label fw-bold">{{ form.delivery_address.label }}</label>
-                {{ form.delivery_address }}
-                {% if form.delivery_address.errors %}
-                  <div class="alert alert-danger small mt-2" role="alert">
-                    {{ form.delivery_address.errors }}
+              <div class="card-body p-4">
+                <div class="row">
+                  <div class="col-md-6 mb-3">
+                    <label for="{{ form.quantity.id_for_label }}" class="form-label fw-bold">
+                      {{ form.quantity.label }}
+                    </label>
+                    <div class="quantity-input">
+                      {{ form.quantity }}
+                      <small class="form-text text-muted">Available: {{ product.stock }} {{ product.unit }}</small>
+                    </div>
+                    {% if form.quantity.errors %}
+                      <div class="alert alert-danger small mt-2">{{ form.quantity.errors }}</div>
+                    {% endif %}
                   </div>
-                {% endif %}
+                </div>
               </div>
+            </div>
+          </div>
 
-              <!-- Phone Field -->
-              <div class="mb-4">
-                <label for="{{ form.phone.id_for_label }}" class="form-label fw-bold">{{ form.phone.label }}</label>
-                {{ form.phone }}
-                {% if form.phone.errors %}
-                  <div class="alert alert-danger small mt-2" role="alert">
-                    {{ form.phone.errors }}
+          <!-- Delivery Information Section -->
+          <div class="checkout-section mb-4">
+            <div class="card shadow-sm border-0">
+              <div class="card-header bg-light p-4">
+                <h5 class="mb-0 fw-bold">
+                  <i class="bi bi-truck me-2"></i>Delivery Information
+                </h5>
+              </div>
+              <div class="card-body p-4">
+                <!-- Delivery Options -->
+                <div class="mb-4">
+                  <label class="form-label fw-bold">{{ form.delivery_option.label }}</label>
+                  <div class="delivery-options">
+                    {% for choice in form.delivery_option %}
+                      <div class="delivery-option-item">
+                        {{ choice.tag }}
+                        <label for="{{ choice.id_for_label }}" class="delivery-option-label">
+                          <div class="option-content">
+                            <div class="option-title">
+                              {% if choice.choice_value == 'standard' %}
+                                <i class="bi bi-truck me-2"></i>Standard Delivery
+                              {% elif choice.choice_value == 'express' %}
+                                <i class="bi bi-lightning me-2"></i>Express Delivery
+                              {% else %}
+                                <i class="bi bi-shop me-2"></i>Store Pickup
+                              {% endif %}
+                            </div>
+                            <div class="option-description">
+                              {% if choice.choice_value == 'standard' %}
+                                3-5 business days • Free
+                              {% elif choice.choice_value == 'express' %}
+                                1-2 business days • 2,000 RWF
+                              {% else %}
+                                Available immediately • Free
+                              {% endif %}
+                            </div>
+                          </div>
+                        </label>
+                      </div>
+                    {% endfor %}
                   </div>
-                {% endif %}
+                </div>
+
+                <!-- Address Fields -->
+                <div class="row">
+                  <div class="col-md-8 mb-3">
+                    <label for="{{ form.delivery_address.id_for_label }}" class="form-label fw-bold">
+                      {{ form.delivery_address.label }}
+                    </label>
+                    {{ form.delivery_address }}
+                    {% if form.delivery_address.errors %}
+                      <div class="alert alert-danger small mt-2">{{ form.delivery_address.errors }}</div>
+                    {% endif %}
+                  </div>
+                  <div class="col-md-4 mb-3">
+                    <label for="{{ form.phone.id_for_label }}" class="form-label fw-bold">
+                      {{ form.phone.label }}
+                    </label>
+                    {{ form.phone }}
+                    {% if form.phone.errors %}
+                      <div class="alert alert-danger small mt-2">{{ form.phone.errors }}</div>
+                    {% endif %}
+                  </div>
+                </div>
+
+                <!-- Delivery Notes -->
+                <div class="mb-3">
+                  <label for="{{ form.delivery_notes.id_for_label }}" class="form-label fw-bold">
+                    {{ form.delivery_notes.label }}
+                  </label>
+                  {{ form.delivery_notes }}
+                </div>
               </div>
+            </div>
+          </div>
 
-              <hr class="my-4">
+          <!-- Payment Method Section -->
+          <div class="checkout-section mb-4">
+            <div class="card shadow-sm border-0">
+              <div class="card-header bg-light p-4">
+                <h5 class="mb-0 fw-bold">
+                  <i class="bi bi-credit-card me-2"></i>Payment Method
+                </h5>
+              </div>
+              <div class="card-body p-4">
+                <div class="payment-methods">
+                  {% for choice in form.payment_method %}
+                    <div class="payment-method-item">
+                      {{ choice.tag }}
+                      <label for="{{ choice.id_for_label }}" class="payment-method-label">
+                        <div class="payment-content">
+                          <div class="payment-icon">
+                            {% if choice.choice_value == 'momo' %}
+                              <i class="bi bi-phone text-warning"></i>
+                            {% elif choice.choice_value == 'airtel' %}
+                              <i class="bi bi-phone text-danger"></i>
+                            {% elif choice.choice_value == 'tigo' %}
+                              <i class="bi bi-phone text-primary"></i>
+                            {% elif choice.choice_value == 'card' %}
+                              <i class="bi bi-credit-card text-info"></i>
+                            {% elif choice.choice_value == 'bank' %}
+                              <i class="bi bi-bank text-success"></i>
+                            {% else %}
+                              <i class="bi bi-cash text-secondary"></i>
+                            {% endif %}
+                          </div>
+                          <div class="payment-details">
+                            <div class="payment-title">{{ choice.choice_label }}</div>
+                            <div class="payment-description">
+                              {% if choice.choice_value == 'momo' %}
+                                Pay with MTN Mobile Money
+                              {% elif choice.choice_value == 'airtel' %}
+                                Pay with Airtel Money
+                              {% elif choice.choice_value == 'tigo' %}
+                                Pay with Tigo Cash
+                              {% elif choice.choice_value == 'card' %}
+                                Visa, Mastercard accepted
+                              {% elif choice.choice_value == 'bank' %}
+                                Direct bank transfer
+                              {% else %}
+                                Pay when you receive your order
+                              {% endif %}
+                            </div>
+                          </div>
+                        </div>
+                      </label>
+                    </div>
+                  {% endfor %}
+                </div>
 
-              <!-- Action Buttons -->
-              <div class="d-grid gap-2">
-                <button type="submit" class="btn btn-view btn-lg fw-bold">
-                  Place Order
-                </button>
-                <a href="{% url 'products:product_detail' product.id %}" class="btn btn-outline-secondary">
-                  Back to Product
-                </a>
+                <!-- Mobile Number Field (shown conditionally) -->
+                <div class="mt-3" id="mobileNumberField" style="display: none;">
+                  <label for="{{ form.mobile_number.id_for_label }}" class="form-label fw-bold">
+                    {{ form.mobile_number.label }}
+                  </label>
+                  {{ form.mobile_number }}
+                  <small class="form-text text-muted">
+                    Enter the mobile number for payment processing
+                  </small>
+                  {% if form.mobile_number.errors %}
+                    <div class="alert alert-danger small mt-2">{{ form.mobile_number.errors }}</div>
+                  {% endif %}
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Terms and Submit -->
+          <div class="checkout-section">
+            <div class="card shadow-sm border-0">
+              <div class="card-body p-4">
+                <div class="form-check mb-3">
+                  <input class="form-check-input" type="checkbox" id="termsCheck" required>
+                  <label class="form-check-label" for="termsCheck">
+                    I agree to the <a href="{% url 'pages:terms_of_service' %}" target="_blank">Terms of Service</a> 
+                    and <a href="{% url 'pages:privacy_policy' %}" target="_blank">Privacy Policy</a>
+                  </label>
+                </div>
+
+                <div class="d-grid gap-2">
+                  <button type="submit" class="btn btn-primary btn-lg fw-bold" id="submitBtn">
+                    <i class="bi bi-lock me-2"></i>Complete Secure Order
+                  </button>
+                  <a href="{% url 'products:product_detail' product.id %}" class="btn btn-outline-secondary">
+                    <i class="bi bi-arrow-left me-2"></i>Back to Product
+                  </a>
+                </div>
               </div>
             </div>
           </div>
@@ -106,4 +317,274 @@
     </div>
   </div>
 </section>
+
+<style>
+/* Checkout Progress Styles */
+.checkout-progress {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 2rem;
+}
+
+.progress-step {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  position: relative;
+}
+
+.step-number {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: #e9ecef;
+  color: #6c757d;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: bold;
+  margin-bottom: 8px;
+  transition: all 0.3s ease;
+}
+
+.progress-step.active .step-number {
+  background: #0d6efd;
+  color: white;
+}
+
+.step-label {
+  font-size: 0.875rem;
+  color: #6c757d;
+  font-weight: 500;
+}
+
+.progress-step.active .step-label {
+  color: #0d6efd;
+  font-weight: 600;
+}
+
+.progress-line {
+  width: 100px;
+  height: 2px;
+  background: #e9ecef;
+  margin: 0 20px;
+  margin-top: -20px;
+}
+
+/* Order Summary Styles */
+.order-summary-card {
+  top: 20px;
+}
+
+.product-image img, .placeholder-image {
+  border: 1px solid #e9ecef;
+}
+
+/* Delivery Options Styles */
+.delivery-options {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.delivery-option-item {
+  position: relative;
+}
+
+.delivery-option-item input[type="radio"] {
+  position: absolute;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.delivery-option-label {
+  display: block;
+  padding: 16px;
+  border: 2px solid #e9ecef;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  background: white;
+}
+
+.delivery-option-label:hover {
+  border-color: #0d6efd;
+  background: #f8f9ff;
+}
+
+.delivery-option-item input[type="radio"]:checked + .delivery-option-label {
+  border-color: #0d6efd;
+  background: #f8f9ff;
+  box-shadow: 0 0 0 3px rgba(13, 110, 253, 0.1);
+}
+
+.option-title {
+  font-weight: 600;
+  color: #212529;
+  margin-bottom: 4px;
+}
+
+.option-description {
+  font-size: 0.875rem;
+  color: #6c757d;
+}
+
+/* Payment Methods Styles */
+.payment-methods {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 12px;
+}
+
+.payment-method-item {
+  position: relative;
+}
+
+.payment-method-item input[type="radio"] {
+  position: absolute;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.payment-method-label {
+  display: block;
+  padding: 16px;
+  border: 2px solid #e9ecef;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  background: white;
+  height: 100%;
+}
+
+.payment-method-label:hover {
+  border-color: #0d6efd;
+  background: #f8f9ff;
+}
+
+.payment-method-item input[type="radio"]:checked + .payment-method-label {
+  border-color: #0d6efd;
+  background: #f8f9ff;
+  box-shadow: 0 0 0 3px rgba(13, 110, 253, 0.1);
+}
+
+.payment-content {
+  display: flex;
+  align-items: center;
+}
+
+.payment-icon {
+  font-size: 1.5rem;
+  margin-right: 12px;
+  width: 30px;
+  text-align: center;
+}
+
+.payment-title {
+  font-weight: 600;
+  color: #212529;
+  margin-bottom: 2px;
+}
+
+.payment-description {
+  font-size: 0.875rem;
+  color: #6c757d;
+}
+
+/* Form Enhancements */
+.form-control:focus {
+  border-color: #0d6efd;
+  box-shadow: 0 0 0 0.2rem rgba(13, 110, 253, 0.25);
+}
+
+.quantity-input input {
+  max-width: 120px;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .checkout-progress {
+    flex-direction: column;
+    gap: 20px;
+  }
+  
+  .progress-line {
+    width: 2px;
+    height: 30px;
+    margin: 10px 0;
+  }
+  
+  .payment-methods {
+    grid-template-columns: 1fr;
+  }
+  
+  .order-summary-card {
+    position: static !important;
+  }
+}
+</style>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+  const form = document.getElementById('checkoutForm');
+  const quantityInput = document.querySelector('input[name="quantity"]');
+  const deliveryOptions = document.querySelectorAll('input[name="delivery_option"]');
+  const paymentMethods = document.querySelectorAll('input[name="payment_method"]');
+  const mobileNumberField = document.getElementById('mobileNumberField');
+  const submitBtn = document.getElementById('submitBtn');
+  
+  const productPrice = {{ product.price }};
+  
+  // Update totals when quantity or delivery changes
+  function updateTotals() {
+    const quantity = parseInt(quantityInput.value) || 1;
+    const selectedDelivery = document.querySelector('input[name="delivery_option"]:checked');
+    
+    let deliveryCost = 0;
+    if (selectedDelivery && selectedDelivery.value === 'express') {
+      deliveryCost = 2000;
+    }
+    
+    const subtotal = productPrice * quantity;
+    const taxRate = 0.18; // 18% VAT for Rwanda
+    const taxAmount = (subtotal + deliveryCost) * taxRate;
+    const total = subtotal + deliveryCost + taxAmount;
+    
+    document.getElementById('subtotal').textContent = subtotal.toLocaleString() + ' RWF';
+    document.getElementById('delivery-cost').textContent = deliveryCost > 0 ? deliveryCost.toLocaleString() + ' RWF' : 'Free';
+    document.getElementById('tax-amount').textContent = Math.round(taxAmount).toLocaleString() + ' RWF';
+    document.getElementById('total-amount').textContent = Math.round(total).toLocaleString() + ' RWF';
+  }
+  
+  // Show/hide mobile number field based on payment method
+  function toggleMobileField() {
+    const selectedPayment = document.querySelector('input[name="payment_method"]:checked');
+    const mobileMethods = ['momo', 'airtel', 'tigo'];
+    
+    if (selectedPayment && mobileMethods.includes(selectedPayment.value)) {
+      mobileNumberField.style.display = 'block';
+      document.querySelector('input[name="mobile_number"]').required = true;
+    } else {
+      mobileNumberField.style.display = 'none';
+      document.querySelector('input[name="mobile_number"]').required = false;
+    }
+  }
+  
+  // Event listeners
+  quantityInput.addEventListener('input', updateTotals);
+  deliveryOptions.forEach(option => option.addEventListener('change', updateTotals));
+  paymentMethods.forEach(method => method.addEventListener('change', toggleMobileField));
+  
+  // Form submission
+  form.addEventListener('submit', function(e) {
+    submitBtn.innerHTML = '<i class="bi bi-hourglass-split me-2"></i>Processing...';
+    submitBtn.disabled = true;
+  });
+  
+  // Initialize
+  updateTotals();
+  toggleMobileField();
+});
+</script>
 {% endblock %}

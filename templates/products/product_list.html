@@ -11,19 +11,64 @@
     </div>
 </div>
 
-<div class="mb-4 d-flex justify-content-between align-items-center">
-    <div>
-        <strong class="h5">All Products</strong>
-        <p class="small text-muted mb-0">Showing newest items first{% if q %} — results for "{{ q }}"{% endif %}</p>
+<div class="mb-4">
+    <!-- Category Filter Display -->
+    {% if category %}
+    <div class="mb-3">
+        <div class="d-flex align-items-center gap-2">
+            <span class="badge bg-primary fs-6 px-3 py-2">
+                <i class="bi bi-funnel me-1"></i>
+                {% if category == 'furniture' %}Furniture
+                {% elif category == 'home-office' %}Home & Office
+                {% elif category == 'outdoor-garden' %}Outdoor & Garden
+                {% elif category == 'doors-construction' %}Doors & Construction
+                {% elif category == 'handcrafted' %}Handcrafted Products
+                {% elif category == 'custom-made' %}Custom Made
+                {% elif category == 'raw-materials' %}Raw Materials
+                {% elif category == 'kids-school' %}Kids & School
+                {% else %}{{ category|title }}
+                {% endif %}
+            </span>
+            <a href="{% url 'products:product_list' %}{% if q %}?q={{ q }}{% endif %}" class="btn btn-sm btn-outline-secondary">
+                <i class="bi bi-x me-1"></i>Clear Filter
+            </a>
+        </div>
     </div>
+    {% endif %}
+    
+    <div class="d-flex justify-content-between align-items-center">
+        <div>
+            <strong class="h5">
+                {% if category %}
+                    {% if category == 'furniture' %}Furniture
+                    {% elif category == 'home-office' %}Home & Office
+                    {% elif category == 'outdoor-garden' %}Outdoor & Garden
+                    {% elif category == 'doors-construction' %}Doors & Construction
+                    {% elif category == 'handcrafted' %}Handcrafted Products
+                    {% elif category == 'custom-made' %}Custom Made
+                    {% elif category == 'raw-materials' %}Raw Materials
+                    {% elif category == 'kids-school' %}Kids & School
+                    {% else %}{{ category|title }}
+                    {% endif %}
+                {% else %}
+                    All Products
+                {% endif %}
+            </strong>
+            <p class="small text-muted mb-0">
+                Showing newest items first
+                {% if q %} — results for "{{ q }}"{% endif %}
+                {% if category %} in this category{% endif %}
+            </p>
+        </div>
 
-    <div class="d-flex gap-2 align-items-center">
-        <label class="me-2 mb-0 small-muted">Sort</label>
-        <select id="sort-select" class="form-select form-select-sm" onchange="window.location.href = this.value;">
-            <option value="?sort=-created_at" {% if sort_by == '-created_at' %}selected{% endif %}>Newest</option>
-            <option value="?sort=price_asc" {% if sort_by == 'price_asc' %}selected{% endif %}>Price: Low &uarr;</option>
-            <option value="?sort=price_desc" {% if sort_by == 'price_desc' %}selected{% endif %}>Price: High &darr;</option>
-        </select>
+        <div class="d-flex gap-2 align-items-center">
+            <label class="me-2 mb-0 small-muted">Sort</label>
+            <select id="sort-select" class="form-select form-select-sm" onchange="applySorting(this.value);">
+                <option value="-created_at" {% if sort_by == '-created_at' %}selected{% endif %}>Newest</option>
+                <option value="price_asc" {% if sort_by == 'price_asc' %}selected{% endif %}>Price: Low &uarr;</option>
+                <option value="price_desc" {% if sort_by == 'price_desc' %}selected{% endif %}>Price: High &darr;</option>
+            </select>
+        </div>
     </div>
 </div>
 
@@ -81,7 +126,9 @@
 <nav aria-label="Page navigation" class="mt-4">
     <ul class="pagination justify-content-center">
         {% if page_obj.has_previous %}
-            <li class="page-item"><a class="page-link" href="?page={{ page_obj.previous_page_number }}&sort={{ sort_by }}">Previous</a></li>
+            <li class="page-item">
+                <a class="page-link" href="?page={{ page_obj.previous_page_number }}&sort={{ sort_by }}{% if q %}&q={{ q }}{% endif %}{% if category %}&category={{ category }}{% endif %}">Previous</a>
+            </li>
         {% else %}
             <li class="page-item disabled"><span class="page-link">Previous</span></li>
         {% endif %}
@@ -90,12 +137,16 @@
             {% if page_obj.number == i %}
                 <li class="page-item active"><span class="page-link">{{ i }}</span></li>
             {% else %}
-                <li class="page-item"><a class="page-link" href="?page={{ i }}&sort={{ sort_by }}">{{ i }}</a></li>
+                <li class="page-item">
+                    <a class="page-link" href="?page={{ i }}&sort={{ sort_by }}{% if q %}&q={{ q }}{% endif %}{% if category %}&category={{ category }}{% endif %}">{{ i }}</a>
+                </li>
             {% endif %}
         {% endfor %}
 
         {% if page_obj.has_next %}
-            <li class="page-item"><a class="page-link" href="?page={{ page_obj.next_page_number }}&sort={{ sort_by }}">Next</a></li>
+            <li class="page-item">
+                <a class="page-link" href="?page={{ page_obj.next_page_number }}&sort={{ sort_by }}{% if q %}&q={{ q }}{% endif %}{% if category %}&category={{ category }}{% endif %}">Next</a>
+            </li>
         {% else %}
             <li class="page-item disabled"><span class="page-link">Next</span></li>
         {% endif %}
@@ -104,3 +155,13 @@
 {% endif %}
 
 {% endblock content %}
+
+<script>
+function applySorting(sortValue) {
+    const url = new URL(window.location);
+    url.searchParams.set('sort', sortValue);
+    // Reset to page 1 when sorting changes
+    url.searchParams.delete('page');
+    window.location.href = url.toString();
+}
+</script>

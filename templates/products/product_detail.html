@@ -69,7 +69,6 @@
                         </div>
                         <div class="col-12">
                             <button type="submit" class="btn btn-lg btn-primary w-100" {% if product.stock == 0 %}disabled{% endif %}>Buy Now</button>
-                            <button type="submit" formaction="{% url 'orders:mock_pay' product.id %}" class="btn btn-success w-100 mt-2" {% if product.stock == 0 %}disabled{% endif %}>Pay Now (Mock)</button>
                             <button type="submit" formaction="{% url 'orders:add_to_cart' product.id %}" class="btn btn-outline-view w-100 mt-2" {% if product.stock == 0 %}disabled{% endif %}>Add to Cart</button>
                         </div>
                     </div>

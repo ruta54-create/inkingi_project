@@ -1,39 +1,104 @@
-<!-- templates/vendor_order_details.html -->
 {% extends "base.html" %}
+
+{% block title %}Order Details - Inkingi Wood Ltd{% endblock %}
+
 {% block content %}
+<section class="order-details-page py-5">
+  <div class="container">
+    <div class="row justify-content-center">
+      <div class="col-12 col-lg-8">
+        <header class="mb-4">
+          <a href="{% url 'orders:vendor_orders' %}" class="btn btn-outline-secondary btn-sm mb-3">
+            ← Back to Orders
+          </a>
+          <h1 class="display-5 fw-bold">Order #{{ order.id }} Details</h1>
+          <p class="lead text-muted">Items you sold in this order</p>
+        </header>
 
-<div style="max-width:850px; margin:30px auto; background:#688b2f; padding:25px; border-radius:14px; box-shadow:0 8px 18px rgba(0,0,0,0.1);">
-
-    <h2 style="color:#2e4e33; text-align:center; margin-bottom:25px;">
-        Order #{{ order.id }} — Items You Sold
-    </h2>
-
-    <p><strong>Date:</strong> {{ order.created_at }}</p>
-    <p><strong>Status:</strong> {{ order.status }}</p>
-    <p><strong>Customer:</strong> {{ order.customer.email }}</p>
-    <p><strong>Delivery:</strong> {{ order.delivery_address }}</p>
-
-    <hr style="margin:20px 0; border-color:hsl(46, 62%, 41%);">
-
-    {% if items %}
-        {% for item in items %}
-            <div style="background:rgb(173, 197, 42); padding:18px; border-radius:10px; margin-bottom:20px; box-shadow:0 4px 10px rgba(0,0,0,0.08);">
-                <p><strong>Product:</strong> {{ item.product.name }}</p>
-                <p><strong>Quantity:</strong> {{ item.quantity }}</p>
-                <p><strong>Price:</strong> {{ item.price }} RWF</p>
+        <!-- Order Info Card -->
+        <div class="card shadow-sm border-0 mb-4">
+          <div class="card-body p-4">
+            <div class="row mb-4">
+              <div class="col-md-6">
+                <p class="mb-2"><strong>Order Date:</strong></p>
+                <p class="text-muted">{{ order.created_at|date:"d M Y, H:i" }}</p>
+              </div>
+              <div class="col-md-6">
+                <p class="mb-2"><strong>Status:</strong></p>
+                <p>
+                  {% if order.status == 'pending' %}
+                    <span class="badge bg-warning text-dark">Pending</span>
+                  {% elif order.status == 'completed' %}
+                    <span class="badge bg-success">Completed</span>
+                  {% elif order.status == 'shipped' %}
+                    <span class="badge bg-info">Shipped</span>
+                  {% else %}
+                    <span class="badge bg-secondary">{{ order.status|title }}</span>
+                  {% endif %}
+                </p>
+              </div>
             </div>
-        {% endfor %}
-    {% else %}
-        <p style="color:#dc9314; text-align:center; padding:20px;">
-            You have no items in this order.
-        </p>
-    {% endif %}
 
-    <a href="{% url 'orders:vendor_orders' %}" 
-       style="display:inline-block; margin-top:10px; background:#6d4c41; color:white; padding:8px 14px; border-radius:8px; text-decoration:none;">
-        ⬅ Back to Orders
-    </a>
+            <hr>
 
-</div>
+            <div class="row">
+              <div class="col-md-6">
+                <p class="mb-2"><strong>Customer:</strong></p>
+                <p class="text-muted">{{ order.customer.email }}</p>
+              </div>
+              <div class="col-md-6">
+                <p class="mb-2"><strong>Delivery Address:</strong></p>
+                <p class="text-muted">{{ order.delivery_address }}</p>
+              </div>
+            </div>
+          </div>
+        </div>
 
+        <!-- Items List -->
+        <h4 class="fw-bold mb-3">Your Items in This Order</h4>
+
+        {% if items %}
+          {% for item in items %}
+            <div class="card shadow-sm border-0 mb-3">
+              <div class="card-body p-4">
+                <div class="row align-items-center">
+                  <div class="col-md-8">
+                    <h5 class="card-title fw-bold mb-2">{{ item.product.name }}</h5>
+                    <p class="card-text text-muted mb-0">
+                      <strong>Quantity:</strong> {{ item.quantity }} unit{{ item.quantity|pluralize }}
+                    </p>
+                  </div>
+                  <div class="col-md-4 text-end">
+                    <p class="fw-bold h5 mb-0 text-success">
+                      {{ item.price }} RWF
+                    </p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          {% endfor %}
+
+          <!-- Total Summary -->
+          <div class="card bg-light border-0 p-4 mt-4">
+            <div class="d-flex justify-content-between align-items-center">
+              <h5 class="fw-bold mb-0">Order Total:</h5>
+              <h4 class="text-success fw-bold mb-0">{{ order.total }} RWF</h4>
+            </div>
+          </div>
+        {% else %}
+          <div class="alert alert-info text-center py-5" role="alert">
+            <p class="mb-0">You have no items in this order.</p>
+          </div>
+        {% endif %}
+
+        <!-- Back Button -->
+        <div class="mt-5">
+          <a href="{% url 'orders:vendor_orders' %}" class="btn btn-outline-secondary">
+            Back to Orders
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
 {% endblock %}

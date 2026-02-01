@@ -1,0 +1,150 @@
+{% extends 'admin/base_site.html' %}
+{% load admin_urls static admin_list %}
+
+{% block title %}Confirm Webhook Event Reprocessing{% endblock %}
+
+{% block extrahead %}
+{{ block.super }}
+<style>
+.warning-box {
+    background-color: #fff3cd;
+    border: 1px solid #ffeaa7;
+    border-radius: 4px;
+    padding: 15px;
+    margin: 20px 0;
+}
+.warning-icon {
+    color: #856404;
+    font-size: 18px;
+    margin-right: 10px;
+}
+.event-list {
+    background-color: #f8f9fa;
+    border: 1px solid #dee2e6;
+    border-radius: 4px;
+    padding: 15px;
+    margin: 15px 0;
+    max-height: 300px;
+    overflow-y: auto;
+}
+.event-item {
+    padding: 8px 0;
+    border-bottom: 1px solid #e9ecef;
+}
+.event-item:last-child {
+    border-bottom: none;
+}
+.event-id {
+    font-family: monospace;
+    background-color: #e9ecef;
+    padding: 2px 6px;
+    border-radius: 3px;
+    font-size: 12px;
+}
+.event-type {
+    color: #495057;
+    font-weight: 500;
+}
+.processed-badge {
+    background-color: #28a745;
+    color: white;
+    padding: 2px 6px;
+    border-radius: 3px;
+    font-size: 10px;
+}
+.pending-badge {
+    background-color: #dc3545;
+    color: white;
+    padding: 2px 6px;
+    border-radius: 3px;
+    font-size: 10px;
+}
+.button-group {
+    margin-top: 20px;
+}
+.button-group .button {
+    margin-right: 10px;
+}
+.danger-button {
+    background-color: #dc3545;
+    border-color: #dc3545;
+    color: white;
+}
+.danger-button:hover {
+    background-color: #c82333;
+    border-color: #bd2130;
+}
+</style>
+{% endblock %}
+
+{% block content %}
+<h1>⚠️ Confirm Webhook Event Reprocessing</h1>
+
+<div class="warning-box">
+    <span class="warning-icon">⚠️</span>
+    <strong>Warning:</strong> You are about to reprocess {{ events_count }} webhook event(s). 
+    This action will:
+    <ul style="margin-top: 10px;">
+        <li>Re-execute the webhook processing logic</li>
+        <li>Potentially create duplicate orders, purchases, or payments</li>
+        <li>Modify product stock levels</li>
+        <li>Send notification emails to customers and vendors</li>
+        <li>Mark events as processed</li>
+    </ul>
+    <p style="margin-top: 10px;"><strong>This action cannot be undone.</strong> Please review the events below carefully before proceeding.</p>
+</div>
+
+<h2>Events to Reprocess ({{ events_count }} total)</h2>
+
+<div class="event-list">
+    {% for event in events %}
+    <div class="event-item">
+        <div style="display: flex; justify-content: space-between; align-items: center;">
+            <div>
+                <span class="event-id">{{ event.stripe_event_id }}</span>
+                <span class="event-type">{{ event.event_type }}</span>
+                {% if event.order %}
+                    <span style="color: #6c757d;">→ Order #{{ event.order.id }}</span>
+                {% endif %}
+            </div>
+            <div>
+                {% if event.processed %}
+                    <span class="processed-badge">PROCESSED</span>
+                {% else %}
+                    <span class="pending-badge">PENDING</span>
+                {% endif %}
+                <span style="color: #6c757d; font-size: 12px;">{{ event.received_at|date:"M d, Y H:i" }}</span>
+            </div>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+
+<form method="post">
+    {% csrf_token %}
+    {% for id in selected_ids %}
+        <input type="hidden" name="selected_ids" value="{{ id }}">
+    {% endfor %}
+    
+    <div class="button-group">
+        <button type="submit" name="confirm" class="button danger-button">
+            🔄 Yes, Reprocess {{ events_count }} Event{{ events_count|pluralize }}
+        </button>
+        <a href="{% url 'admin:orders_stripewebhookevent_changelist' %}" class="button default">
+            ❌ Cancel
+        </a>
+    </div>
+</form>
+
+<div style="margin-top: 30px; padding: 15px; background-color: #d1ecf1; border: 1px solid #bee5eb; border-radius: 4px;">
+    <h3 style="color: #0c5460; margin-top: 0;">💡 Best Practices</h3>
+    <ul style="color: #0c5460;">
+        <li>Only reprocess events if you understand why they failed initially</li>
+        <li>Check for duplicate orders/purchases before reprocessing</li>
+        <li>Consider the impact on inventory and customer notifications</li>
+        <li>Monitor logs during and after reprocessing</li>
+        <li>Have a rollback plan if something goes wrong</li>
+    </ul>
+</div>
+
+{% endblock %}
