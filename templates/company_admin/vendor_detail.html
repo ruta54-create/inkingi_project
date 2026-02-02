@@ -1,0 +1,187 @@
+{% extends 'base.html' %}
+{% load i18n %}
+{% load currency_tags %}
+
+{% block title %}{% trans "Vendor" %}: {{ vendor.username }} - Admin{% endblock %}
+
+{% block header %}
+<div class="d-flex justify-content-between align-items-center">
+    <div>
+        <h1 class="fw-bold"><i class="bi bi-shop me-2"></i>{{ vendor.username }}</h1>
+        <p class="text-muted mb-0">{% trans "Vendor Performance Dashboard" %}</p>
+    </div>
+    <a href="{% url 'company_admin:vendor_management' %}" class="btn btn-outline-secondary">
+        <i class="bi bi-arrow-left me-1"></i>{% trans "Back to Vendors" %}
+    </a>
+</div>
+{% endblock %}
+
+{% block content %}
+<!-- Stats Row -->
+<div class="row mb-4">
+    <div class="col-md-3 mb-3">
+        <div class="card bg-primary text-white">
+            <div class="card-body">
+                <h6 class="text-uppercase">{% trans "Total Sales" %}</h6>
+                <h3>{% price_in_currency total_sales %}</h3>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3 mb-3">
+        <div class="card bg-success text-white">
+            <div class="card-body">
+                <h6 class="text-uppercase">{% trans "Total Orders" %}</h6>
+                <h3>{{ total_orders }}</h3>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3 mb-3">
+        <div class="card bg-info text-white">
+            <div class="card-body">
+                <h6 class="text-uppercase">{% trans "Products" %}</h6>
+                <h3>{{ total_products }}</h3>
+                <small>{{ active_products }} {% trans "active" %}</small>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3 mb-3">
+        <div class="card bg-warning text-dark">
+            <div class="card-body">
+                <h6 class="text-uppercase">{% trans "Refunds" %}</h6>
+                <h3>{{ refunded_count }}</h3>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-lg-8">
+        <!-- Recent Orders -->
+        <div class="card shadow-sm mb-4">
+            <div class="card-header">
+                <h5 class="mb-0"><i class="bi bi-clock-history me-2"></i>{% trans "Recent Orders" %}</h5>
+            </div>
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table table-hover">
+                        <thead>
+                            <tr>
+                                <th>{% trans "Order" %}</th>
+                                <th>{% trans "Product" %}</th>
+                                <th>{% trans "Customer" %}</th>
+                                <th>{% trans "Amount" %}</th>
+                                <th>{% trans "Date" %}</th>
+                                <th>{% trans "Status" %}</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for item in recent_orders %}
+                            <tr>
+                                <td><a href="{% url 'company_admin:order_detail' item.order.id %}">#{{ item.order.id }}</a></td>
+                                <td>{{ item.product.name|truncatechars:30 }}</td>
+                                <td>{{ item.order.customer.username }}</td>
+                                <td>{% price_in_currency item.subtotal %}</td>
+                                <td>{{ item.order.created_at|date:"M d, Y" }}</td>
+                                <td>
+                                    <span class="badge {% if item.order.status == 'completed' or item.order.status == 'delivered' %}bg-success{% elif item.order.status == 'pending' %}bg-warning text-dark{% else %}bg-info{% endif %}">
+                                        {{ item.order.get_status_display }}
+                                    </span>
+                                </td>
+                            </tr>
+                            {% empty %}
+                            <tr>
+                                <td colspan="6" class="text-center text-muted">{% trans "No orders yet" %}</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- Products -->
+        <div class="card shadow-sm">
+            <div class="card-header">
+                <h5 class="mb-0"><i class="bi bi-box me-2"></i>{% trans "Products" %}</h5>
+            </div>
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>{% trans "Product" %}</th>
+                                <th>{% trans "Price" %}</th>
+                                <th>{% trans "Stock" %}</th>
+                                <th>{% trans "Status" %}</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for product in products %}
+                            <tr>
+                                <td>
+                                    {% if product.image %}
+                                    <img src="{{ product.image.url }}" alt="{{ product.name }}" width="40" class="me-2">
+                                    {% endif %}
+                                    {{ product.name }}
+                                </td>
+                                <td>{% price_in_currency product.price %}</td>
+                                <td>{{ product.stock }} {{ product.unit }}</td>
+                                <td>
+                                    <span class="badge {% if product.status == 'active' %}bg-success{% else %}bg-secondary{% endif %}">
+                                        {{ product.get_status_display }}
+                                    </span>
+                                </td>
+                            </tr>
+                            {% empty %}
+                            <tr>
+                                <td colspan="4" class="text-center text-muted">{% trans "No products" %}</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-lg-4">
+        <!-- Vendor Info -->
+        <div class="card shadow-sm mb-4">
+            <div class="card-header">
+                <h5 class="mb-0"><i class="bi bi-person me-2"></i>{% trans "Vendor Information" %}</h5>
+            </div>
+            <div class="card-body">
+                <p><strong>{% trans "Username" %}:</strong> {{ vendor.username }}</p>
+                <p><strong>{% trans "Email" %}:</strong> {{ vendor.email }}</p>
+                <p><strong>{% trans "Phone" %}:</strong> {{ vendor.phone|default:"-" }}</p>
+                <p><strong>{% trans "Location" %}:</strong> {{ vendor.location|default:"-" }}</p>
+                <p><strong>{% trans "Joined" %}:</strong> {{ vendor.date_joined|date:"F d, Y" }}</p>
+            </div>
+        </div>
+
+        <!-- Monthly Sales Chart Placeholder -->
+        <div class="card shadow-sm">
+            <div class="card-header">
+                <h5 class="mb-0"><i class="bi bi-graph-up me-2"></i>{% trans "Sales Trend" %}</h5>
+            </div>
+            <div class="card-body">
+                {% if monthly_sales %}
+                <ul class="list-unstyled">
+                    {% for month in monthly_sales %}
+                    <li class="mb-2">
+                        <div class="d-flex justify-content-between">
+                            <span>{{ month.month|date:"M Y" }}</span>
+                            <strong>{% price_in_currency month.total %}</strong>
+                        </div>
+                        <small class="text-muted">{{ month.count }} {% trans "orders" %}</small>
+                    </li>
+                    {% endfor %}
+                </ul>
+                {% else %}
+                <p class="text-muted text-center">{% trans "No sales data available" %}</p>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

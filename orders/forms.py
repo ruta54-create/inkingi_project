@@ -114,6 +114,17 @@ class CheckoutForm(forms.Form):
         
         return phone
 
+    # GPS coordinates for delivery
+    delivery_latitude = forms.DecimalField(
+        required=False,
+        widget=forms.HiddenInput(attrs={'id': 'delivery_latitude'})
+    )
+
+    delivery_longitude = forms.DecimalField(
+        required=False,
+        widget=forms.HiddenInput(attrs={'id': 'delivery_longitude'})
+    )
+
     def get_delivery_cost(self):
         """Calculate delivery cost based on selected option"""
         delivery_option = self.cleaned_data.get('delivery_option', 'standard')
@@ -123,3 +134,113 @@ class CheckoutForm(forms.Form):
             'pickup': 0,
         }
         return delivery_costs.get(delivery_option, 0)
+
+
+class PaymentProofForm(forms.Form):
+    """Form for uploading payment proof"""
+    payment_proof = forms.ImageField(
+        label='Payment Proof',
+        help_text='Upload a screenshot of your payment confirmation (MTN, Airtel, or Bank transfer)',
+        widget=forms.FileInput(attrs={
+            'class': 'form-control',
+            'accept': 'image/*'
+        })
+    )
+
+    payment_reference = forms.CharField(
+        max_length=100,
+        required=False,
+        label='Payment Reference/Transaction ID',
+        widget=forms.TextInput(attrs={
+            'class': 'form-control',
+            'placeholder': 'Enter transaction ID or reference number'
+        })
+    )
+
+
+class VendorConfirmationForm(forms.Form):
+    """Form for vendor to confirm or reject an order"""
+    ACTION_CHOICES = [
+        ('confirm', 'Confirm Order'),
+        ('reject', 'Reject Order'),
+    ]
+
+    action = forms.ChoiceField(
+        choices=ACTION_CHOICES,
+        widget=forms.RadioSelect(attrs={'class': 'form-check-input'})
+    )
+
+    rejection_reason = forms.CharField(
+        max_length=500,
+        required=False,
+        widget=forms.Textarea(attrs={
+            'class': 'form-control',
+            'rows': 3,
+            'placeholder': 'Reason for rejection (required if rejecting)'
+        })
+    )
+
+    def clean(self):
+        cleaned_data = super().clean()
+        action = cleaned_data.get('action')
+        rejection_reason = cleaned_data.get('rejection_reason')
+
+        if action == 'reject' and not rejection_reason:
+            raise forms.ValidationError('Please provide a reason for rejection.')
+
+        return cleaned_data
+
+
+class DeliveryTrackingForm(forms.Form):
+    """Form for updating delivery tracking"""
+    STATUS_CHOICES = [
+        ('pending', 'Pending Pickup'),
+        ('picked_up', 'Picked Up'),
+        ('in_transit', 'In Transit'),
+        ('out_for_delivery', 'Out for Delivery'),
+        ('delivered', 'Delivered'),
+        ('failed', 'Delivery Failed'),
+    ]
+
+    status = forms.ChoiceField(
+        choices=STATUS_CHOICES,
+        widget=forms.Select(attrs={'class': 'form-select'})
+    )
+
+    driver_name = forms.CharField(
+        max_length=100,
+        required=False,
+        widget=forms.TextInput(attrs={'class': 'form-control'})
+    )
+
+    driver_phone = forms.CharField(
+        max_length=20,
+        required=False,
+        widget=forms.TextInput(attrs={'class': 'form-control'})
+    )
+
+    vehicle_number = forms.CharField(
+        max_length=20,
+        required=False,
+        widget=forms.TextInput(attrs={'class': 'form-control'})
+    )
+
+    current_latitude = forms.DecimalField(
+        max_digits=9,
+        decimal_places=6,
+        required=False,
+        widget=forms.NumberInput(attrs={'class': 'form-control', 'step': '0.000001'})
+    )
+
+    current_longitude = forms.DecimalField(
+        max_digits=9,
+        decimal_places=6,
+        required=False,
+        widget=forms.NumberInput(attrs={'class': 'form-control', 'step': '0.000001'})
+    )
+
+    notes = forms.CharField(
+        max_length=500,
+        required=False,
+        widget=forms.Textarea(attrs={'class': 'form-control', 'rows': 2})
+    )

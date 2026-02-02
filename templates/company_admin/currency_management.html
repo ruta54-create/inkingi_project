@@ -1,0 +1,119 @@
+{% extends 'base.html' %}
+{% load i18n %}
+
+{% block title %}{% trans "Currency Management" %} - Admin{% endblock %}
+
+{% block header %}
+<div class="d-flex justify-content-between align-items-center">
+    <div>
+        <h1 class="fw-bold"><i class="bi bi-currency-exchange me-2"></i>{% trans "Currency Management" %}</h1>
+        <p class="text-muted mb-0">{% trans "Manage currencies and exchange rates" %}</p>
+    </div>
+    <a href="{% url 'company_admin:dashboard' %}" class="btn btn-outline-secondary">
+        <i class="bi bi-arrow-left me-1"></i>{% trans "Back to Dashboard" %}
+    </a>
+</div>
+{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-lg-8">
+        <!-- Existing Currencies -->
+        <div class="card shadow-sm mb-4">
+            <div class="card-header">
+                <h5 class="mb-0">{% trans "Exchange Rates" %}</h5>
+            </div>
+            <div class="card-body">
+                <p class="text-muted mb-3">{% trans "Base currency: RWF (Rwandan Franc) = 1.0" %}</p>
+                <div class="table-responsive">
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>{% trans "Code" %}</th>
+                                <th>{% trans "Name" %}</th>
+                                <th>{% trans "Symbol" %}</th>
+                                <th>{% trans "Exchange Rate" %}</th>
+                                <th>{% trans "Active" %}</th>
+                                <th>{% trans "Actions" %}</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for currency in currencies %}
+                            <tr>
+                                <form method="post">
+                                    {% csrf_token %}
+                                    <input type="hidden" name="action" value="update">
+                                    <input type="hidden" name="code" value="{{ currency.code }}">
+                                    <td><strong>{{ currency.code }}</strong></td>
+                                    <td>{{ currency.name }}</td>
+                                    <td>{{ currency.symbol }}</td>
+                                    <td>
+                                        <input type="number" name="exchange_rate" class="form-control form-control-sm"
+                                               value="{{ currency.exchange_rate }}" step="0.000001" style="width: 120px;">
+                                    </td>
+                                    <td>
+                                        <div class="form-check">
+                                            <input type="checkbox" name="is_active" class="form-check-input" {% if currency.is_active %}checked{% endif %}>
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <button type="submit" class="btn btn-sm btn-primary">
+                                            <i class="bi bi-save"></i>
+                                        </button>
+                                    </td>
+                                </form>
+                            </tr>
+                            {% empty %}
+                            <tr>
+                                <td colspan="6" class="text-center text-muted">{% trans "No currencies configured" %}</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-lg-4">
+        <!-- Add New Currency -->
+        <div class="card shadow-sm">
+            <div class="card-header bg-success text-white">
+                <h5 class="mb-0"><i class="bi bi-plus-circle me-2"></i>{% trans "Add Currency" %}</h5>
+            </div>
+            <div class="card-body">
+                <form method="post">
+                    {% csrf_token %}
+                    <input type="hidden" name="action" value="add">
+
+                    <div class="mb-3">
+                        <label class="form-label">{% trans "Currency Code" %}</label>
+                        <input type="text" name="new_code" class="form-control" maxlength="3" placeholder="USD" required>
+                        <div class="form-text">{% trans "3-letter ISO code" %}</div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">{% trans "Name" %}</label>
+                        <input type="text" name="new_name" class="form-control" placeholder="US Dollar" required>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">{% trans "Symbol" %}</label>
+                        <input type="text" name="new_symbol" class="form-control" maxlength="10" placeholder="$">
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">{% trans "Exchange Rate" %}</label>
+                        <input type="number" name="new_rate" class="form-control" step="0.000001" value="1" required>
+                        <div class="form-text">{% trans "Rate relative to RWF" %}</div>
+                    </div>
+
+                    <button type="submit" class="btn btn-success w-100">
+                        <i class="bi bi-plus me-1"></i>{% trans "Add Currency" %}
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

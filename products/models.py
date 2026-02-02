@@ -1,6 +1,7 @@
 from django.db import models
 from django.conf import settings
 from django.core.validators import MinValueValidator
+from django.utils.translation import gettext_lazy as _
 
 
 
@@ -8,8 +9,8 @@ class Product(models.Model):
     STATUS_ACTIVE = 'active'
     STATUS_INACTIVE = 'inactive'
     STATUS_CHOICES = [
-        (STATUS_ACTIVE, 'Active'),
-        (STATUS_INACTIVE, 'Inactive'),
+        (STATUS_ACTIVE, _('Active')),
+        (STATUS_INACTIVE, _('Inactive')),
     ]
 
     vendor = models.ForeignKey(
@@ -77,15 +78,15 @@ class Product(models.Model):
     CATEGORY_OTHER = 'other'
 
     CATEGORY_CHOICES = [
-        (CATEGORY_FURNITURE, 'Furniture'),
-        (CATEGORY_HOME_OFFICE, 'Home & Office'),
-        (CATEGORY_OUTDOOR_GARDEN, 'Outdoor & Garden'),
-        (CATEGORY_DOORS_CONSTRUCTION, 'Doors & Construction'),
-        (CATEGORY_HANDCRAFTED, 'Handcrafted Products'),
-        (CATEGORY_CUSTOM_MADE, 'Custom Made'),
-        (CATEGORY_RAW_MATERIALS, 'Raw Materials'),
-        (CATEGORY_KIDS_SCHOOL, 'Kids & School'),
-        (CATEGORY_OTHER, 'Other'),
+        (CATEGORY_FURNITURE, _('Furniture')),
+        (CATEGORY_HOME_OFFICE, _('Home & Office')),
+        (CATEGORY_OUTDOOR_GARDEN, _('Outdoor & Garden')),
+        (CATEGORY_DOORS_CONSTRUCTION, _('Doors & Construction')),
+        (CATEGORY_HANDCRAFTED, _('Handcrafted Products')),
+        (CATEGORY_CUSTOM_MADE, _('Custom Made')),
+        (CATEGORY_RAW_MATERIALS, _('Raw Materials')),
+        (CATEGORY_KIDS_SCHOOL, _('Kids & School')),
+        (CATEGORY_OTHER, _('Other')),
     ]
 
     category = models.CharField(

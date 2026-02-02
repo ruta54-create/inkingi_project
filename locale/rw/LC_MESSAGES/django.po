@@ -1,0 +1,428 @@
+# Kinyarwanda translations for Inkingi Woods Ltd.
+# Copyright (C) 2024 Inkingi Woods Ltd
+# This file is distributed under the same license as the Inkingi Woods package.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: Inkingi Woods 1.0\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2024-01-01 00:00+0000\n"
+"PO-Revision-Date: 2024-01-01 00:00+0000\n"
+"Last-Translator: Inkingi Woods Team\n"
+"Language-Team: Kinyarwanda\n"
+"Language: rw\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+
+# Navigation
+msgid "Home"
+msgstr "Ahabanza"
+
+msgid "Products"
+msgstr "Ibicuruzwa"
+
+msgid "All Products"
+msgstr "Ibicuruzwa Byose"
+
+msgid "Furniture"
+msgstr "Ibikoresho byo mu Nzu"
+
+msgid "Home & Office"
+msgstr "Inzu & Ibiro"
+
+msgid "Outdoor & Garden"
+msgstr "Hanze & Ubusitani"
+
+msgid "Doors & Construction"
+msgstr "Inzugi & Ubwubatsi"
+
+msgid "Handcrafted Products"
+msgstr "Ibicuruzwa by'Amaboko"
+
+msgid "Custom Made"
+msgstr "Bikorwa ku Giti Cyawe"
+
+msgid "Raw Materials"
+msgstr "Ibikoresho Bidahindutse"
+
+msgid "Kids & School"
+msgstr "Abana & Ishuri"
+
+msgid "Cart"
+msgstr "Agaseke"
+
+msgid "Search"
+msgstr "Shakisha"
+
+msgid "Dashboard"
+msgstr "Ikibaho"
+
+msgid "My Products"
+msgstr "Ibicuruzwa Byanjye"
+
+msgid "Orders"
+msgstr "Ibisabwa"
+
+msgid "My Orders"
+msgstr "Ibisabwa Byanjye"
+
+msgid "Profile"
+msgstr "Umwirondoro"
+
+msgid "Change password"
+msgstr "Hindura ijambo ry'ibanga"
+
+msgid "Logout"
+msgstr "Sohoka"
+
+msgid "Login"
+msgstr "Injira"
+
+msgid "About"
+msgstr "Ibyerekeye"
+
+msgid "Contact"
+msgstr "Twandikire"
+
+msgid "FAQ"
+msgstr "Ibibazo Bikunze Kubazwa"
+
+msgid "Add Product"
+msgstr "Ongeraho Igicuruzwa"
+
+msgid "Browse"
+msgstr "Reba"
+
+msgid "Sell on Inkingi Woods Ltd"
+msgstr "Gurisha kuri Inkingi Woods Ltd"
+
+msgid "Admin"
+msgstr "Ubuyobozi"
+
+# Footer
+msgid "Rwanda's premier marketplace for sustainable wood products, connecting artisans with global customers while preserving traditional craftsmanship."
+msgstr "Isoko rikomeye ryo mu Rwanda ry'ibicuruzwa by'ibiti birambye, rihuza abahanga n'abakiriya ku isi hose mu kubungabunga ubuhanga bw'abasanzi."
+
+msgid "Headquarters"
+msgstr "Icyicaro Gikuru"
+
+msgid "Quick Links"
+msgstr "Aho Ugera Vuba"
+
+msgid "About Us"
+msgstr "Ibyerekeye Twebwe"
+
+msgid "Become a Seller"
+msgstr "Ba Umucuruzi"
+
+msgid "Your Cart"
+msgstr "Agaseke Kawe"
+
+msgid "Contact Us"
+msgstr "Twandikire"
+
+msgid "Phone"
+msgstr "Telefone"
+
+msgid "Email"
+msgstr "Imeri"
+
+msgid "Chat with us"
+msgstr "Ganira Natwe"
+
+msgid "Connect With Us"
+msgstr "Duhurire"
+
+msgid "Business Hours"
+msgstr "Amasaha y'Akazi"
+
+msgid "Monday - Friday"
+msgstr "Kuwa Mbere - Kuwa Gatanu"
+
+msgid "Saturday"
+msgstr "Kuwa Gatandatu"
+
+msgid "Sunday"
+msgstr "Ku Cyumweru"
+
+msgid "Closed"
+msgstr "Birafunze"
+
+msgid "Get In Touch"
+msgstr "Twandikire"
+
+msgid "All rights reserved."
+msgstr "Uburenganzira bwose bwabikiwe."
+
+msgid "Privacy Policy"
+msgstr "Politiki y'Ibanga"
+
+msgid "Terms of Service"
+msgstr "Amategeko y'Imikorere"
+
+msgid "Refund Policy"
+msgstr "Politiki yo Gusubiza Amafaranga"
+
+# Password Reset
+msgid "Reset your password"
+msgstr "Hindura ijambo ry'ibanga ryawe"
+
+msgid "Email address"
+msgstr "Aderesi ya imeri"
+
+msgid "Send reset link"
+msgstr "Ohereza link yo guhindura"
+
+msgid "If your email exists in our system, you will receive a password reset link shortly."
+msgstr "Niba imeri yawe iri muri sisitemu yacu, uzakira link yo guhindura ijambo ry'ibanga vuba."
+
+msgid "Password reset requested"
+msgstr "Gusaba guhindura ijambo ry'ibanga"
+
+msgid "If your email exists, a reset link was sent."
+msgstr "Niba imeri yawe ibaho, link yo guhindura yoherejwe."
+
+msgid "Unable to send reset link right now. Please try again later."
+msgstr "Ntibishoboka kohereza link yo guhindura ubu. Ongera ugerageze nyuma."
+
+msgid "Success"
+msgstr "Byagenze Neza"
+
+# Admin Dashboard
+msgid "Admin Dashboard"
+msgstr "Ikibaho cy'Ubuyobozi"
+
+msgid "Welcome to the Inkingi Woods administration panel"
+msgstr "Murakaza neza mu buyobozi bwa Inkingi Woods"
+
+msgid "Site Settings"
+msgstr "Igenamiterere rya Site"
+
+msgid "Total Revenue"
+msgstr "Amafaranga Yose"
+
+msgid "Today"
+msgstr "Uyu Munsi"
+
+msgid "Total Orders"
+msgstr "Ibisabwa Byose"
+
+msgid "Pending"
+msgstr "Bitegereje"
+
+msgid "Processing"
+msgstr "Birimo Gukorwa"
+
+msgid "Vendors"
+msgstr "Abacuruzi"
+
+msgid "Manage Vendors"
+msgstr "Gucunga Abacuruzi"
+
+msgid "Active"
+msgstr "Bikora"
+
+msgid "Quick Actions"
+msgstr "Ibikorwa Byihuse"
+
+msgid "Deliveries"
+msgstr "Ibigenewe Gutanga"
+
+msgid "Users"
+msgstr "Abakoresha"
+
+msgid "Currency"
+msgstr "Ifaranga"
+
+msgid "Settings"
+msgstr "Igenamiterere"
+
+msgid "Awaiting Confirmation"
+msgstr "Bitegereje Kwemezwa"
+
+msgid "Order"
+msgstr "Icyasabwe"
+
+msgid "Customer"
+msgstr "Umukiriya"
+
+msgid "Amount"
+msgstr "Ingano"
+
+msgid "Action"
+msgstr "Igikorwa"
+
+msgid "View"
+msgstr "Reba"
+
+msgid "No orders awaiting confirmation"
+msgstr "Nta bisabwa bitegereje kwemezwa"
+
+msgid "Recent Orders"
+msgstr "Ibisabwa bya Vuba"
+
+# Vendor Management
+msgid "Vendor Management"
+msgstr "Gucunga Abacuruzi"
+
+msgid "View vendor performance and manage vendors"
+msgstr "Reba imikorere y'abacuruzi no kubacunga"
+
+msgid "Back to Dashboard"
+msgstr "Subira ku Kibaho"
+
+msgid "Vendor"
+msgstr "Umucuruzi"
+
+msgid "Total Sales"
+msgstr "Ibicuruzwa Byose"
+
+msgid "Joined"
+msgstr "Yinjiye"
+
+msgid "Actions"
+msgstr "Ibikorwa"
+
+msgid "No vendors found"
+msgstr "Nta bacuruzi babonetse"
+
+# Order Status
+msgid "Pending Payment"
+msgstr "Kwishyura Bitegereje"
+
+msgid "Awaiting Vendor Confirmation"
+msgstr "Bitegereje Kwemezwa n'Umucuruzi"
+
+msgid "Shipped"
+msgstr "Byoherejwe"
+
+msgid "Delivered"
+msgstr "Byagejejwe"
+
+msgid "Completed"
+msgstr "Byarangiye"
+
+msgid "Cancelled"
+msgstr "Byahagaritswe"
+
+# Payment
+msgid "Upload Payment Proof"
+msgstr "Shyiraho Icyemezo cy'Ubwishyu"
+
+msgid "Payment Method"
+msgstr "Uburyo bwo Kwishyura"
+
+msgid "Bank Transfer"
+msgstr "Kohereza kuri Banki"
+
+msgid "Mobile Money"
+msgstr "Amafaranga kuri Telefone"
+
+msgid "MTN Mobile Money"
+msgstr "MTN Mobile Money"
+
+msgid "Airtel Money"
+msgstr "Airtel Money"
+
+msgid "Tigo Cash"
+msgstr "Tigo Cash"
+
+msgid "Credit/Debit Card"
+msgstr "Ikarita ya Banki"
+
+msgid "Cash on Delivery"
+msgstr "Kwishyura Igihe Uhawe"
+
+msgid "Other"
+msgstr "Ibindi"
+
+msgid "Inactive"
+msgstr "Ntibikora"
+
+# Delivery
+msgid "Standard Delivery (3-5 days)"
+msgstr "Kugeza Bisanzwe (Iminsi 3-5)"
+
+msgid "Express Delivery (1-2 days)"
+msgstr "Kugeza Byihuse (Iminsi 1-2)"
+
+msgid "Store Pickup"
+msgstr "Kuzifatira mu Iduka"
+
+msgid "Track Delivery"
+msgstr "Kurikirana Kugeza"
+
+msgid "Update Tracking"
+msgstr "Kuvugurura Aho Bigeze"
+
+# General
+msgid "Inkingi Woods Ltd"
+msgstr "Inkingi Woods Ltd"
+
+msgid "English"
+msgstr "Icyongereza"
+
+msgid "Français"
+msgstr "Igifaransa"
+
+msgid "Kinyarwanda"
+msgstr "Ikinyarwanda"
+
+msgid "Submit"
+msgstr "Ohereza"
+
+msgid "Cancel"
+msgstr "Hagarika"
+
+msgid "Save"
+msgstr "Bika"
+
+msgid "Delete"
+msgstr "Siba"
+
+msgid "Edit"
+msgstr "Hindura"
+
+msgid "Confirm"
+msgstr "Emeza"
+
+msgid "Reject"
+msgstr "Hakanisha"
+
+msgid "Accept"
+msgstr "Emera"
+
+msgid "Status"
+msgstr "Uko Bihagaze"
+
+msgid "Date"
+msgstr "Itariki"
+
+msgid "Price"
+msgstr "Igiciro"
+
+msgid "Quantity"
+msgstr "Ingano"
+
+msgid "Total"
+msgstr "Igiteranyo"
+
+msgid "Description"
+msgstr "Ibisobanuro"
+
+msgid "Name"
+msgstr "Izina"
+
+msgid "Stock"
+msgstr "Ibiri mu Bubiko"
+
+msgid "Category"
+msgstr "Icyiciro"
+
+msgid "Unit"
+msgstr "Igipimo"
+
+msgid "Image"
+msgstr "Ishusho"

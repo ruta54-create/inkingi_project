@@ -1,0 +1,133 @@
+{% extends 'base.html' %}
+{% load i18n %}
+
+{% block title %}{% trans "Update Delivery Tracking" %} - Order #{{ order.id }}{% endblock %}
+
+{% block header %}
+<h1 class="fw-bold"><i class="bi bi-geo-alt me-2"></i>{% trans "Update Delivery Tracking" %}</h1>
+<p class="text-muted">{% trans "Order" %} #{{ order.id }}</p>
+{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-lg-8">
+        <div class="card shadow-sm">
+            <div class="card-header bg-primary text-white">
+                <h5 class="mb-0"><i class="bi bi-pencil me-2"></i>{% trans "Update Tracking Information" %}</h5>
+            </div>
+            <div class="card-body">
+                <form method="post">
+                    {% csrf_token %}
+
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">{% trans "Status" %}</label>
+                            <select name="status" class="form-select">
+                                <option value="pending" {% if form.initial.status == 'pending' %}selected{% endif %}>{% trans "Pending Pickup" %}</option>
+                                <option value="picked_up" {% if form.initial.status == 'picked_up' %}selected{% endif %}>{% trans "Picked Up" %}</option>
+                                <option value="in_transit" {% if form.initial.status == 'in_transit' %}selected{% endif %}>{% trans "In Transit" %}</option>
+                                <option value="out_for_delivery" {% if form.initial.status == 'out_for_delivery' %}selected{% endif %}>{% trans "Out for Delivery" %}</option>
+                                <option value="delivered" {% if form.initial.status == 'delivered' %}selected{% endif %}>{% trans "Delivered" %}</option>
+                                <option value="failed" {% if form.initial.status == 'failed' %}selected{% endif %}>{% trans "Delivery Failed" %}</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <h6 class="mt-4 mb-3">{% trans "Driver Information" %}</h6>
+                    <div class="row">
+                        <div class="col-md-4 mb-3">
+                            <label class="form-label">{% trans "Driver Name" %}</label>
+                            <input type="text" name="driver_name" class="form-control" value="{{ form.initial.driver_name }}">
+                        </div>
+                        <div class="col-md-4 mb-3">
+                            <label class="form-label">{% trans "Driver Phone" %}</label>
+                            <input type="text" name="driver_phone" class="form-control" value="{{ form.initial.driver_phone }}">
+                        </div>
+                        <div class="col-md-4 mb-3">
+                            <label class="form-label">{% trans "Vehicle Number" %}</label>
+                            <input type="text" name="vehicle_number" class="form-control" value="{{ form.initial.vehicle_number }}">
+                        </div>
+                    </div>
+
+                    <h6 class="mt-4 mb-3">{% trans "GPS Location" %}</h6>
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">{% trans "Current Latitude" %}</label>
+                            <input type="number" name="current_latitude" class="form-control" step="0.000001"
+                                   value="{{ form.initial.current_latitude }}" id="current_latitude">
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">{% trans "Current Longitude" %}</label>
+                            <input type="number" name="current_longitude" class="form-control" step="0.000001"
+                                   value="{{ form.initial.current_longitude }}" id="current_longitude">
+                        </div>
+                    </div>
+
+                    <button type="button" class="btn btn-outline-info mb-3" onclick="getLocation()">
+                        <i class="bi bi-geo-alt me-1"></i>{% trans "Use Current Location" %}
+                    </button>
+
+                    <div class="mb-3">
+                        <label class="form-label">{% trans "Notes" %}</label>
+                        <textarea name="notes" class="form-control" rows="3">{{ form.initial.notes }}</textarea>
+                    </div>
+
+                    <div class="d-grid gap-2">
+                        <button type="submit" class="btn btn-primary btn-lg">
+                            <i class="bi bi-save me-2"></i>{% trans "Update Tracking" %}
+                        </button>
+                        <a href="{% url 'orders:track_delivery' order.id %}" class="btn btn-outline-secondary">
+                            {% trans "Cancel" %}
+                        </a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-lg-4">
+        <!-- Order Info -->
+        <div class="card shadow-sm mb-3">
+            <div class="card-header">
+                <h5 class="mb-0">{% trans "Order Information" %}</h5>
+            </div>
+            <div class="card-body">
+                <p><strong>{% trans "Customer" %}:</strong> {{ order.customer.username }}</p>
+                <p><strong>{% trans "Phone" %}:</strong> {{ order.phone }}</p>
+                <p><strong>{% trans "Address" %}:</strong><br>{{ order.delivery_address }}</p>
+            </div>
+        </div>
+
+        <!-- Current Status -->
+        <div class="card shadow-sm">
+            <div class="card-header">
+                <h5 class="mb-0">{% trans "Current Status" %}</h5>
+            </div>
+            <div class="card-body">
+                <p><strong>{% trans "Status" %}:</strong>
+                    <span class="badge bg-info">{{ tracking.get_status_display }}</span>
+                </p>
+                <p><strong>{% trans "Last Updated" %}:</strong> {{ tracking.updated_at|date:"M d, Y H:i" }}</p>
+                {% if tracking.driver_name %}
+                <p><strong>{% trans "Driver" %}:</strong> {{ tracking.driver_name }}</p>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+function getLocation() {
+    if (navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition(function(position) {
+            document.getElementById('current_latitude').value = position.coords.latitude.toFixed(6);
+            document.getElementById('current_longitude').value = position.coords.longitude.toFixed(6);
+        }, function(error) {
+            alert('{% trans "Unable to get location:" %} ' + error.message);
+        });
+    } else {
+        alert('{% trans "Geolocation is not supported by this browser." %}');
+    }
+}
+</script>
+{% endblock %}

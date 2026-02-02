@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <style>
+        body { font-family: Arial, sans-serif; line-height: 1.6; color: #333; }
+        .container { max-width: 600px; margin: 0 auto; padding: 20px; }
+        .header { background: #ff7a18; color: white; padding: 20px; text-align: center; }
+        .content { padding: 20px; background: #f9f9f9; }
+        .footer { text-align: center; padding: 20px; color: #666; font-size: 12px; }
+        .success { color: #28a745; }
+        .btn { display: inline-block; padding: 10px 20px; background: #ff7a18; color: white; text-decoration: none; border-radius: 5px; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>Inkingi Woods Ltd</h1>
+        </div>
+        <div class="content">
+            <h2 class="success">Payment Confirmed!</h2>
+            <p>Dear {{ user.username }},</p>
+            <p>Great news! Your payment for <strong>Order #{{ order.id }}</strong> has been verified and confirmed by the vendor.</p>
+
+            <h3>Order Details:</h3>
+            <ul>
+                <li><strong>Order ID:</strong> #{{ order.id }}</li>
+                <li><strong>Total:</strong> {{ order.total }} RWF</li>
+                <li><strong>Payment Method:</strong> {{ order.get_payment_method_display }}</li>
+                <li><strong>Status:</strong> Processing</li>
+            </ul>
+
+            <p>Your order is now being processed and will be shipped soon. You can track your delivery once it's on its way.</p>
+
+            <p style="text-align: center;">
+                <a href="#" class="btn">Track Your Order</a>
+            </p>
+
+            <p>Thank you for shopping with Inkingi Woods!</p>
+        </div>
+        <div class="footer">
+            <p>&copy; {{ now.year }} Inkingi Woods Ltd. All rights reserved.</p>
+            <p>KG 7 Avenue, Kigali, Rwanda | +250 788 123 456</p>
+        </div>
+    </div>
+</body>
+</html>

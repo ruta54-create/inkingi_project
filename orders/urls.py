@@ -18,7 +18,14 @@ urlpatterns = [
     path('cart/remove/<int:product_id>/', views.remove_from_cart, name='remove_from_cart'),
     path('cart/checkout/', views.checkout_cart, name='checkout_cart'),
 
-    # (Session cart removed — using simple single-product checkout flow)
+    # Payment proof and vendor confirmation
+    path('upload-payment-proof/<int:order_id>/', views.upload_payment_proof, name='upload_payment_proof'),
+    path('vendor-confirm/<int:order_id>/', views.vendor_confirm_order, name='vendor_confirm_order'),
+
+    # Delivery tracking
+    path('track/<int:order_id>/', views.track_delivery, name='track_delivery'),
+    path('track/<int:order_id>/update/', views.update_delivery_tracking, name='update_tracking'),
+    path('api/tracking/<int:order_id>/', views.get_tracking_location, name='get_tracking_location'),
 
     path('mock-pay/<int:product_id>/', views.mock_pay, name='mock_pay'),
     path('stripe/checkout/<int:product_id>/', views.stripe_checkout, name='stripe_checkout'),

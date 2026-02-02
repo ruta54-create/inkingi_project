@@ -2,6 +2,7 @@
 from pathlib import Path
 from dotenv import load_dotenv
 import os
+from django.utils.translation import gettext_lazy as _
 
 load_dotenv()
 
@@ -29,7 +30,8 @@ INSTALLED_APPS = [
     'company_admin',
     'orders',
     'pages',
-    'crispy_forms', 
+    'core',  # New app for site settings, currency, etc.
+    'crispy_forms',
     'crispy_bootstrap5',
 ]
 
@@ -57,7 +59,7 @@ ROOT_URLCONF = 'SokoHub.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [BASE_DIR /'templates'],
+        'DIRS': [BASE_DIR / 'templates'],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -65,6 +67,9 @@ TEMPLATES = [
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
                 'django.template.context_processors.i18n',
+                'core.context_processors.site_settings',
+                'core.context_processors.currency_context',
+                'core.context_processors.language_context',
             ],
         },
     },
@@ -117,13 +122,43 @@ AUTH_USER_MODEL = 'accounts.CustomUser'
 # Internationalization
 # https://docs.djangoproject.com/en/5.2/topics/i18n/
 
-LANGUAGE_CODE = 'en-us'
+LANGUAGE_CODE = 'en'
 
-TIME_ZONE = 'Africa/Cairo'
+TIME_ZONE = 'Africa/Kigali'
 
 USE_I18N = True
-
+USE_L10N = True
 USE_TZ = True
+
+# Supported languages
+LANGUAGES = [
+    ('en', _('English')),
+    ('fr', _('Français')),
+    ('rw', _('Kinyarwanda')),
+]
+
+# Language cookie settings
+LANGUAGE_COOKIE_NAME = 'inkingi_language'
+LANGUAGE_COOKIE_AGE = 365 * 24 * 60 * 60  # 1 year
+
+# Locale paths for translation files
+LOCALE_PATHS = [
+    BASE_DIR / 'locale',
+]
+
+# Currency settings
+SUPPORTED_CURRENCIES = {
+    'RWF': {'name': 'Rwandan Franc', 'symbol': 'RWF', 'rate': 1.0},
+    'USD': {'name': 'US Dollar', 'symbol': '$', 'rate': 0.00077},
+    'EUR': {'name': 'Euro', 'symbol': '€', 'rate': 0.00071},
+    'GBP': {'name': 'British Pound', 'symbol': '£', 'rate': 0.00061},
+    'JPY': {'name': 'Japanese Yen', 'symbol': '¥', 'rate': 0.115},
+    'KES': {'name': 'Kenyan Shilling', 'symbol': 'KES', 'rate': 0.125},
+    'UGX': {'name': 'Ugandan Shilling', 'symbol': 'UGX', 'rate': 2.88},
+    'TZS': {'name': 'Tanzanian Shilling', 'symbol': 'TZS', 'rate': 1.97},
+}
+DEFAULT_CURRENCY = 'RWF'
+CURRENCY_COOKIE_NAME = 'inkingi_currency'
 
 
 # Static files (CSS, JavaScript, Images)

@@ -1,0 +1,428 @@
+# French translations for Inkingi Woods Ltd.
+# Copyright (C) 2024 Inkingi Woods Ltd
+# This file is distributed under the same license as the Inkingi Woods package.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: Inkingi Woods 1.0\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2024-01-01 00:00+0000\n"
+"PO-Revision-Date: 2024-01-01 00:00+0000\n"
+"Last-Translator: Inkingi Woods Team\n"
+"Language-Team: French\n"
+"Language: fr\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n > 1);\n"
+
+# Navigation
+msgid "Home"
+msgstr "Accueil"
+
+msgid "Products"
+msgstr "Produits"
+
+msgid "All Products"
+msgstr "Tous les Produits"
+
+msgid "Furniture"
+msgstr "Meubles"
+
+msgid "Home & Office"
+msgstr "Maison & Bureau"
+
+msgid "Outdoor & Garden"
+msgstr "Extérieur & Jardin"
+
+msgid "Doors & Construction"
+msgstr "Portes & Construction"
+
+msgid "Handcrafted Products"
+msgstr "Produits Artisanaux"
+
+msgid "Custom Made"
+msgstr "Sur Mesure"
+
+msgid "Raw Materials"
+msgstr "Matières Premières"
+
+msgid "Kids & School"
+msgstr "Enfants & École"
+
+msgid "Cart"
+msgstr "Panier"
+
+msgid "Search"
+msgstr "Rechercher"
+
+msgid "Dashboard"
+msgstr "Tableau de Bord"
+
+msgid "My Products"
+msgstr "Mes Produits"
+
+msgid "Orders"
+msgstr "Commandes"
+
+msgid "My Orders"
+msgstr "Mes Commandes"
+
+msgid "Profile"
+msgstr "Profil"
+
+msgid "Change password"
+msgstr "Changer le mot de passe"
+
+msgid "Logout"
+msgstr "Déconnexion"
+
+msgid "Login"
+msgstr "Connexion"
+
+msgid "About"
+msgstr "À Propos"
+
+msgid "Contact"
+msgstr "Contact"
+
+msgid "FAQ"
+msgstr "FAQ"
+
+msgid "Add Product"
+msgstr "Ajouter un Produit"
+
+msgid "Browse"
+msgstr "Parcourir"
+
+msgid "Sell on Inkingi Woods Ltd"
+msgstr "Vendre sur Inkingi Woods Ltd"
+
+msgid "Admin"
+msgstr "Administration"
+
+# Footer
+msgid "Rwanda's premier marketplace for sustainable wood products, connecting artisans with global customers while preserving traditional craftsmanship."
+msgstr "Le premier marché rwandais de produits en bois durables, connectant les artisans aux clients du monde entier tout en préservant l'artisanat traditionnel."
+
+msgid "Headquarters"
+msgstr "Siège Social"
+
+msgid "Quick Links"
+msgstr "Liens Rapides"
+
+msgid "About Us"
+msgstr "À Propos de Nous"
+
+msgid "Become a Seller"
+msgstr "Devenir Vendeur"
+
+msgid "Your Cart"
+msgstr "Votre Panier"
+
+msgid "Contact Us"
+msgstr "Contactez-Nous"
+
+msgid "Phone"
+msgstr "Téléphone"
+
+msgid "Email"
+msgstr "Email"
+
+msgid "Chat with us"
+msgstr "Discuter avec nous"
+
+msgid "Connect With Us"
+msgstr "Connectez-vous avec Nous"
+
+msgid "Business Hours"
+msgstr "Heures d'Ouverture"
+
+msgid "Monday - Friday"
+msgstr "Lundi - Vendredi"
+
+msgid "Saturday"
+msgstr "Samedi"
+
+msgid "Sunday"
+msgstr "Dimanche"
+
+msgid "Closed"
+msgstr "Fermé"
+
+msgid "Get In Touch"
+msgstr "Contactez-Nous"
+
+msgid "All rights reserved."
+msgstr "Tous droits réservés."
+
+msgid "Privacy Policy"
+msgstr "Politique de Confidentialité"
+
+msgid "Terms of Service"
+msgstr "Conditions d'Utilisation"
+
+msgid "Refund Policy"
+msgstr "Politique de Remboursement"
+
+# Password Reset
+msgid "Reset your password"
+msgstr "Réinitialiser votre mot de passe"
+
+msgid "Email address"
+msgstr "Adresse email"
+
+msgid "Send reset link"
+msgstr "Envoyer le lien de réinitialisation"
+
+msgid "If your email exists in our system, you will receive a password reset link shortly."
+msgstr "Si votre email existe dans notre système, vous recevrez bientôt un lien de réinitialisation."
+
+msgid "Password reset requested"
+msgstr "Réinitialisation du mot de passe demandée"
+
+msgid "If your email exists, a reset link was sent."
+msgstr "Si votre email existe, un lien de réinitialisation a été envoyé."
+
+msgid "Unable to send reset link right now. Please try again later."
+msgstr "Impossible d'envoyer le lien de réinitialisation maintenant. Veuillez réessayer plus tard."
+
+msgid "Success"
+msgstr "Succès"
+
+# Admin Dashboard
+msgid "Admin Dashboard"
+msgstr "Tableau de Bord Admin"
+
+msgid "Welcome to the Inkingi Woods administration panel"
+msgstr "Bienvenue dans le panneau d'administration d'Inkingi Woods"
+
+msgid "Site Settings"
+msgstr "Paramètres du Site"
+
+msgid "Total Revenue"
+msgstr "Revenu Total"
+
+msgid "Today"
+msgstr "Aujourd'hui"
+
+msgid "Total Orders"
+msgstr "Total des Commandes"
+
+msgid "Pending"
+msgstr "En Attente"
+
+msgid "Processing"
+msgstr "En Traitement"
+
+msgid "Vendors"
+msgstr "Vendeurs"
+
+msgid "Manage Vendors"
+msgstr "Gérer les Vendeurs"
+
+msgid "Active"
+msgstr "Actif"
+
+msgid "Quick Actions"
+msgstr "Actions Rapides"
+
+msgid "Deliveries"
+msgstr "Livraisons"
+
+msgid "Users"
+msgstr "Utilisateurs"
+
+msgid "Currency"
+msgstr "Devise"
+
+msgid "Settings"
+msgstr "Paramètres"
+
+msgid "Awaiting Confirmation"
+msgstr "En Attente de Confirmation"
+
+msgid "Order"
+msgstr "Commande"
+
+msgid "Customer"
+msgstr "Client"
+
+msgid "Amount"
+msgstr "Montant"
+
+msgid "Action"
+msgstr "Action"
+
+msgid "View"
+msgstr "Voir"
+
+msgid "No orders awaiting confirmation"
+msgstr "Aucune commande en attente de confirmation"
+
+msgid "Recent Orders"
+msgstr "Commandes Récentes"
+
+# Vendor Management
+msgid "Vendor Management"
+msgstr "Gestion des Vendeurs"
+
+msgid "View vendor performance and manage vendors"
+msgstr "Voir les performances des vendeurs et les gérer"
+
+msgid "Back to Dashboard"
+msgstr "Retour au Tableau de Bord"
+
+msgid "Vendor"
+msgstr "Vendeur"
+
+msgid "Total Sales"
+msgstr "Ventes Totales"
+
+msgid "Joined"
+msgstr "Inscrit"
+
+msgid "Actions"
+msgstr "Actions"
+
+msgid "No vendors found"
+msgstr "Aucun vendeur trouvé"
+
+# Order Status
+msgid "Pending Payment"
+msgstr "Paiement en Attente"
+
+msgid "Awaiting Vendor Confirmation"
+msgstr "En Attente de Confirmation du Vendeur"
+
+msgid "Shipped"
+msgstr "Expédié"
+
+msgid "Delivered"
+msgstr "Livré"
+
+msgid "Completed"
+msgstr "Terminé"
+
+msgid "Cancelled"
+msgstr "Annulé"
+
+# Payment
+msgid "Upload Payment Proof"
+msgstr "Télécharger la Preuve de Paiement"
+
+msgid "Payment Method"
+msgstr "Méthode de Paiement"
+
+msgid "Bank Transfer"
+msgstr "Virement Bancaire"
+
+msgid "Mobile Money"
+msgstr "Mobile Money"
+
+msgid "MTN Mobile Money"
+msgstr "MTN Mobile Money"
+
+msgid "Airtel Money"
+msgstr "Airtel Money"
+
+msgid "Tigo Cash"
+msgstr "Tigo Cash"
+
+msgid "Credit/Debit Card"
+msgstr "Carte de Crédit/Débit"
+
+msgid "Cash on Delivery"
+msgstr "Paiement à la Livraison"
+
+msgid "Other"
+msgstr "Autre"
+
+msgid "Inactive"
+msgstr "Inactif"
+
+# Delivery
+msgid "Standard Delivery (3-5 days)"
+msgstr "Livraison Standard (3-5 jours)"
+
+msgid "Express Delivery (1-2 days)"
+msgstr "Livraison Express (1-2 jours)"
+
+msgid "Store Pickup"
+msgstr "Retrait en Magasin"
+
+msgid "Track Delivery"
+msgstr "Suivre la Livraison"
+
+msgid "Update Tracking"
+msgstr "Mettre à Jour le Suivi"
+
+# General
+msgid "Inkingi Woods Ltd"
+msgstr "Inkingi Woods Ltd"
+
+msgid "English"
+msgstr "Anglais"
+
+msgid "Français"
+msgstr "Français"
+
+msgid "Kinyarwanda"
+msgstr "Kinyarwanda"
+
+msgid "Submit"
+msgstr "Soumettre"
+
+msgid "Cancel"
+msgstr "Annuler"
+
+msgid "Save"
+msgstr "Enregistrer"
+
+msgid "Delete"
+msgstr "Supprimer"
+
+msgid "Edit"
+msgstr "Modifier"
+
+msgid "Confirm"
+msgstr "Confirmer"
+
+msgid "Reject"
+msgstr "Rejeter"
+
+msgid "Accept"
+msgstr "Accepter"
+
+msgid "Status"
+msgstr "Statut"
+
+msgid "Date"
+msgstr "Date"
+
+msgid "Price"
+msgstr "Prix"
+
+msgid "Quantity"
+msgstr "Quantité"
+
+msgid "Total"
+msgstr "Total"
+
+msgid "Description"
+msgstr "Description"
+
+msgid "Name"
+msgstr "Nom"
+
+msgid "Stock"
+msgstr "Stock"
+
+msgid "Category"
+msgstr "Catégorie"
+
+msgid "Unit"
+msgstr "Unité"
+
+msgid "Image"
+msgstr "Image"

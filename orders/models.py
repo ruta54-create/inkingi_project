@@ -1,34 +1,55 @@
 from django.db import models
 from django.conf import settings
 from django.core.validators import MinValueValidator
+from django.utils.translation import gettext_lazy as _
 
 
 class Order(models.Model):
     STATUS_PENDING = 'pending'
+    STATUS_AWAITING_CONFIRMATION = 'awaiting_confirmation'
     STATUS_PROCESSING = 'processing'
     STATUS_SHIPPED = 'shipped'
     STATUS_DELIVERED = 'delivered'
     STATUS_COMPLETED = 'completed'
     STATUS_CANCELLED = 'cancelled'
-    
+
     STATUS_CHOICES = [
-        (STATUS_PENDING, 'Pending Payment'),
-        (STATUS_PROCESSING, 'Processing'),
-        (STATUS_SHIPPED, 'Shipped'),
-        (STATUS_DELIVERED, 'Delivered'),
-        (STATUS_COMPLETED, 'Completed'),
-        (STATUS_CANCELLED, 'Cancelled'),
+        (STATUS_PENDING, _('Pending Payment')),
+        (STATUS_AWAITING_CONFIRMATION, _('Awaiting Vendor Confirmation')),
+        (STATUS_PROCESSING, _('Processing')),
+        (STATUS_SHIPPED, _('Shipped')),
+        (STATUS_DELIVERED, _('Delivered')),
+        (STATUS_COMPLETED, _('Completed')),
+        (STATUS_CANCELLED, _('Cancelled')),
     ]
 
     # Basic order information
     customer = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='orders')
     total = models.DecimalField(decimal_places=2, max_digits=12, validators=[MinValueValidator(0)])
-    status = models.CharField(max_length=20, choices=STATUS_CHOICES, default=STATUS_PENDING)
-    
+    status = models.CharField(max_length=25, choices=STATUS_CHOICES, default=STATUS_PENDING)
+
     # Delivery information
     delivery_address = models.TextField()
     phone = models.CharField(max_length=20)
     delivery_notes = models.TextField(blank=True, null=True)
+
+    # GPS Location for delivery
+    delivery_latitude = models.DecimalField(max_digits=9, decimal_places=6, null=True, blank=True)
+    delivery_longitude = models.DecimalField(max_digits=9, decimal_places=6, null=True, blank=True)
+
+    # Payment proof
+    payment_proof = models.ImageField(upload_to='payment_proofs/', blank=True, null=True,
+                                       help_text='Upload screenshot/proof of payment')
+    payment_proof_uploaded_at = models.DateTimeField(null=True, blank=True)
+
+    # Vendor confirmation
+    vendor_confirmed = models.BooleanField(default=False)
+    vendor_confirmed_at = models.DateTimeField(null=True, blank=True)
+    vendor_confirmed_by = models.ForeignKey(
+        settings.AUTH_USER_MODEL, on_delete=models.SET_NULL,
+        null=True, blank=True, related_name='confirmed_orders'
+    )
+    vendor_rejection_reason = models.TextField(blank=True, null=True)
     
     # Delivery options
     DELIVERY_STANDARD = 'standard'
@@ -36,9 +57,9 @@ class Order(models.Model):
     DELIVERY_PICKUP = 'pickup'
     
     DELIVERY_CHOICES = [
-        (DELIVERY_STANDARD, 'Standard Delivery (3-5 days)'),
-        (DELIVERY_EXPRESS, 'Express Delivery (1-2 days)'),
-        (DELIVERY_PICKUP, 'Store Pickup'),
+        (DELIVERY_STANDARD, _('Standard Delivery (3-5 days)')),
+        (DELIVERY_EXPRESS, _('Express Delivery (1-2 days)')),
+        (DELIVERY_PICKUP, _('Store Pickup')),
     ]
     
     delivery_option = models.CharField(
@@ -62,12 +83,12 @@ class Order(models.Model):
     PAYMENT_CASH = 'cash'
     
     PAYMENT_CHOICES = [
-        (PAYMENT_BANK, 'Bank Transfer'),
-        (PAYMENT_MOMO, 'MTN Mobile Money'),
-        (PAYMENT_AIRTEL, 'Airtel Money'),
-        (PAYMENT_TIGO, 'Tigo Cash'),
-        (PAYMENT_CARD, 'Credit/Debit Card'),
-        (PAYMENT_CASH, 'Cash on Delivery'),
+        (PAYMENT_BANK, _('Bank Transfer')),
+        (PAYMENT_MOMO, _('MTN Mobile Money')),
+        (PAYMENT_AIRTEL, _('Airtel Money')),
+        (PAYMENT_TIGO, _('Tigo Cash')),
+        (PAYMENT_CARD, _('Credit/Debit Card')),
+        (PAYMENT_CASH, _('Cash on Delivery')),
     ]
     
     payment_method = models.CharField(

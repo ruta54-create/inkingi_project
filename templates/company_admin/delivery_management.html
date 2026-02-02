@@ -1,0 +1,95 @@
+{% extends 'base.html' %}
+{% load i18n %}
+{% load currency_tags %}
+
+{% block title %}{% trans "Delivery Management" %} - Admin{% endblock %}
+
+{% block header %}
+<div class="d-flex justify-content-between align-items-center">
+    <div>
+        <h1 class="fw-bold"><i class="bi bi-truck me-2"></i>{% trans "Delivery Management" %}</h1>
+        <p class="text-muted mb-0">{% trans "Track and manage all deliveries" %}</p>
+    </div>
+    <a href="{% url 'company_admin:dashboard' %}" class="btn btn-outline-secondary">
+        <i class="bi bi-arrow-left me-1"></i>{% trans "Back to Dashboard" %}
+    </a>
+</div>
+{% endblock %}
+
+{% block content %}
+<!-- Filter -->
+<div class="card shadow-sm mb-4">
+    <div class="card-body">
+        <form method="get" class="row g-3 align-items-end">
+            <div class="col-md-4">
+                <label class="form-label">{% trans "Status" %}</label>
+                <select name="status" class="form-select">
+                    <option value="">{% trans "All Statuses" %}</option>
+                    {% for value, label in status_choices %}
+                    <option value="{{ value }}" {% if status_filter == value %}selected{% endif %}>{{ label }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="col-md-4">
+                <button type="submit" class="btn btn-primary">
+                    <i class="bi bi-filter me-1"></i>{% trans "Filter" %}
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- Deliveries Table -->
+<div class="card shadow-sm">
+    <div class="card-body">
+        <div class="table-responsive">
+            <table class="table table-hover">
+                <thead class="table-dark">
+                    <tr>
+                        <th>{% trans "Order" %}</th>
+                        <th>{% trans "Customer" %}</th>
+                        <th>{% trans "Driver" %}</th>
+                        <th>{% trans "Status" %}</th>
+                        <th>{% trans "Estimated Delivery" %}</th>
+                        <th>{% trans "Last Update" %}</th>
+                        <th>{% trans "Actions" %}</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for tracking in trackings %}
+                    <tr>
+                        <td><a href="{% url 'company_admin:order_detail' tracking.order.id %}">#{{ tracking.order.id }}</a></td>
+                        <td>{{ tracking.order.customer.username }}</td>
+                        <td>{{ tracking.driver_name|default:"-" }}</td>
+                        <td>
+                            <span class="badge {% if tracking.status == 'delivered' %}bg-success{% elif tracking.status == 'failed' %}bg-danger{% elif tracking.status == 'out_for_delivery' %}bg-info{% else %}bg-warning text-dark{% endif %}">
+                                {{ tracking.get_status_display }}
+                            </span>
+                        </td>
+                        <td>{{ tracking.estimated_delivery|date:"M d, Y H:i"|default:"-" }}</td>
+                        <td>{{ tracking.updated_at|date:"M d, Y H:i" }}</td>
+                        <td>
+                            <div class="btn-group btn-group-sm">
+                                <a href="{% url 'orders:track_delivery' tracking.order.id %}" class="btn btn-outline-primary">
+                                    <i class="bi bi-geo-alt"></i> {% trans "Track" %}
+                                </a>
+                                <a href="{% url 'orders:update_tracking' tracking.order.id %}" class="btn btn-outline-warning">
+                                    <i class="bi bi-pencil"></i>
+                                </a>
+                            </div>
+                        </td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="7" class="text-center text-muted py-4">
+                            <i class="bi bi-truck fs-1"></i>
+                            <p>{% trans "No deliveries found" %}</p>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %}

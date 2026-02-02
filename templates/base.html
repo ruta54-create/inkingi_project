@@ -1,7 +1,9 @@
 {% load static %}
 {% load cart_extras %}
+{% load i18n %}
+{% load currency_tags %}
 <!DOCTYPE html>
-<html lang="en">
+<html lang="{{ LANGUAGE_CODE|default:'en' }}">
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -9,12 +11,12 @@
     <!-- Bootstrap Icons -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
     <link href="{% static 'css/styles.css' %}" rel="stylesheet">
-    <title>{% block title %}Inkingi Woods Ltd{% endblock %}</title>
+    <title>{% block title %}{% trans "Inkingi Woods Ltd" %}{% endblock %}</title>
 
     <style>
         .heros {
             opacity: 30;
-            background-image: url('static/images/banner.jpg');
+            background-image: url('{% static "images/banner.jpg" %}');
             background-position: 100%;
             background-repeat: no-repeat;
             background-size: cover;
@@ -69,7 +71,18 @@
             -webkit-text-fill-color: transparent;
             background-clip: text;
         }
-        
+
+        /* Language/Currency Selector */
+        .lang-currency-selector {
+            font-size: 0.85rem;
+        }
+        .lang-currency-selector .dropdown-toggle {
+            padding: 0.25rem 0.5rem;
+        }
+        .lang-currency-selector .dropdown-menu {
+            min-width: 120px;
+        }
+
         /* Professional Dropdown Styles */
         .dropdown-menu {
             border-radius: 12px;
@@ -77,29 +90,29 @@
             margin-top: 0.5rem;
             min-width: 280px;
         }
-        
+
         .dropdown-item {
             padding: 0.75rem 1.5rem;
             transition: all 0.3s ease;
             border-radius: 0;
         }
-        
+
         .dropdown-item:hover {
             background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
             transform: translateX(5px);
             color: #ff7a18;
         }
-        
+
         .dropdown-item i {
             width: 20px;
             text-align: center;
         }
-        
+
         .dropdown-divider {
             margin: 0.5rem 1rem;
             border-color: #e9ecef;
         }
-        
+
         /* Mobile dropdown improvements */
         @media (max-width: 991.98px) {
             .dropdown-menu {
@@ -110,34 +123,100 @@
                 margin-top: 0;
                 min-width: auto;
             }
-            
+
             .dropdown-item {
                 padding: 0.5rem 1rem;
                 color: rgba(0,0,0,.55);
             }
-            
+
             .dropdown-item:hover {
                 background: rgba(255, 122, 24, 0.1);
                 transform: none;
                 color: #ff7a18;
             }
         }
-        
+
         /* Dropdown toggle arrow animation */
         .dropdown-toggle::after {
             transition: transform 0.3s ease;
         }
-        
+
         .dropdown-toggle[aria-expanded="true"]::after {
             transform: rotate(180deg);
+        }
+
+        /* Admin Link Styles */
+        .admin-link {
+            background: linear-gradient(45deg, #ff7a18, #ff9d4d);
+            color: white !important;
+            padding: 0.25rem 0.75rem;
+            border-radius: 20px;
+            font-size: 0.85rem;
+        }
+        .admin-link:hover {
+            background: linear-gradient(45deg, #e66a08, #ff8c3d);
         }
     </style>
 </head>
 <body class="bg-light">
 
+<!-- Top Bar with Language/Currency Selector -->
+<div class="bg-dark text-white py-1">
+    <div class="container d-flex justify-content-between align-items-center">
+        <div class="d-flex align-items-center gap-2 small">
+            <i class="bi bi-telephone"></i>
+            <span>{% if site_settings %}{{ site_settings.contact_phone }}{% else %}+250 788 123 456{% endif %}</span>
+            <span class="mx-2">|</span>
+            <i class="bi bi-envelope"></i>
+            <span>{% if site_settings %}{{ site_settings.contact_email }}{% else %}info@inkingiwoods.rw{% endif %}</span>
+        </div>
+        <div class="d-flex align-items-center gap-3 lang-currency-selector">
+            <!-- Language Selector -->
+            <div class="dropdown">
+                <button class="btn btn-sm btn-outline-light dropdown-toggle" type="button" data-bs-toggle="dropdown">
+                    <i class="bi bi-globe2"></i>
+                    {% if current_language == 'en' %}English
+                    {% elif current_language == 'fr' %}Français
+                    {% elif current_language == 'rw' %}Kinyarwanda
+                    {% else %}English{% endif %}
+                </button>
+                <ul class="dropdown-menu dropdown-menu-end">
+                    <li><a class="dropdown-item {% if current_language == 'en' %}active{% endif %}" href="{% url 'core:set_language' %}?language=en&next={{ request.path }}">English</a></li>
+                    <li><a class="dropdown-item {% if current_language == 'fr' %}active{% endif %}" href="{% url 'core:set_language' %}?language=fr&next={{ request.path }}">Français</a></li>
+                    <li><a class="dropdown-item {% if current_language == 'rw' %}active{% endif %}" href="{% url 'core:set_language' %}?language=rw&next={{ request.path }}">Kinyarwanda</a></li>
+                </ul>
+            </div>
+
+            <!-- Currency Selector -->
+            <div class="dropdown">
+                <button class="btn btn-sm btn-outline-light dropdown-toggle" type="button" data-bs-toggle="dropdown">
+                    <i class="bi bi-currency-exchange"></i>
+                    {% if current_currency %}{{ current_currency.code }}{% else %}RWF{% endif %}
+                </button>
+                <ul class="dropdown-menu dropdown-menu-end">
+                    {% for code, info in supported_currencies.items %}
+                    <li><a class="dropdown-item {% if current_currency.code == code %}active{% endif %}" href="{% url 'core:set_currency' %}?currency={{ code }}&next={{ request.path }}">{{ info.symbol }} {{ code }} - {{ info.name }}</a></li>
+                    {% endfor %}
+                </ul>
+            </div>
+
+            {% if request.user.is_staff %}
+            <a href="{% url 'company_admin:dashboard' %}" class="admin-link text-decoration-none">
+                <i class="bi bi-speedometer2"></i> {% trans "Admin" %}
+            </a>
+            {% endif %}
+        </div>
+    </div>
+</div>
+
 <nav class="navbar navbar-expand-lg navbar-white bg-white border-bottom shadow-sm">
     <div class="container">
-        <a class="text-color navbar-brand fw-bold mb-0 fs-4" href="{% url 'home_page' %}">Inkingi Woods Ltd</a>
+        <a class="text-color navbar-brand fw-bold mb-0 fs-4" href="{% url 'home_page' %}">
+            {% if site_settings.logo %}
+            <img src="{{ site_settings.logo.url }}" alt="Logo" height="40" class="me-2">
+            {% endif %}
+            {% if site_settings %}{{ site_settings.site_name }}{% else %}Inkingi Woods Ltd{% endif %}
+        </a>
         <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#mainNav">
             <span class="navbar-toggler-icon"></span>
         </button>
@@ -145,69 +224,69 @@
         <div class="collapse navbar-collapse" id="mainNav">
             <ul class="navbar-nav me-auto mb-2 mb-lg-0">
                 <li class="nav-item">
-                    <a class="nav-link {% if request.path == '/' %}active{% endif %}" href="{% url 'home_page' %}">Home</a>
+                    <a class="nav-link {% if request.path == '/' %}active{% endif %}" href="{% url 'home_page' %}">{% trans "Home" %}</a>
                 </li>
                 <li class="nav-item dropdown">
-                    <a class="nav-link dropdown-toggle {% if 'products' in request.path %}active{% endif %}" 
-                       href="{% url 'products:product_list' %}" 
-                       id="productsDropdown" 
-                       role="button" 
-                       data-bs-toggle="dropdown" 
+                    <a class="nav-link dropdown-toggle {% if 'products' in request.path %}active{% endif %}"
+                       href="{% url 'products:product_list' %}"
+                       id="productsDropdown"
+                       role="button"
+                       data-bs-toggle="dropdown"
                        aria-expanded="false">
-                        Products
+                        {% trans "Products" %}
                     </a>
                     <ul class="dropdown-menu shadow-lg border-0" aria-labelledby="productsDropdown">
                         <li>
                             <a class="dropdown-item fw-bold text-primary" href="{% url 'products:product_list' %}">
-                                <i class="bi bi-grid-3x3-gap me-2"></i>All Products
+                                <i class="bi bi-grid-3x3-gap me-2"></i>{% trans "All Products" %}
                             </a>
                         </li>
                         <li><hr class="dropdown-divider"></li>
                         <li>
                             <a class="dropdown-item" href="{% url 'products:product_list' %}?category=furniture">
-                                <i class="bi bi-house-door me-2 text-warning"></i>Furniture
+                                <i class="bi bi-house-door me-2 text-warning"></i>{% trans "Furniture" %}
                             </a>
                         </li>
                         <li>
                             <a class="dropdown-item" href="{% url 'products:product_list' %}?category=home-office">
-                                <i class="bi bi-laptop me-2 text-info"></i>Home & Office
+                                <i class="bi bi-laptop me-2 text-info"></i>{% trans "Home & Office" %}
                             </a>
                         </li>
                         <li>
                             <a class="dropdown-item" href="{% url 'products:product_list' %}?category=outdoor-garden">
-                                <i class="bi bi-tree me-2 text-success"></i>Outdoor & Garden
+                                <i class="bi bi-tree me-2 text-success"></i>{% trans "Outdoor & Garden" %}
                             </a>
                         </li>
                         <li>
                             <a class="dropdown-item" href="{% url 'products:product_list' %}?category=doors-construction">
-                                <i class="bi bi-door-open me-2 text-secondary"></i>Doors & Construction
+                                <i class="bi bi-door-open me-2 text-secondary"></i>{% trans "Doors & Construction" %}
                             </a>
                         </li>
                         <li>
                             <a class="dropdown-item" href="{% url 'products:product_list' %}?category=handcrafted">
-                                <i class="bi bi-palette me-2 text-danger"></i>Handcrafted Products
+                                <i class="bi bi-palette me-2 text-danger"></i>{% trans "Handcrafted Products" %}
                             </a>
                         </li>
                         <li>
                             <a class="dropdown-item" href="{% url 'products:product_list' %}?category=custom-made">
-                                <i class="bi bi-tools me-2 text-dark"></i>Custom Made
+                                <i class="bi bi-tools me-2 text-dark"></i>{% trans "Custom Made" %}
                             </a>
                         </li>
                         <li>
                             <a class="dropdown-item" href="{% url 'products:product_list' %}?category=raw-materials">
-                                <i class="bi bi-stack me-2 text-muted"></i>Raw Materials
+                                <i class="bi bi-stack me-2 text-muted"></i>{% trans "Raw Materials" %}
                             </a>
                         </li>
                         <li>
                             <a class="dropdown-item" href="{% url 'products:product_list' %}?category=kids-school">
-                                <i class="bi bi-backpack me-2 text-primary"></i>Kids & School
+                                <i class="bi bi-backpack me-2 text-primary"></i>{% trans "Kids & School" %}
                             </a>
                         </li>
                     </ul>
                 </li>
                 <li class="nav-item">
                     <a class="nav-link position-relative {% if 'cart' in request.path %}active{% endif %}" href="{% url 'orders:cart_view' %}">
-                        🛒 Cart
+                        <i class="bi bi-cart3"></i> {% trans "Cart" %}
                         {% cart_item_count as cart_count %}
                         {% if cart_count %}
                             <span class="badge bg-danger rounded-pill ms-1">{{ cart_count }}</span>
@@ -217,53 +296,53 @@
             </ul>
 
             <form class="d-flex ms-3 me-3" role="search" method="get" action="{% url 'products:product_list' %}">
-                <input class="form-control form-control-sm me-2" type="search" name="q" placeholder="Search products..." aria-label="Search" value="{{ request.GET.q|default:'' }}">
-                <button class="btn btn-sm btn-outline-primary" type="submit">Search</button>
+                <input class="form-control form-control-sm me-2" type="search" name="q" placeholder="{% trans 'Search products...' %}" aria-label="Search" value="{{ request.GET.q|default:'' }}">
+                <button class="btn btn-sm btn-outline-primary" type="submit">{% trans "Search" %}</button>
             </form>
 
             <ul class="navbar-nav mb-2 mb-lg-0">
                 {% if request.user.is_authenticated %}
                     {% if request.user.user_type == 'vendor' %}
-                        <li class="nav-item"><a class="nav-link" href="{% url 'products:vendor_dashboard' %}">Dashboard</a></li>
-                        <li class="nav-item"><a class="nav-link" href="{% url 'products:vendor_products' %}">My Products</a></li>
-                        <li class="nav-item"><a class="nav-link" href="{% url 'orders:vendor_orders' %}">Orders</a></li>
+                        <li class="nav-item"><a class="nav-link" href="{% url 'products:vendor_dashboard' %}">{% trans "Dashboard" %}</a></li>
+                        <li class="nav-item"><a class="nav-link" href="{% url 'products:vendor_products' %}">{% trans "My Products" %}</a></li>
+                        <li class="nav-item"><a class="nav-link" href="{% url 'orders:vendor_orders' %}">{% trans "Orders" %}</a></li>
                     {% else %}
-                        <li class="nav-item"><a class="nav-link" href="{% url 'orders:my_orders' %}">My Orders</a></li>
+                        <li class="nav-item"><a class="nav-link" href="{% url 'orders:my_orders' %}">{% trans "My Orders" %}</a></li>
                     {% endif %}
 
                     <li class="nav-item dropdown">
                         <a class="nav-link dropdown-toggle" href="#" id="userMenu" role="button" data-bs-toggle="dropdown">{{ request.user.username }}</a>
                         <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userMenu">
-                            <li><a class="dropdown-item" href="{% url 'accounts:profile' %}">Profile</a></li>
-                            <li><a class="dropdown-item" href="{% url 'accounts:password_change' %}">Change password</a></li>
+                            <li><a class="dropdown-item" href="{% url 'accounts:profile' %}"><i class="bi bi-person me-2"></i>{% trans "Profile" %}</a></li>
+                            <li><a class="dropdown-item" href="{% url 'accounts:password_change' %}"><i class="bi bi-key me-2"></i>{% trans "Change password" %}</a></li>
                             <li><hr class="dropdown-divider"></li>
-                            <li><a class="dropdown-item" href="{% url 'logout' %}">Logout</a></li>
+                            <li><a class="dropdown-item" href="{% url 'logout' %}"><i class="bi bi-box-arrow-right me-2"></i>{% trans "Logout" %}</a></li>
                         </ul>
                     </li>
 
                 {% else %}
-                    <li class="nav-item"><a class="nav-link btn btn-sm btn-primary text-white ms-6" href="{% url 'login' %}">Login</a></li>
-                  
+                    <li class="nav-item"><a class="nav-link btn btn-sm btn-primary text-white ms-6" href="{% url 'login' %}">{% trans "Login" %}</a></li>
+
                     <li class="nav-item">
-                        <a class="nav-link btn btn-sm btn-primary text-white ms-2" href="{% url 'pages:about' %}">About</a>
+                        <a class="nav-link btn btn-sm btn-primary text-white ms-2" href="{% url 'pages:about' %}">{% trans "About" %}</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link btn btn-sm btn-primary text-white ms-2" href="{% url 'pages:contact' %}">Contact</a>
+                        <a class="nav-link btn btn-sm btn-primary text-white ms-2" href="{% url 'pages:contact' %}">{% trans "Contact" %}</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link btn btn-sm btn-primary text-white ms-2" href="{% url 'pages:faq' %}">FAQ</a>
+                        <a class="nav-link btn btn-sm btn-primary text-white ms-2" href="{% url 'pages:faq' %}">{% trans "FAQ" %}</a>
                     </li>
                 {% endif %}
             </ul>
-            
+
             {# CTA button: for vendors show Add Product, otherwise prompt to Register/Sell #}
             <div class="d-flex align-items-center ms-3">
                 {% if request.user.is_authenticated and request.user.user_type == 'vendor' %}
-                    <a href="{% url 'products:add_product' %}" class="btn btn-sm btn-outline-primary">Add Product</a>
+                    <a href="{% url 'products:add_product' %}" class="btn btn-sm btn-outline-primary">{% trans "Add Product" %}</a>
                 {% elif request.user.is_authenticated %}
-                    <a href="{% url 'products:product_list' %}" class="btn btn-sm btn-outline-primary">Browse</a>
+                    <a href="{% url 'products:product_list' %}" class="btn btn-sm btn-outline-primary">{% trans "Browse" %}</a>
                 {% else %}
-                    <a href="{% url 'register' %}" class="btn btn-sm btn-primary ms-2">Sell on Inkingi Woods Ltd</a>
+                    <a href="{% url 'register' %}" class="btn btn-sm btn-primary ms-2">{% trans "Sell on Inkingi Woods Ltd" %}</a>
                 {% endif %}
             </div>
         </div>
@@ -281,8 +360,9 @@
     {% if messages %}
     <div class="mb-3">
         {% for message in messages %}
-            <div class="alert alert-{{ message.tags }} alert-custom" role="alert">
+            <div class="alert alert-{{ message.tags }} alert-custom alert-dismissible fade show" role="alert">
                 {{ message }}
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
             </div>
         {% endfor %}
     </div>
@@ -297,22 +377,19 @@
         <div class="row">
             <!-- Company Info -->
             <div class="col-lg-4 col-md-6 mb-4">
-                <h3 class="footer-brand mb-3">Inkingi Woods Ltd</h3>
+                <h3 class="footer-brand mb-3">{% if site_settings %}{{ site_settings.site_name }}{% else %}Inkingi Woods Ltd{% endif %}</h3>
                 <p class="text-light mb-4" style="opacity: 0.9;">
-                    Rwanda's premier marketplace for sustainable wood products, 
-                    connecting artisans with global customers while preserving 
-                    traditional craftsmanship.
+                    {% trans "Rwanda's premier marketplace for sustainable wood products, connecting artisans with global customers while preserving traditional craftsmanship." %}
                 </p>
                 <div class="contact-info-item">
                     <i class="bi bi-building contact-info-icon"></i>
                     <div>
-                        <strong>Headquarters:</strong><br>
-                        <a href="https://maps.google.com/?q=KG+7+Ave,+Kigali,+Rwanda" 
-                           target="_blank" 
-                           class="text-white text-decoration-none" 
+                        <strong>{% trans "Headquarters" %}:</strong><br>
+                        <a href="https://maps.google.com/?q=KG+7+Ave,+Kigali,+Rwanda"
+                           target="_blank"
+                           class="text-white text-decoration-none"
                            style="opacity: 0.9;">
-                            KG 7 Avenue, Kigali<br>
-                            Rwanda, East Africa
+                            {% if site_settings %}{{ site_settings.contact_address }}{% else %}KG 7 Avenue, Kigali, Rwanda{% endif %}
                         </a>
                     </div>
                 </div>
@@ -320,57 +397,48 @@
 
             <!-- Quick Links -->
             <div class="col-lg-2 col-md-6 mb-4">
-                <h5 class="mb-3" style="color: #ff7a18;">Quick Links</h5>
+                <h5 class="mb-3" style="color: #ff7a18;">{% trans "Quick Links" %}</h5>
                 <ul class="list-unstyled footer-links">
-                    <li class="mb-2"><a href="{% url 'home_page' %}" class="text-white" style="opacity: 0.9;">Home</a></li>
-                    <li class="mb-2"><a href="{% url 'products:product_list' %}" class="text-white" style="opacity: 0.9;">Products</a></li>
-                    <li class="mb-2"><a href="{% url 'pages:about' %}" class="text-white" style="opacity: 0.9;">About Us</a></li>
-                    <li class="mb-2"><a href="{% url 'pages:contact' %}" class="text-white" style="opacity: 0.9;">Contact</a></li>
-                    <li class="mb-2"><a href="{% url 'pages:faq' %}" class="text-white" style="opacity: 0.9;">FAQ</a></li>
-                    <li class="mb-2"><a href="{% url 'register' %}" class="text-white" style="opacity: 0.9;">Become a Seller</a></li>
-                    <li><a href="{% url 'orders:cart_view' %}" class="text-white" style="opacity: 0.9;">Your Cart</a></li>
+                    <li class="mb-2"><a href="{% url 'home_page' %}" class="text-white" style="opacity: 0.9;">{% trans "Home" %}</a></li>
+                    <li class="mb-2"><a href="{% url 'products:product_list' %}" class="text-white" style="opacity: 0.9;">{% trans "Products" %}</a></li>
+                    <li class="mb-2"><a href="{% url 'pages:about' %}" class="text-white" style="opacity: 0.9;">{% trans "About Us" %}</a></li>
+                    <li class="mb-2"><a href="{% url 'pages:contact' %}" class="text-white" style="opacity: 0.9;">{% trans "Contact" %}</a></li>
+                    <li class="mb-2"><a href="{% url 'pages:faq' %}" class="text-white" style="opacity: 0.9;">{% trans "FAQ" %}</a></li>
+                    <li class="mb-2"><a href="{% url 'register' %}" class="text-white" style="opacity: 0.9;">{% trans "Become a Seller" %}</a></li>
+                    <li><a href="{% url 'orders:cart_view' %}" class="text-white" style="opacity: 0.9;">{% trans "Your Cart" %}</a></li>
                 </ul>
             </div>
 
             <!-- Contact Information -->
             <div class="col-lg-3 col-md-6 mb-4">
-                <h5 class="mb-3" style="color: #ff7a18;">Contact Us</h5>
+                <h5 class="mb-3" style="color: #ff7a18;">{% trans "Contact Us" %}</h5>
                 <div class="contact-info-item">
                     <i class="bi bi-telephone contact-info-icon"></i>
                     <div>
-                        <strong>Phone:</strong><br>
-                        <a href="tel:+250788123456" class="text-white text-decoration-none" style="opacity: 0.9;">
-                            +250 788 123 456
-                        </a><br>
-                        <a href="tel:+250788987654" class="text-white text-decoration-none" style="opacity: 0.9;">
-                            +250 788 987 654
+                        <strong>{% trans "Phone" %}:</strong><br>
+                        <a href="tel:{% if site_settings %}{{ site_settings.contact_phone }}{% else %}+250788123456{% endif %}" class="text-white text-decoration-none" style="opacity: 0.9;">
+                            {% if site_settings %}{{ site_settings.contact_phone }}{% else %}+250 788 123 456{% endif %}
                         </a>
                     </div>
                 </div>
                 <div class="contact-info-item">
                     <i class="bi bi-envelope contact-info-icon"></i>
                     <div>
-                        <strong>Email:</strong><br>
-                        <a href="mailto:info@inkingiwoods.rw" class="text-white text-decoration-none" style="opacity: 0.9;">
-                            info@inkingiwoods.rw
-                        </a><br>
-                        <a href="mailto:sales@inkingiwoods.rw" class="text-white text-decoration-none" style="opacity: 0.9;">
-                            sales@inkingiwoods.rw
-                        </a><br>
-                        <a href="mailto:support@inkingiwoods.rw" class="text-white text-decoration-none" style="opacity: 0.9;">
-                            support@inkingiwoods.rw
+                        <strong>{% trans "Email" %}:</strong><br>
+                        <a href="mailto:{% if site_settings %}{{ site_settings.contact_email }}{% else %}info@inkingiwoods.rw{% endif %}" class="text-white text-decoration-none" style="opacity: 0.9;">
+                            {% if site_settings %}{{ site_settings.contact_email }}{% else %}info@inkingiwoods.rw{% endif %}
                         </a>
                     </div>
                 </div>
                 <div class="contact-info-item">
-                    <i class="bi bi-globe contact-info-icon"></i>
+                    <i class="bi bi-whatsapp contact-info-icon"></i>
                     <div>
-                        <strong>Website:</strong><br>
-                        <a href="https://www.inkingiwoods.rw" 
-                           target="_blank" 
-                           class="text-white text-decoration-none" 
+                        <strong>WhatsApp:</strong><br>
+                        <a href="https://wa.me/{% if site_settings %}{{ site_settings.whatsapp_number }}{% else %}250788123456{% endif %}"
+                           target="_blank"
+                           class="text-white text-decoration-none"
                            style="opacity: 0.9;">
-                            www.inkingiwoods.rw
+                            {% trans "Chat with us" %}
                         </a>
                     </div>
                 </div>
@@ -378,45 +446,46 @@
 
             <!-- Social Media & Business Hours -->
             <div class="col-lg-3 col-md-6 mb-4">
-                <h5 class="mb-3" style="color: #ff7a18;">Connect With Us</h5>
+                <h5 class="mb-3" style="color: #ff7a18;">{% trans "Connect With Us" %}</h5>
                 <div class="mb-4">
-                    <a href="https://wa.me/250788123456?text=Hello%20Inkingi%20Woods,%20I%20have%20a%20question" 
-                       target="_blank" 
+                    <a href="https://wa.me/{% if site_settings %}{{ site_settings.whatsapp_number }}{% else %}250788123456{% endif %}"
+                       target="_blank"
                        class="social-icon bg-success text-white me-2 mb-2">
                         <i class="bi bi-whatsapp"></i>
                     </a>
-                    <a href="https://twitter.com/inkingiwoods" 
-                       target="_blank" 
+                    {% if site_settings.twitter_url %}
+                    <a href="{{ site_settings.twitter_url }}"
+                       target="_blank"
                        class="social-icon bg-info text-white me-2 mb-2">
                         <i class="bi bi-twitter"></i>
                     </a>
-                    <a href="https://facebook.com/inkingiwoods" 
-                       target="_blank" 
+                    {% endif %}
+                    {% if site_settings.facebook_url %}
+                    <a href="{{ site_settings.facebook_url }}"
+                       target="_blank"
                        class="social-icon bg-primary text-white me-2 mb-2">
                         <i class="bi bi-facebook"></i>
                     </a>
-                    <a href="https://instagram.com/inkingiwoods" 
-                       target="_blank" 
+                    {% endif %}
+                    {% if site_settings.instagram_url %}
+                    <a href="{{ site_settings.instagram_url }}"
+                       target="_blank"
                        class="social-icon bg-danger text-white me-2 mb-2">
                         <i class="bi bi-instagram"></i>
                     </a>
-                    <a href="https://linkedin.com/company/inkingi-woods" 
-                       target="_blank" 
-                       class="social-icon bg-dark text-white me-2 mb-2">
-                        <i class="bi bi-linkedin"></i>
-                    </a>
+                    {% endif %}
                 </div>
-                
-                <h5 class="mb-3" style="color: #ff7a18;">Business Hours</h5>
+
+                <h5 class="mb-3" style="color: #ff7a18;">{% trans "Business Hours" %}</h5>
                 <div class="text-white" style="opacity: 0.9;">
-                    <div class="mb-1"><strong>Monday - Friday:</strong> 8:00 AM - 6:00 PM</div>
-                    <div class="mb-1"><strong>Saturday:</strong> 9:00 AM - 4:00 PM</div>
-                    <div><strong>Sunday:</strong> Closed</div>
+                    <div class="mb-1"><strong>{% trans "Monday - Friday" %}:</strong> 8:00 AM - 6:00 PM</div>
+                    <div class="mb-1"><strong>{% trans "Saturday" %}:</strong> 9:00 AM - 4:00 PM</div>
+                    <div><strong>{% trans "Sunday" %}:</strong> {% trans "Closed" %}</div>
                 </div>
-                
+
                 <div class="mt-4">
                     <a href="{% url 'pages:contact' %}" class="btn btn-outline-light btn-sm">
-                        <i class="bi bi-chat-left-text me-1"></i> Get In Touch
+                        <i class="bi bi-chat-left-text me-1"></i> {% trans "Get In Touch" %}
                     </a>
                 </div>
             </div>
@@ -425,14 +494,14 @@
         <div class="row footer-bottom mt-4 pt-4">
             <div class="col-md-6 text-center text-md-start mb-2 mb-md-0">
                 <p class="mb-0" style="opacity: 0.8;">
-                    &copy; {{ now|date:'Y' }} Inkingi Woods Ltd. All rights reserved.
+                    &copy; {% now "Y" %} {% if site_settings %}{{ site_settings.site_name }}{% else %}Inkingi Woods Ltd{% endif %}. {% trans "All rights reserved." %}
                 </p>
             </div>
             <div class="col-md-6 text-center text-md-end">
                 <p class="mb-0" style="opacity: 0.8;">
-                    <a href="/privacy-policy/" class="text-white text-decoration-none me-3">Privacy Policy</a>
-                    <a href="/terms-of-service/" class="text-white text-decoration-none me-3">Terms of Service</a>
-                    <a href="/refund-policy/" class="text-white text-decoration-none">Refund Policy</a>
+                    <a href="/privacy-policy/" class="text-white text-decoration-none me-3">{% trans "Privacy Policy" %}</a>
+                    <a href="/terms-of-service/" class="text-white text-decoration-none me-3">{% trans "Terms of Service" %}</a>
+                    <a href="/refund-policy/" class="text-white text-decoration-none">{% trans "Refund Policy" %}</a>
                 </p>
             </div>
         </div>
@@ -446,7 +515,7 @@
     <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="passwordResetModalLabel">Reset your password</h5>
+                <h5 class="modal-title" id="passwordResetModalLabel">{% trans "Reset your password" %}</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
@@ -454,11 +523,11 @@
                 <form id="password-reset-modal-form" method="post" action="{% url 'accounts:password_reset' %}">
                     {% csrf_token %}
                     <div class="mb-3">
-                        <label for="pr-email" class="form-label">Email address</label>
+                        <label for="pr-email" class="form-label">{% trans "Email address" %}</label>
                         <input type="email" id="pr-email" name="email" class="form-control" placeholder="you@example.com" required>
                     </div>
                     <div class="d-flex justify-content-end">
-                        <button type="submit" class="btn btn-view">Send reset link</button>
+                        <button type="submit" class="btn btn-view">{% trans "Send reset link" %}</button>
                     </div>
                 </form>
             </div>
@@ -515,19 +584,15 @@ document.addEventListener('DOMContentLoaded', function(){
                 body: formData,
                 credentials: 'same-origin'
             }).then(res => {
-                // regardless of response status, present a generic success message for privacy
                 const alert = document.getElementById('pr-alert');
                 alert.className = 'alert alert-success';
-                alert.textContent = 'If your email exists in our system, you will receive a password reset link shortly.';
+                alert.textContent = '{% trans "If your email exists in our system, you will receive a password reset link shortly." %}';
                 alert.classList.remove('d-none');
-                // show toast and close modal after short delay so users notice it
-                showToast('Password reset requested', 'If your email exists, a reset link was sent.');
-                // clear email field and re-enable button
+                showToast('{% trans "Password reset requested" %}', '{% trans "If your email exists, a reset link was sent." %}');
                 const emailInput = prForm.querySelector('input[name="email"]');
                 if(emailInput) emailInput.value = '';
                 if(submitBtn) submitBtn.disabled = false;
 
-                // hide modal after a brief pause so alert is visible
                 setTimeout(()=>{
                     const modalEl = document.getElementById('passwordResetModal');
                     const bs = bootstrap.Modal.getInstance(modalEl);
@@ -537,7 +602,7 @@ document.addEventListener('DOMContentLoaded', function(){
             }).catch(err => {
                 const alert = document.getElementById('pr-alert');
                 alert.className = 'alert alert-danger';
-                alert.textContent = 'Unable to send reset link right now. Please try again later.';
+                alert.textContent = '{% trans "Unable to send reset link right now. Please try again later." %}';
                 alert.classList.remove('d-none');
                 if(submitBtn) submitBtn.disabled = false;
             });
@@ -545,15 +610,10 @@ document.addEventListener('DOMContentLoaded', function(){
     }
 
     // Convert Django messages alerts into Bootstrap toasts (for success messages)
-    document.querySelectorAll('.alert').forEach(function(alertEl){
-        const cls = alertEl.className || '';
-        if(cls.indexOf('alert-success') !== -1){
-            const title = 'Success';
-            const body = alertEl.textContent.trim();
-            if(body){ showToast(title, body); }
-            // keep the original alert visible for accessibility, then remove after a while
-            setTimeout(()=> alertEl.remove(), 4000);
-        }
+    document.querySelectorAll('.alert-success').forEach(function(alertEl){
+        const body = alertEl.textContent.trim();
+        if(body){ showToast('{% trans "Success" %}', body); }
+        setTimeout(()=> alertEl.remove(), 4000);
     });
 });
 
@@ -574,5 +634,6 @@ function showToast(title, message){
     t.show();
 }
 </script>
+{% block extra_js %}{% endblock %}
 </body>
 </html>

@@ -1,0 +1,282 @@
+{% extends 'base.html' %}
+{% load i18n %}
+{% load currency_tags %}
+
+{% block title %}{% trans "Track Delivery" %} - Order #{{ order.id }}{% endblock %}
+
+{% block header %}
+<h1 class="fw-bold"><i class="bi bi-geo-alt me-2"></i>{% trans "Track Your Delivery" %}</h1>
+<p class="text-muted">{% trans "Order" %} #{{ order.id }}</p>
+{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-lg-8">
+        <!-- Map Section -->
+        <div class="card shadow-sm mb-4">
+            <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
+                <h5 class="mb-0"><i class="bi bi-map me-2"></i>{% trans "Live Tracking" %}</h5>
+                <span class="badge bg-light text-dark" id="tracking-status">
+                    {{ tracking.get_status_display }}
+                </span>
+            </div>
+            <div class="card-body p-0">
+                <div id="map" style="height: 400px; width: 100%;"></div>
+            </div>
+        </div>
+
+        <!-- Tracking Timeline -->
+        <div class="card shadow-sm">
+            <div class="card-header">
+                <h5 class="mb-0"><i class="bi bi-clock-history me-2"></i>{% trans "Delivery Progress" %}</h5>
+            </div>
+            <div class="card-body">
+                <div class="timeline">
+                    <div class="timeline-item {% if tracking.status == 'pending' %}active{% elif tracking.status in 'picked_up,in_transit,out_for_delivery,delivered' %}completed{% endif %}">
+                        <div class="timeline-marker"></div>
+                        <div class="timeline-content">
+                            <h6>{% trans "Order Placed" %}</h6>
+                            <p class="text-muted small">{{ order.created_at|date:"F d, Y H:i" }}</p>
+                        </div>
+                    </div>
+
+                    <div class="timeline-item {% if tracking.status == 'picked_up' %}active{% elif tracking.status in 'in_transit,out_for_delivery,delivered' %}completed{% endif %}">
+                        <div class="timeline-marker"></div>
+                        <div class="timeline-content">
+                            <h6>{% trans "Picked Up" %}</h6>
+                            {% if tracking.picked_up_at %}
+                            <p class="text-muted small">{{ tracking.picked_up_at|date:"F d, Y H:i" }}</p>
+                            {% else %}
+                            <p class="text-muted small">{% trans "Pending" %}</p>
+                            {% endif %}
+                        </div>
+                    </div>
+
+                    <div class="timeline-item {% if tracking.status == 'in_transit' %}active{% elif tracking.status in 'out_for_delivery,delivered' %}completed{% endif %}">
+                        <div class="timeline-marker"></div>
+                        <div class="timeline-content">
+                            <h6>{% trans "In Transit" %}</h6>
+                            <p class="text-muted small">{% trans "On the way to your location" %}</p>
+                        </div>
+                    </div>
+
+                    <div class="timeline-item {% if tracking.status == 'out_for_delivery' %}active{% elif tracking.status == 'delivered' %}completed{% endif %}">
+                        <div class="timeline-marker"></div>
+                        <div class="timeline-content">
+                            <h6>{% trans "Out for Delivery" %}</h6>
+                            <p class="text-muted small">{% trans "Driver is nearby" %}</p>
+                        </div>
+                    </div>
+
+                    <div class="timeline-item {% if tracking.status == 'delivered' %}completed{% endif %}">
+                        <div class="timeline-marker"></div>
+                        <div class="timeline-content">
+                            <h6>{% trans "Delivered" %}</h6>
+                            {% if tracking.delivered_at %}
+                            <p class="text-muted small">{{ tracking.delivered_at|date:"F d, Y H:i" }}</p>
+                            {% else %}
+                            <p class="text-muted small">{% trans "Pending" %}</p>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-lg-4">
+        <!-- Driver Info -->
+        <div class="card shadow-sm mb-3">
+            <div class="card-header bg-success text-white">
+                <h5 class="mb-0"><i class="bi bi-person-badge me-2"></i>{% trans "Driver Information" %}</h5>
+            </div>
+            <div class="card-body">
+                {% if tracking.driver_name %}
+                <div class="d-flex align-items-center mb-3">
+                    <div class="bg-light rounded-circle p-3 me-3">
+                        <i class="bi bi-person-fill fs-3"></i>
+                    </div>
+                    <div>
+                        <h6 class="mb-0">{{ tracking.driver_name }}</h6>
+                        <small class="text-muted">{% trans "Delivery Driver" %}</small>
+                    </div>
+                </div>
+                {% if tracking.driver_phone %}
+                <a href="tel:{{ tracking.driver_phone }}" class="btn btn-outline-success w-100 mb-2">
+                    <i class="bi bi-telephone me-2"></i>{{ tracking.driver_phone }}
+                </a>
+                {% endif %}
+                {% if tracking.vehicle_number %}
+                <p class="mb-0"><strong>{% trans "Vehicle" %}:</strong> {{ tracking.vehicle_number }}</p>
+                {% endif %}
+                {% else %}
+                <p class="text-muted">{% trans "Driver not assigned yet" %}</p>
+                {% endif %}
+            </div>
+        </div>
+
+        <!-- Estimated Delivery -->
+        <div class="card shadow-sm mb-3">
+            <div class="card-header">
+                <h5 class="mb-0"><i class="bi bi-clock me-2"></i>{% trans "Estimated Delivery" %}</h5>
+            </div>
+            <div class="card-body text-center">
+                {% if tracking.estimated_delivery %}
+                <h3 class="text-primary">{{ tracking.estimated_delivery|date:"F d, Y" }}</h3>
+                <p class="text-muted">{{ tracking.estimated_delivery|time:"H:i" }}</p>
+                {% else %}
+                <p class="text-muted">{% trans "Will be updated soon" %}</p>
+                {% endif %}
+            </div>
+        </div>
+
+        <!-- Delivery Address -->
+        <div class="card shadow-sm mb-3">
+            <div class="card-header">
+                <h5 class="mb-0"><i class="bi bi-geo-alt me-2"></i>{% trans "Delivery Address" %}</h5>
+            </div>
+            <div class="card-body">
+                <p class="mb-0">{{ order.delivery_address }}</p>
+                {% if order.delivery_notes %}
+                <hr>
+                <p class="text-muted small mb-0">{% trans "Notes" %}: {{ order.delivery_notes }}</p>
+                {% endif %}
+            </div>
+        </div>
+
+        <!-- Order Summary -->
+        <div class="card shadow-sm">
+            <div class="card-header">
+                <h5 class="mb-0"><i class="bi bi-bag me-2"></i>{% trans "Order Summary" %}</h5>
+            </div>
+            <div class="card-body">
+                <p><strong>{% trans "Total" %}:</strong> {% price_in_currency order.total %}</p>
+                <p><strong>{% trans "Payment" %}:</strong> {{ order.get_payment_method_display }}</p>
+                <a href="{% url 'orders:confirmation' order.id %}" class="btn btn-outline-primary w-100">
+                    {% trans "View Order Details" %}
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+.timeline {
+    position: relative;
+    padding-left: 30px;
+}
+.timeline::before {
+    content: '';
+    position: absolute;
+    left: 10px;
+    top: 0;
+    bottom: 0;
+    width: 2px;
+    background: #dee2e6;
+}
+.timeline-item {
+    position: relative;
+    padding-bottom: 20px;
+}
+.timeline-marker {
+    position: absolute;
+    left: -25px;
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    background: #dee2e6;
+    border: 3px solid #fff;
+    box-shadow: 0 0 0 2px #dee2e6;
+}
+.timeline-item.active .timeline-marker {
+    background: #ff7a18;
+    box-shadow: 0 0 0 2px #ff7a18;
+}
+.timeline-item.completed .timeline-marker {
+    background: #28a745;
+    box-shadow: 0 0 0 2px #28a745;
+}
+.timeline-item.completed .timeline-marker::after {
+    content: '\2713';
+    color: white;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-size: 10px;
+}
+</style>
+
+<!-- Leaflet CSS and JS for Map -->
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Default to Kigali if no coordinates
+    const defaultLat = -1.9403;
+    const defaultLng = 30.0588;
+
+    const currentLat = {{ tracking.current_latitude|default:"-1.9403" }};
+    const currentLng = {{ tracking.current_longitude|default:"30.0588" }};
+    const destLat = {{ tracking.destination_latitude|default:"-1.9503" }};
+    const destLng = {{ tracking.destination_longitude|default:"30.0688" }};
+
+    // Initialize map
+    const map = L.map('map').setView([currentLat || defaultLat, currentLng || defaultLng], 14);
+
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        attribution: '&copy; OpenStreetMap contributors'
+    }).addTo(map);
+
+    // Delivery truck marker
+    const truckIcon = L.divIcon({
+        html: '<i class="bi bi-truck" style="font-size: 24px; color: #ff7a18;"></i>',
+        className: 'truck-marker',
+        iconSize: [30, 30]
+    });
+
+    // Destination marker
+    const destIcon = L.divIcon({
+        html: '<i class="bi bi-house-fill" style="font-size: 24px; color: #28a745;"></i>',
+        className: 'dest-marker',
+        iconSize: [30, 30]
+    });
+
+    let driverMarker = null;
+
+    if (currentLat && currentLng) {
+        driverMarker = L.marker([currentLat, currentLng], {icon: truckIcon}).addTo(map)
+            .bindPopup('{% trans "Delivery Driver" %}');
+    }
+
+    if (destLat && destLng) {
+        L.marker([destLat, destLng], {icon: destIcon}).addTo(map)
+            .bindPopup('{% trans "Delivery Address" %}');
+    }
+
+    // Poll for location updates every 30 seconds
+    function updateLocation() {
+        fetch('{% url "orders:get_tracking_location" order.id %}')
+            .then(response => response.json())
+            .then(data => {
+                if (data.current_latitude && data.current_longitude) {
+                    const newLatLng = [data.current_latitude, data.current_longitude];
+                    if (driverMarker) {
+                        driverMarker.setLatLng(newLatLng);
+                    } else {
+                        driverMarker = L.marker(newLatLng, {icon: truckIcon}).addTo(map)
+                            .bindPopup('{% trans "Delivery Driver" %}');
+                    }
+                }
+                // Update status badge
+                document.getElementById('tracking-status').textContent = data.status_display;
+            })
+            .catch(err => console.log('Error updating location:', err));
+    }
+
+    // Update every 30 seconds
+    setInterval(updateLocation, 30000);
+});
+</script>
+{% endblock %}
