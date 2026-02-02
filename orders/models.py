@@ -1,6 +1,7 @@
 from django.db import models
 from django.conf import settings
 from django.core.validators import MinValueValidator
+from django.utils.translation import gettext_lazy as _
 
 
 class Order(models.Model):
@@ -13,13 +14,13 @@ class Order(models.Model):
     STATUS_CANCELLED = 'cancelled'
 
     STATUS_CHOICES = [
-        (STATUS_PENDING, 'Pending Payment'),
-        (STATUS_AWAITING_CONFIRMATION, 'Awaiting Vendor Confirmation'),
-        (STATUS_PROCESSING, 'Processing'),
-        (STATUS_SHIPPED, 'Shipped'),
-        (STATUS_DELIVERED, 'Delivered'),
-        (STATUS_COMPLETED, 'Completed'),
-        (STATUS_CANCELLED, 'Cancelled'),
+        (STATUS_PENDING, _('Pending Payment')),
+        (STATUS_AWAITING_CONFIRMATION, _('Awaiting Vendor Confirmation')),
+        (STATUS_PROCESSING, _('Processing')),
+        (STATUS_SHIPPED, _('Shipped')),
+        (STATUS_DELIVERED, _('Delivered')),
+        (STATUS_COMPLETED, _('Completed')),
+        (STATUS_CANCELLED, _('Cancelled')),
     ]
 
     # Basic order information
@@ -56,9 +57,9 @@ class Order(models.Model):
     DELIVERY_PICKUP = 'pickup'
     
     DELIVERY_CHOICES = [
-        (DELIVERY_STANDARD, 'Standard Delivery (3-5 days)'),
-        (DELIVERY_EXPRESS, 'Express Delivery (1-2 days)'),
-        (DELIVERY_PICKUP, 'Store Pickup'),
+        (DELIVERY_STANDARD, _('Standard Delivery (3-5 days)')),
+        (DELIVERY_EXPRESS, _('Express Delivery (1-2 days)')),
+        (DELIVERY_PICKUP, _('Store Pickup')),
     ]
     
     delivery_option = models.CharField(
@@ -82,12 +83,12 @@ class Order(models.Model):
     PAYMENT_CASH = 'cash'
     
     PAYMENT_CHOICES = [
-        (PAYMENT_BANK, 'Bank Transfer'),
-        (PAYMENT_MOMO, 'MTN Mobile Money'),
-        (PAYMENT_AIRTEL, 'Airtel Money'),
-        (PAYMENT_TIGO, 'Tigo Cash'),
-        (PAYMENT_CARD, 'Credit/Debit Card'),
-        (PAYMENT_CASH, 'Cash on Delivery'),
+        (PAYMENT_BANK, _('Bank Transfer')),
+        (PAYMENT_MOMO, _('MTN Mobile Money')),
+        (PAYMENT_AIRTEL, _('Airtel Money')),
+        (PAYMENT_TIGO, _('Tigo Cash')),
+        (PAYMENT_CARD, _('Credit/Debit Card')),
+        (PAYMENT_CASH, _('Cash on Delivery')),
     ]
     
     payment_method = models.CharField(
