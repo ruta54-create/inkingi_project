@@ -1,0 +1,20 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(git checkout:*)",
+      "Bash(python manage.py:*)",
+      "Bash(py manage.py makemigrations core)",
+      "Bash(where:*)",
+      "Bash(pipenv run python:*)",
+      "Bash(cmd.exe /c \"cd /d \"\"C:\\\\Users\\\\Chairman\\\\Documents\\\\1CST_UR Room\\\\zero\\\\inkingi_project\"\" && python manage.py makemigrations core 2>&1\")",
+      "Bash(dir /b:*)",
+      "Bash(python -m venv:*)",
+      "Bash(pip install:*)",
+      "Bash(git add:*)",
+      "Bash(git commit -m \"$\\(cat <<''EOF''\nAdd marketplace enhancements: payment proof, vendor confirmation, delivery tracking\n\nFeatures added:\n- Payment proof upload for customers\n- Vendor order confirmation workflow with accept/reject\n- Delivery tracking system with status updates\n- Email notifications for order confirmation/rejection\n- Company admin dashboard with order management\n- Core app with currency management and site settings\n\nBug fixes:\n- Fix Order.status max_length for ''awaiting_confirmation'' status\n- Fix test_vendor_can_add_product: use valid GIF image and category\n- Fix test_admin_reprocess_events: handle two-step confirmation flow\n\nCo-Authored-By: Claude Opus 4.5 <noreply@anthropic.com>\nEOF\n\\)\")",
+      "Bash(git push:*)",
+      "Bash(python:*)",
+      "Bash(ls:*)"
+    ]
+  }
+}
