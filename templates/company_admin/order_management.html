@@ -1,0 +1,113 @@
+{% extends 'base.html' %}
+{% load i18n %}
+{% load currency_tags %}
+
+{% block title %}{% trans "Order Management" %} - Admin{% endblock %}
+
+{% block header %}
+<div class="d-flex justify-content-between align-items-center">
+    <div>
+        <h1 class="fw-bold"><i class="bi bi-clipboard-check me-2"></i>{% trans "Order Management" %}</h1>
+        <p class="text-muted mb-0">{% trans "View and manage all orders" %}</p>
+    </div>
+    <a href="{% url 'company_admin:dashboard' %}" class="btn btn-outline-secondary">
+        <i class="bi bi-arrow-left me-1"></i>{% trans "Back to Dashboard" %}
+    </a>
+</div>
+{% endblock %}
+
+{% block content %}
+<!-- Filters -->
+<div class="card shadow-sm mb-4">
+    <div class="card-body">
+        <form method="get" class="row g-3 align-items-end">
+            <div class="col-md-3">
+                <label class="form-label">{% trans "Status" %}</label>
+                <select name="status" class="form-select">
+                    <option value="">{% trans "All Statuses" %}</option>
+                    {% for value, label in status_choices %}
+                    <option value="{{ value }}" {% if status_filter == value %}selected{% endif %}>{{ label }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="col-md-3">
+                <label class="form-label">{% trans "From Date" %}</label>
+                <input type="date" name="date_from" class="form-control" value="{{ date_from }}">
+            </div>
+            <div class="col-md-3">
+                <label class="form-label">{% trans "To Date" %}</label>
+                <input type="date" name="date_to" class="form-control" value="{{ date_to }}">
+            </div>
+            <div class="col-md-3">
+                <button type="submit" class="btn btn-primary w-100">
+                    <i class="bi bi-filter me-1"></i>{% trans "Filter" %}
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- Orders Table -->
+<div class="card shadow-sm">
+    <div class="card-body">
+        <div class="table-responsive">
+            <table class="table table-hover">
+                <thead class="table-dark">
+                    <tr>
+                        <th>{% trans "Order ID" %}</th>
+                        <th>{% trans "Customer" %}</th>
+                        <th>{% trans "Date" %}</th>
+                        <th>{% trans "Items" %}</th>
+                        <th>{% trans "Total" %}</th>
+                        <th>{% trans "Payment" %}</th>
+                        <th>{% trans "Status" %}</th>
+                        <th>{% trans "Actions" %}</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for order in orders %}
+                    <tr>
+                        <td><strong>#{{ order.id }}</strong></td>
+                        <td>
+                            {{ order.customer.username }}
+                            <br><small class="text-muted">{{ order.customer.email }}</small>
+                        </td>
+                        <td>{{ order.created_at|date:"M d, Y H:i" }}</td>
+                        <td>{{ order.items.count }} {% trans "items" %}</td>
+                        <td><strong>{% price_in_currency order.total %}</strong></td>
+                        <td>
+                            {{ order.get_payment_method_display }}
+                            {% if order.payment_proof %}
+                            <br><span class="badge bg-success">{% trans "Proof uploaded" %}</span>
+                            {% endif %}
+                        </td>
+                        <td>
+                            <span class="badge {% if order.status == 'completed' or order.status == 'delivered' %}bg-success{% elif order.status == 'pending' %}bg-warning text-dark{% elif order.status == 'awaiting_confirmation' %}bg-info{% elif order.status == 'cancelled' %}bg-danger{% else %}bg-primary{% endif %}">
+                                {{ order.get_status_display }}
+                            </span>
+                        </td>
+                        <td>
+                            <div class="btn-group btn-group-sm">
+                                <a href="{% url 'company_admin:order_detail' order.id %}" class="btn btn-outline-primary" title="{% trans 'View' %}">
+                                    <i class="bi bi-eye"></i>
+                                </a>
+                                <a href="{% url 'orders:track_delivery' order.id %}" class="btn btn-outline-info" title="{% trans 'Track' %}">
+                                    <i class="bi bi-geo-alt"></i>
+                                </a>
+                            </div>
+                        </td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="8" class="text-center text-muted py-4">
+                            <i class="bi bi-inbox fs-1"></i>
+                            <p>{% trans "No orders found" %}</p>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %}

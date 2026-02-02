@@ -18,6 +18,7 @@ from django.contrib import admin
 from django.urls import path, include
 from django.conf import settings
 from django.conf.urls.static import static
+from django.conf.urls.i18n import i18n_patterns
 from .views import home
 from accounts import views as accounts_views
 
@@ -35,7 +36,10 @@ urlpatterns = [
     path('', home, name='home_page'),
     path('products/', include(('products.urls', 'products'), namespace='products')),
     path('pages/', include('pages.urls')),
-    
+    # Core app for language/currency switching
+    path('core/', include('core.urls')),
+    # Django i18n language switching
+    path('i18n/', include('django.conf.urls.i18n')),
 ]
 
 if settings.DEBUG:

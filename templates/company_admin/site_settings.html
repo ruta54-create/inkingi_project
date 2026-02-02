@@ -1,0 +1,197 @@
+{% extends 'base.html' %}
+{% load i18n %}
+
+{% block title %}{% trans "Site Settings" %} - Admin{% endblock %}
+
+{% block header %}
+<h1 class="fw-bold"><i class="bi bi-gear me-2"></i>{% trans "Site Settings" %}</h1>
+<p class="text-muted">{% trans "Configure your website branding, contact information, and business settings" %}</p>
+{% endblock %}
+
+{% block content %}
+<form method="post" enctype="multipart/form-data">
+    {% csrf_token %}
+
+    <div class="row">
+        <div class="col-lg-8">
+            <!-- Branding Section -->
+            <div class="card shadow-sm mb-4">
+                <div class="card-header bg-primary text-white">
+                    <h5 class="mb-0"><i class="bi bi-brush me-2"></i>{% trans "Branding" %}</h5>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">{% trans "Site Name" %}</label>
+                            <input type="text" name="site_name" class="form-control" value="{{ settings.site_name }}">
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">{% trans "Tagline" %}</label>
+                            <input type="text" name="site_tagline" class="form-control" value="{{ settings.site_tagline }}">
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">{% trans "Logo" %}</label>
+                            {% if settings.logo %}
+                            <div class="mb-2">
+                                <img src="{{ settings.logo.url }}" alt="Current Logo" height="50">
+                            </div>
+                            {% endif %}
+                            <input type="file" name="logo" class="form-control" accept="image/*">
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">{% trans "Banner Image" %}</label>
+                            {% if settings.banner_image %}
+                            <div class="mb-2">
+                                <img src="{{ settings.banner_image.url }}" alt="Current Banner" height="50">
+                            </div>
+                            {% endif %}
+                            <input type="file" name="banner_image" class="form-control" accept="image/*">
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Banner/Hero Section -->
+            <div class="card shadow-sm mb-4">
+                <div class="card-header bg-info text-white">
+                    <h5 class="mb-0"><i class="bi bi-image me-2"></i>{% trans "Banner/Hero Section" %}</h5>
+                </div>
+                <div class="card-body">
+                    <div class="mb-3">
+                        <label class="form-label">{% trans "Banner Title" %}</label>
+                        <input type="text" name="banner_title" class="form-control" value="{{ settings.banner_title }}">
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">{% trans "Banner Subtitle" %}</label>
+                        <textarea name="banner_subtitle" class="form-control" rows="2">{{ settings.banner_subtitle }}</textarea>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">{% trans "Advertising Video (Upload)" %}</label>
+                            {% if settings.banner_video %}
+                            <div class="mb-2">
+                                <video width="200" controls>
+                                    <source src="{{ settings.banner_video.url }}" type="video/mp4">
+                                </video>
+                            </div>
+                            {% endif %}
+                            <input type="file" name="banner_video" class="form-control" accept="video/*">
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">{% trans "Video URL (YouTube/Vimeo)" %}</label>
+                            <input type="url" name="banner_video_url" class="form-control" value="{{ settings.banner_video_url }}" placeholder="https://youtube.com/watch?v=...">
+                        </div>
+                    </div>
+                    <div class="form-check">
+                        <input type="checkbox" name="show_video_on_homepage" class="form-check-input" id="show_video" {% if settings.show_video_on_homepage %}checked{% endif %}>
+                        <label class="form-check-label" for="show_video">{% trans "Show video on homepage" %}</label>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Contact Information -->
+            <div class="card shadow-sm mb-4">
+                <div class="card-header bg-success text-white">
+                    <h5 class="mb-0"><i class="bi bi-telephone me-2"></i>{% trans "Contact Information" %}</h5>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">{% trans "Email" %}</label>
+                            <input type="email" name="contact_email" class="form-control" value="{{ settings.contact_email }}">
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">{% trans "Phone" %}</label>
+                            <input type="text" name="contact_phone" class="form-control" value="{{ settings.contact_phone }}">
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">{% trans "WhatsApp Number" %}</label>
+                            <input type="text" name="whatsapp_number" class="form-control" value="{{ settings.whatsapp_number }}" placeholder="250788123456">
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">{% trans "Address" %}</label>
+                            <textarea name="contact_address" class="form-control" rows="2">{{ settings.contact_address }}</textarea>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Social Media -->
+            <div class="card shadow-sm mb-4">
+                <div class="card-header bg-dark text-white">
+                    <h5 class="mb-0"><i class="bi bi-share me-2"></i>{% trans "Social Media" %}</h5>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label"><i class="bi bi-facebook me-1"></i>Facebook URL</label>
+                            <input type="url" name="facebook_url" class="form-control" value="{{ settings.facebook_url }}">
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label"><i class="bi bi-twitter me-1"></i>Twitter URL</label>
+                            <input type="url" name="twitter_url" class="form-control" value="{{ settings.twitter_url }}">
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label"><i class="bi bi-instagram me-1"></i>Instagram URL</label>
+                            <input type="url" name="instagram_url" class="form-control" value="{{ settings.instagram_url }}">
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label"><i class="bi bi-linkedin me-1"></i>LinkedIn URL</label>
+                            <input type="url" name="linkedin_url" class="form-control" value="{{ settings.linkedin_url }}">
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-4">
+            <!-- Business Settings -->
+            <div class="card shadow-sm mb-4">
+                <div class="card-header bg-warning text-dark">
+                    <h5 class="mb-0"><i class="bi bi-calculator me-2"></i>{% trans "Business Settings" %}</h5>
+                </div>
+                <div class="card-body">
+                    <div class="mb-3">
+                        <label class="form-label">{% trans "Tax Rate (%)" %}</label>
+                        <input type="number" name="tax_rate" class="form-control" value="{{ settings.tax_rate }}" step="0.01" min="0" max="100">
+                        <div class="form-text">{% trans "VAT percentage applied to orders" %}</div>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">{% trans "Standard Delivery Cost (RWF)" %}</label>
+                        <input type="number" name="standard_delivery_cost" class="form-control" value="{{ settings.standard_delivery_cost }}" step="100" min="0">
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">{% trans "Express Delivery Cost (RWF)" %}</label>
+                        <input type="number" name="express_delivery_cost" class="form-control" value="{{ settings.express_delivery_cost }}" step="100" min="0">
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">{% trans "Free Delivery Threshold (RWF)" %}</label>
+                        <input type="number" name="free_delivery_threshold" class="form-control" value="{{ settings.free_delivery_threshold }}" step="1000" min="0">
+                        <div class="form-text">{% trans "Orders above this amount get free delivery" %}</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Save Button -->
+            <div class="d-grid">
+                <button type="submit" class="btn btn-primary btn-lg">
+                    <i class="bi bi-save me-2"></i>{% trans "Save Settings" %}
+                </button>
+            </div>
+
+            <!-- Back to Dashboard -->
+            <div class="d-grid mt-3">
+                <a href="{% url 'company_admin:dashboard' %}" class="btn btn-outline-secondary">
+                    <i class="bi bi-arrow-left me-2"></i>{% trans "Back to Dashboard" %}
+                </a>
+            </div>
+        </div>
+    </div>
+</form>
+{% endblock %}

@@ -1,0 +1,117 @@
+{% extends 'base.html' %}
+{% load i18n %}
+{% load currency_tags %}
+
+{% block title %}{% trans "Upload Payment Proof" %} - Order #{{ order.id }}{% endblock %}
+
+{% block header %}
+<h1 class="fw-bold">{% trans "Upload Payment Proof" %}</h1>
+<p class="text-muted">{% trans "Order" %} #{{ order.id }}</p>
+{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-lg-8">
+        <div class="card shadow-sm mb-4">
+            <div class="card-header bg-primary text-white">
+                <h5 class="mb-0"><i class="bi bi-upload me-2"></i>{% trans "Upload Payment Proof" %}</h5>
+            </div>
+            <div class="card-body">
+                <div class="alert alert-info">
+                    <h6><i class="bi bi-info-circle me-2"></i>{% trans "Instructions" %}</h6>
+                    <ul class="mb-0">
+                        <li>{% trans "Take a screenshot of your payment confirmation from MTN, Airtel, or your bank app" %}</li>
+                        <li>{% trans "Make sure the transaction ID and amount are clearly visible" %}</li>
+                        <li>{% trans "Upload the image below" %}</li>
+                        <li>{% trans "The vendor will review and confirm your payment" %}</li>
+                    </ul>
+                </div>
+
+                <form method="post" enctype="multipart/form-data">
+                    {% csrf_token %}
+
+                    <div class="mb-4">
+                        <label class="form-label fw-bold">{% trans "Payment Proof Image" %} <span class="text-danger">*</span></label>
+                        <input type="file" name="payment_proof" class="form-control form-control-lg" accept="image/*" required>
+                        <div class="form-text">{% trans "Accepted formats: JPG, PNG, GIF. Max size: 5MB" %}</div>
+                    </div>
+
+                    <div class="mb-4">
+                        <label class="form-label fw-bold">{% trans "Transaction Reference (Optional)" %}</label>
+                        <input type="text" name="payment_reference" class="form-control"
+                               placeholder="{% trans 'Enter the transaction ID from your payment' %}">
+                    </div>
+
+                    <div class="d-grid gap-2">
+                        <button type="submit" class="btn btn-primary btn-lg">
+                            <i class="bi bi-cloud-upload me-2"></i>{% trans "Upload Payment Proof" %}
+                        </button>
+                        <a href="{% url 'orders:confirmation' order.id %}" class="btn btn-outline-secondary">
+                            {% trans "Cancel" %}
+                        </a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-lg-4">
+        <div class="card shadow-sm">
+            <div class="card-header">
+                <h5 class="mb-0">{% trans "Order Summary" %}</h5>
+            </div>
+            <div class="card-body">
+                <p><strong>{% trans "Order" %}:</strong> #{{ order.id }}</p>
+                <p><strong>{% trans "Date" %}:</strong> {{ order.created_at|date:"F d, Y" }}</p>
+                <p><strong>{% trans "Payment Method" %}:</strong> {{ order.get_payment_method_display }}</p>
+
+                <hr>
+
+                <h6>{% trans "Items" %}:</h6>
+                <ul class="list-unstyled">
+                    {% for item in items %}
+                    <li class="mb-2">
+                        {{ item.product.name }} x {{ item.quantity }}
+                        <span class="float-end">{% price_in_currency item.price %}</span>
+                    </li>
+                    {% endfor %}
+                </ul>
+
+                <hr>
+
+                <div class="d-flex justify-content-between">
+                    <strong>{% trans "Total" %}:</strong>
+                    <strong class="text-primary">{% price_in_currency order.total %}</strong>
+                </div>
+            </div>
+        </div>
+
+        <!-- Payment Instructions -->
+        <div class="card shadow-sm mt-3">
+            <div class="card-header bg-warning text-dark">
+                <h6 class="mb-0"><i class="bi bi-credit-card me-2"></i>{% trans "Payment Details" %}</h6>
+            </div>
+            <div class="card-body">
+                {% if order.payment_method == 'momo' %}
+                <p><strong>MTN Mobile Money:</strong></p>
+                <p class="mb-1">{% trans "Dial" %} *182*8*1#</p>
+                <p class="mb-1">{% trans "Enter Merchant Code" %}: 123456</p>
+                <p class="mb-1">{% trans "Amount" %}: {{ order.total|floatformat:0 }} RWF</p>
+                {% elif order.payment_method == 'airtel' %}
+                <p><strong>Airtel Money:</strong></p>
+                <p class="mb-1">{% trans "Dial" %} *182*8*1#</p>
+                <p class="mb-1">{% trans "Enter Merchant Code" %}: 654321</p>
+                <p class="mb-1">{% trans "Amount" %}: {{ order.total|floatformat:0 }} RWF</p>
+                {% elif order.payment_method == 'bank' %}
+                <p><strong>{% trans "Bank Transfer" %}:</strong></p>
+                <p class="mb-1">{% trans "Bank" %}: Bank of Kigali</p>
+                <p class="mb-1">{% trans "Account" %}: 1234567890</p>
+                <p class="mb-1">{% trans "Name" %}: Inkingi Woods Ltd</p>
+                <p class="mb-1">{% trans "Amount" %}: {{ order.total|floatformat:0 }} RWF</p>
+                <p class="mb-1">{% trans "Reference" %}: Order-{{ order.id }}</p>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

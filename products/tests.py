@@ -16,16 +16,23 @@ class AddProductTest(TestCase):
 
 	def test_vendor_can_add_product(self):
 		url = reverse('products:add_product')
-		image = SimpleUploadedFile('test.gif', b'GIF87a', content_type='image/gif')
+		# Valid 1x1 pixel GIF image
+		gif_data = (
+			b'GIF89a\x01\x00\x01\x00\x80\x00\x00\xff\xff\xff'
+			b'\x00\x00\x00!\xf9\x04\x01\x00\x00\x00\x00,'
+			b'\x00\x00\x00\x00\x01\x00\x01\x00\x00\x02\x02D\x01\x00;'
+		)
+		image = SimpleUploadedFile('test.gif', gif_data, content_type='image/gif')
 		data = {
 			'name': 'Test Product',
 			'description': 'A test product',
 			'price': '12.50',
 			'stock': '5',
 			'unit': 'meter',
-			'category': 'bed',
+			'category': 'furniture',
+			'image': image,
 		}
-		response = self.client.post(url, data, files={'image': image}, follow=True)
+		response = self.client.post(url, data, follow=True)
 		self.assertEqual(response.status_code, 200)
 		self.assertTrue(Product.objects.filter(name='Test Product', vendor=self.user).exists())
 		messages = list(response.context.get('messages', []))

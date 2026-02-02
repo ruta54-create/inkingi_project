@@ -1,0 +1,211 @@
+{% extends 'base.html' %}
+{% load i18n %}
+{% load currency_tags %}
+
+{% block title %}{% trans "Order" %} #{{ order.id }} - Admin{% endblock %}
+
+{% block header %}
+<div class="d-flex justify-content-between align-items-center">
+    <div>
+        <h1 class="fw-bold"><i class="bi bi-receipt me-2"></i>{% trans "Order" %} #{{ order.id }}</h1>
+        <p class="text-muted mb-0">{% trans "Placed on" %} {{ order.created_at|date:"F d, Y H:i" }}</p>
+    </div>
+    <a href="{% url 'company_admin:order_management' %}" class="btn btn-outline-secondary">
+        <i class="bi bi-arrow-left me-1"></i>{% trans "Back to Orders" %}
+    </a>
+</div>
+{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-lg-8">
+        <!-- Order Items -->
+        <div class="card shadow-sm mb-4">
+            <div class="card-header">
+                <h5 class="mb-0"><i class="bi bi-box me-2"></i>{% trans "Order Items" %}</h5>
+            </div>
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>{% trans "Product" %}</th>
+                                <th>{% trans "Vendor" %}</th>
+                                <th>{% trans "Price" %}</th>
+                                <th>{% trans "Qty" %}</th>
+                                <th>{% trans "Subtotal" %}</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for item in items %}
+                            <tr>
+                                <td>
+                                    {% if item.product.image %}
+                                    <img src="{{ item.product.image.url }}" alt="{{ item.product.name }}" width="50" class="me-2">
+                                    {% endif %}
+                                    {{ item.product.name }}
+                                </td>
+                                <td>{{ item.product.vendor.username }}</td>
+                                <td>{% price_in_currency item.price %}</td>
+                                <td>{{ item.quantity }}</td>
+                                <td><strong>{% price_in_currency item.subtotal %}</strong></td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                        <tfoot>
+                            <tr>
+                                <td colspan="4" class="text-end"><strong>{% trans "Subtotal" %}:</strong></td>
+                                <td><strong>{% price_in_currency order.subtotal %}</strong></td>
+                            </tr>
+                            <tr>
+                                <td colspan="4" class="text-end"><strong>{% trans "Delivery" %}:</strong></td>
+                                <td>{% price_in_currency order.delivery_cost %}</td>
+                            </tr>
+                            <tr>
+                                <td colspan="4" class="text-end"><strong>{% trans "Tax" %} ({{ order.tax_rate|floatformat:0 }}%):</strong></td>
+                                <td>{% price_in_currency order.tax_amount %}</td>
+                            </tr>
+                            <tr class="table-primary">
+                                <td colspan="4" class="text-end"><strong>{% trans "Total" %}:</strong></td>
+                                <td><strong class="fs-5">{% price_in_currency order.total %}</strong></td>
+                            </tr>
+                        </tfoot>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- Payment Proof -->
+        {% if order.payment_proof %}
+        <div class="card shadow-sm mb-4">
+            <div class="card-header bg-info text-white">
+                <h5 class="mb-0"><i class="bi bi-image me-2"></i>{% trans "Payment Proof" %}</h5>
+            </div>
+            <div class="card-body text-center">
+                <img src="{{ order.payment_proof.url }}" alt="Payment Proof" class="img-fluid rounded" style="max-height: 400px;">
+                <p class="mt-2 text-muted">{% trans "Uploaded" %}: {{ order.payment_proof_uploaded_at|date:"F d, Y H:i" }}</p>
+                {% if order.payment_reference %}
+                <p><strong>{% trans "Reference" %}:</strong> {{ order.payment_reference }}</p>
+                {% endif %}
+            </div>
+        </div>
+        {% endif %}
+
+        <!-- Update Status -->
+        <div class="card shadow-sm">
+            <div class="card-header bg-warning text-dark">
+                <h5 class="mb-0"><i class="bi bi-pencil me-2"></i>{% trans "Update Status" %}</h5>
+            </div>
+            <div class="card-body">
+                <form method="post" action="{% url 'company_admin:update_order_status' order.id %}">
+                    {% csrf_token %}
+                    <div class="row align-items-end">
+                        <div class="col-md-8">
+                            <label class="form-label">{% trans "Order Status" %}</label>
+                            <select name="status" class="form-select">
+                                <option value="pending" {% if order.status == 'pending' %}selected{% endif %}>{% trans "Pending Payment" %}</option>
+                                <option value="awaiting_confirmation" {% if order.status == 'awaiting_confirmation' %}selected{% endif %}>{% trans "Awaiting Confirmation" %}</option>
+                                <option value="processing" {% if order.status == 'processing' %}selected{% endif %}>{% trans "Processing" %}</option>
+                                <option value="shipped" {% if order.status == 'shipped' %}selected{% endif %}>{% trans "Shipped" %}</option>
+                                <option value="delivered" {% if order.status == 'delivered' %}selected{% endif %}>{% trans "Delivered" %}</option>
+                                <option value="completed" {% if order.status == 'completed' %}selected{% endif %}>{% trans "Completed" %}</option>
+                                <option value="cancelled" {% if order.status == 'cancelled' %}selected{% endif %}>{% trans "Cancelled" %}</option>
+                            </select>
+                        </div>
+                        <div class="col-md-4">
+                            <button type="submit" class="btn btn-primary w-100">
+                                <i class="bi bi-save me-1"></i>{% trans "Update" %}
+                            </button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-lg-4">
+        <!-- Order Status -->
+        <div class="card shadow-sm mb-3">
+            <div class="card-header">
+                <h5 class="mb-0">{% trans "Order Status" %}</h5>
+            </div>
+            <div class="card-body">
+                <span class="badge fs-6 {% if order.status == 'completed' or order.status == 'delivered' %}bg-success{% elif order.status == 'pending' %}bg-warning text-dark{% elif order.status == 'awaiting_confirmation' %}bg-info{% elif order.status == 'cancelled' %}bg-danger{% else %}bg-primary{% endif %}">
+                    {{ order.get_status_display }}
+                </span>
+
+                {% if order.vendor_confirmed %}
+                <p class="mt-3 mb-0 text-success">
+                    <i class="bi bi-check-circle me-1"></i>{% trans "Vendor confirmed" %}
+                    <br><small>{{ order.vendor_confirmed_at|date:"M d, Y H:i" }}</small>
+                </p>
+                {% endif %}
+
+                {% if order.vendor_rejection_reason %}
+                <p class="mt-3 mb-0 text-danger">
+                    <i class="bi bi-x-circle me-1"></i>{% trans "Rejected" %}
+                    <br><small>{{ order.vendor_rejection_reason }}</small>
+                </p>
+                {% endif %}
+            </div>
+        </div>
+
+        <!-- Customer Info -->
+        <div class="card shadow-sm mb-3">
+            <div class="card-header">
+                <h5 class="mb-0"><i class="bi bi-person me-2"></i>{% trans "Customer" %}</h5>
+            </div>
+            <div class="card-body">
+                <p><strong>{{ order.customer.username }}</strong></p>
+                <p class="mb-1"><i class="bi bi-envelope me-2"></i>{{ order.customer.email }}</p>
+                <p class="mb-0"><i class="bi bi-telephone me-2"></i>{{ order.phone }}</p>
+            </div>
+        </div>
+
+        <!-- Delivery Info -->
+        <div class="card shadow-sm mb-3">
+            <div class="card-header">
+                <h5 class="mb-0"><i class="bi bi-geo-alt me-2"></i>{% trans "Delivery" %}</h5>
+            </div>
+            <div class="card-body">
+                <p><strong>{{ order.get_delivery_option_display }}</strong></p>
+                <p class="mb-1">{{ order.delivery_address }}</p>
+                {% if order.delivery_notes %}
+                <p class="text-muted small mb-0">{% trans "Notes" %}: {{ order.delivery_notes }}</p>
+                {% endif %}
+            </div>
+        </div>
+
+        <!-- Payment Info -->
+        <div class="card shadow-sm mb-3">
+            <div class="card-header">
+                <h5 class="mb-0"><i class="bi bi-credit-card me-2"></i>{% trans "Payment" %}</h5>
+            </div>
+            <div class="card-body">
+                <p><strong>{{ order.get_payment_method_display }}</strong></p>
+                {% if order.payment_reference %}
+                <p class="mb-0 small">{% trans "Reference" %}: {{ order.payment_reference }}</p>
+                {% endif %}
+            </div>
+        </div>
+
+        <!-- Tracking -->
+        {% if tracking %}
+        <div class="card shadow-sm">
+            <div class="card-header bg-success text-white">
+                <h5 class="mb-0"><i class="bi bi-truck me-2"></i>{% trans "Tracking" %}</h5>
+            </div>
+            <div class="card-body">
+                <p><strong>{% trans "Status" %}:</strong> {{ tracking.get_status_display }}</p>
+                {% if tracking.driver_name %}
+                <p><strong>{% trans "Driver" %}:</strong> {{ tracking.driver_name }}</p>
+                {% endif %}
+                <a href="{% url 'orders:track_delivery' order.id %}" class="btn btn-sm btn-outline-success w-100">
+                    <i class="bi bi-geo-alt me-1"></i>{% trans "View Map" %}
+                </a>
+            </div>
+        </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

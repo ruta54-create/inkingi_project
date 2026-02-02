@@ -5,14 +5,16 @@ from django.core.validators import MinValueValidator
 
 class Order(models.Model):
     STATUS_PENDING = 'pending'
+    STATUS_AWAITING_CONFIRMATION = 'awaiting_confirmation'
     STATUS_PROCESSING = 'processing'
     STATUS_SHIPPED = 'shipped'
     STATUS_DELIVERED = 'delivered'
     STATUS_COMPLETED = 'completed'
     STATUS_CANCELLED = 'cancelled'
-    
+
     STATUS_CHOICES = [
         (STATUS_PENDING, 'Pending Payment'),
+        (STATUS_AWAITING_CONFIRMATION, 'Awaiting Vendor Confirmation'),
         (STATUS_PROCESSING, 'Processing'),
         (STATUS_SHIPPED, 'Shipped'),
         (STATUS_DELIVERED, 'Delivered'),
@@ -23,12 +25,30 @@ class Order(models.Model):
     # Basic order information
     customer = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='orders')
     total = models.DecimalField(decimal_places=2, max_digits=12, validators=[MinValueValidator(0)])
-    status = models.CharField(max_length=20, choices=STATUS_CHOICES, default=STATUS_PENDING)
-    
+    status = models.CharField(max_length=25, choices=STATUS_CHOICES, default=STATUS_PENDING)
+
     # Delivery information
     delivery_address = models.TextField()
     phone = models.CharField(max_length=20)
     delivery_notes = models.TextField(blank=True, null=True)
+
+    # GPS Location for delivery
+    delivery_latitude = models.DecimalField(max_digits=9, decimal_places=6, null=True, blank=True)
+    delivery_longitude = models.DecimalField(max_digits=9, decimal_places=6, null=True, blank=True)
+
+    # Payment proof
+    payment_proof = models.ImageField(upload_to='payment_proofs/', blank=True, null=True,
+                                       help_text='Upload screenshot/proof of payment')
+    payment_proof_uploaded_at = models.DateTimeField(null=True, blank=True)
+
+    # Vendor confirmation
+    vendor_confirmed = models.BooleanField(default=False)
+    vendor_confirmed_at = models.DateTimeField(null=True, blank=True)
+    vendor_confirmed_by = models.ForeignKey(
+        settings.AUTH_USER_MODEL, on_delete=models.SET_NULL,
+        null=True, blank=True, related_name='confirmed_orders'
+    )
+    vendor_rejection_reason = models.TextField(blank=True, null=True)
     
     # Delivery options
     DELIVERY_STANDARD = 'standard'

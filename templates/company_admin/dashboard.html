@@ -1,0 +1,322 @@
+{% extends 'base.html' %}
+{% load i18n %}
+{% load currency_tags %}
+
+{% block title %}{% trans "Admin Dashboard" %} - Inkingi Woods{% endblock %}
+
+{% block header %}
+<div class="d-flex justify-content-between align-items-center">
+    <div>
+        <h1 class="fw-bold"><i class="bi bi-speedometer2 me-2"></i>{% trans "Admin Dashboard" %}</h1>
+        <p class="text-muted mb-0">{% trans "Welcome to the Inkingi Woods administration panel" %}</p>
+    </div>
+    <div>
+        <a href="{% url 'company_admin:site_settings' %}" class="btn btn-outline-primary">
+            <i class="bi bi-gear me-1"></i>{% trans "Site Settings" %}
+        </a>
+    </div>
+</div>
+{% endblock %}
+
+{% block content %}
+<!-- Stats Cards -->
+<div class="row mb-4">
+    <div class="col-xl-3 col-md-6 mb-3">
+        <div class="card bg-primary text-white shadow">
+            <div class="card-body">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                        <h6 class="text-uppercase mb-1">{% trans "Total Revenue" %}</h6>
+                        <h3 class="mb-0">{% price_in_currency total_revenue %}</h3>
+                    </div>
+                    <i class="bi bi-currency-dollar fs-1 opacity-50"></i>
+                </div>
+            </div>
+            <div class="card-footer bg-primary-dark">
+                <small>{% trans "Today" %}: {% price_in_currency today_revenue %}</small>
+            </div>
+        </div>
+    </div>
+    <div class="col-xl-3 col-md-6 mb-3">
+        <div class="card bg-success text-white shadow">
+            <div class="card-body">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                        <h6 class="text-uppercase mb-1">{% trans "Total Orders" %}</h6>
+                        <h3 class="mb-0">{{ total_orders }}</h3>
+                    </div>
+                    <i class="bi bi-bag-check fs-1 opacity-50"></i>
+                </div>
+            </div>
+            <div class="card-footer bg-success-dark">
+                <small>{% trans "Pending" %}: {{ pending_orders }} | {% trans "Processing" %}: {{ processing_orders }}</small>
+            </div>
+        </div>
+    </div>
+    <div class="col-xl-3 col-md-6 mb-3">
+        <div class="card bg-info text-white shadow">
+            <div class="card-body">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                        <h6 class="text-uppercase mb-1">{% trans "Vendors" %}</h6>
+                        <h3 class="mb-0">{{ total_vendors }}</h3>
+                    </div>
+                    <i class="bi bi-shop fs-1 opacity-50"></i>
+                </div>
+            </div>
+            <div class="card-footer bg-info-dark">
+                <a href="{% url 'company_admin:vendor_management' %}" class="text-white text-decoration-none">
+                    <small>{% trans "Manage Vendors" %} <i class="bi bi-arrow-right"></i></small>
+                </a>
+            </div>
+        </div>
+    </div>
+    <div class="col-xl-3 col-md-6 mb-3">
+        <div class="card bg-warning text-dark shadow">
+            <div class="card-body">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                        <h6 class="text-uppercase mb-1">{% trans "Products" %}</h6>
+                        <h3 class="mb-0">{{ total_products }}</h3>
+                    </div>
+                    <i class="bi bi-box-seam fs-1 opacity-50"></i>
+                </div>
+            </div>
+            <div class="card-footer bg-warning-dark">
+                <small>{% trans "Active" %}: {{ active_products }}</small>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Quick Actions -->
+<div class="row mb-4">
+    <div class="col-12">
+        <div class="card shadow-sm">
+            <div class="card-header">
+                <h5 class="mb-0"><i class="bi bi-lightning me-2"></i>{% trans "Quick Actions" %}</h5>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-2 col-4 mb-3 text-center">
+                        <a href="{% url 'company_admin:order_management' %}" class="text-decoration-none">
+                            <div class="bg-light p-3 rounded">
+                                <i class="bi bi-clipboard-check fs-2 text-primary"></i>
+                                <p class="small mb-0 mt-2">{% trans "Orders" %}</p>
+                            </div>
+                        </a>
+                    </div>
+                    <div class="col-md-2 col-4 mb-3 text-center">
+                        <a href="{% url 'company_admin:vendor_management' %}" class="text-decoration-none">
+                            <div class="bg-light p-3 rounded">
+                                <i class="bi bi-people fs-2 text-success"></i>
+                                <p class="small mb-0 mt-2">{% trans "Vendors" %}</p>
+                            </div>
+                        </a>
+                    </div>
+                    <div class="col-md-2 col-4 mb-3 text-center">
+                        <a href="{% url 'company_admin:delivery_management' %}" class="text-decoration-none">
+                            <div class="bg-light p-3 rounded">
+                                <i class="bi bi-truck fs-2 text-info"></i>
+                                <p class="small mb-0 mt-2">{% trans "Deliveries" %}</p>
+                            </div>
+                        </a>
+                    </div>
+                    <div class="col-md-2 col-4 mb-3 text-center">
+                        <a href="{% url 'company_admin:user_management' %}" class="text-decoration-none">
+                            <div class="bg-light p-3 rounded">
+                                <i class="bi bi-person-gear fs-2 text-warning"></i>
+                                <p class="small mb-0 mt-2">{% trans "Users" %}</p>
+                            </div>
+                        </a>
+                    </div>
+                    <div class="col-md-2 col-4 mb-3 text-center">
+                        <a href="{% url 'company_admin:currency_management' %}" class="text-decoration-none">
+                            <div class="bg-light p-3 rounded">
+                                <i class="bi bi-currency-exchange fs-2 text-danger"></i>
+                                <p class="small mb-0 mt-2">{% trans "Currency" %}</p>
+                            </div>
+                        </a>
+                    </div>
+                    <div class="col-md-2 col-4 mb-3 text-center">
+                        <a href="{% url 'company_admin:site_settings' %}" class="text-decoration-none">
+                            <div class="bg-light p-3 rounded">
+                                <i class="bi bi-gear fs-2 text-secondary"></i>
+                                <p class="small mb-0 mt-2">{% trans "Settings" %}</p>
+                            </div>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <!-- Orders Awaiting Confirmation -->
+    <div class="col-lg-6 mb-4">
+        <div class="card shadow-sm h-100">
+            <div class="card-header bg-warning text-dark d-flex justify-content-between align-items-center">
+                <h5 class="mb-0"><i class="bi bi-exclamation-circle me-2"></i>{% trans "Awaiting Confirmation" %}</h5>
+                <span class="badge bg-danger">{{ awaiting_confirmation|length }}</span>
+            </div>
+            <div class="card-body">
+                {% if awaiting_confirmation %}
+                <div class="table-responsive">
+                    <table class="table table-hover">
+                        <thead>
+                            <tr>
+                                <th>{% trans "Order" %}</th>
+                                <th>{% trans "Customer" %}</th>
+                                <th>{% trans "Amount" %}</th>
+                                <th>{% trans "Action" %}</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for order in awaiting_confirmation %}
+                            <tr>
+                                <td>#{{ order.id }}</td>
+                                <td>{{ order.customer.username }}</td>
+                                <td>{% price_in_currency order.total %}</td>
+                                <td>
+                                    <a href="{% url 'company_admin:order_detail' order.id %}" class="btn btn-sm btn-primary">
+                                        {% trans "View" %}
+                                    </a>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+                {% else %}
+                <p class="text-muted text-center">{% trans "No orders awaiting confirmation" %}</p>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+
+    <!-- Recent Orders -->
+    <div class="col-lg-6 mb-4">
+        <div class="card shadow-sm h-100">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <h5 class="mb-0"><i class="bi bi-clock-history me-2"></i>{% trans "Recent Orders" %}</h5>
+                <a href="{% url 'company_admin:order_management' %}" class="btn btn-sm btn-outline-primary">
+                    {% trans "View All" %}
+                </a>
+            </div>
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table table-hover">
+                        <thead>
+                            <tr>
+                                <th>{% trans "Order" %}</th>
+                                <th>{% trans "Customer" %}</th>
+                                <th>{% trans "Status" %}</th>
+                                <th>{% trans "Amount" %}</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for order in recent_orders|slice:":10" %}
+                            <tr>
+                                <td><a href="{% url 'company_admin:order_detail' order.id %}">#{{ order.id }}</a></td>
+                                <td>{{ order.customer.username }}</td>
+                                <td>
+                                    <span class="badge {% if order.status == 'completed' or order.status == 'delivered' %}bg-success{% elif order.status == 'pending' %}bg-warning{% elif order.status == 'cancelled' %}bg-danger{% else %}bg-info{% endif %}">
+                                        {{ order.get_status_display }}
+                                    </span>
+                                </td>
+                                <td>{% price_in_currency order.total %}</td>
+                            </tr>
+                            {% empty %}
+                            <tr>
+                                <td colspan="4" class="text-center text-muted">{% trans "No orders yet" %}</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <!-- Top Vendors -->
+    <div class="col-lg-6 mb-4">
+        <div class="card shadow-sm">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <h5 class="mb-0"><i class="bi bi-trophy me-2"></i>{% trans "Top Vendors" %}</h5>
+                <a href="{% url 'company_admin:vendor_management' %}" class="btn btn-sm btn-outline-primary">
+                    {% trans "View All" %}
+                </a>
+            </div>
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>#</th>
+                                <th>{% trans "Vendor" %}</th>
+                                <th>{% trans "Total Sales" %}</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for vendor in top_vendors %}
+                            <tr>
+                                <td>{{ forloop.counter }}</td>
+                                <td>
+                                    <a href="{% url 'company_admin:vendor_detail' vendor.id %}">{{ vendor.username }}</a>
+                                </td>
+                                <td>{% if vendor.total_sales %}{% price_in_currency vendor.total_sales %}{% else %}RWF 0{% endif %}</td>
+                            </tr>
+                            {% empty %}
+                            <tr>
+                                <td colspan="3" class="text-center text-muted">{% trans "No vendors yet" %}</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Recent Customers -->
+    <div class="col-lg-6 mb-4">
+        <div class="card shadow-sm">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <h5 class="mb-0"><i class="bi bi-people me-2"></i>{% trans "Recent Customers" %}</h5>
+                <a href="{% url 'company_admin:user_management' %}?type=customer" class="btn btn-sm btn-outline-primary">
+                    {% trans "View All" %}
+                </a>
+            </div>
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>{% trans "Customer" %}</th>
+                                <th>{% trans "Email" %}</th>
+                                <th>{% trans "Joined" %}</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for customer in customers|slice:":5" %}
+                            <tr>
+                                <td>{{ customer.username }}</td>
+                                <td>{{ customer.email }}</td>
+                                <td>{{ customer.date_joined|date:"M d, Y" }}</td>
+                            </tr>
+                            {% empty %}
+                            <tr>
+                                <td colspan="3" class="text-center text-muted">{% trans "No customers yet" %}</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

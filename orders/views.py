@@ -898,5 +898,304 @@ def purchase_detail(request, pk):
 from .admin import enhanced_admin_dashboard
 
 
+@login_required
+def upload_payment_proof(request, order_id):
+    """Allow customer to upload payment proof for an order"""
+    from .forms import PaymentProofForm
+
+    order = get_object_or_404(Order, id=order_id, customer=request.user)
+
+    if order.status not in [Order.STATUS_PENDING]:
+        messages.error(request, 'Payment proof can only be uploaded for pending orders.')
+        return redirect('orders:confirmation', order_id=order.id)
+
+    if request.method == 'POST':
+        form = PaymentProofForm(request.POST, request.FILES)
+        if form.is_valid():
+            order.payment_proof = form.cleaned_data['payment_proof']
+            if form.cleaned_data.get('payment_reference'):
+                order.payment_reference = form.cleaned_data['payment_reference']
+            order.payment_proof_uploaded_at = timezone.now()
+            order.status = Order.STATUS_AWAITING_CONFIRMATION
+            order.save()
+
+            messages.success(request, 'Payment proof uploaded successfully. Waiting for vendor confirmation.')
+            return redirect('orders:confirmation', order_id=order.id)
+    else:
+        form = PaymentProofForm()
+
+    return render(request, 'orders/upload_payment_proof.html', {
+        'order': order,
+        'form': form,
+        'items': order.items.all()
+    })
+
+
+@login_required
+def vendor_confirm_order(request, order_id):
+    """Allow vendor to confirm or reject an order after viewing payment proof"""
+    from .forms import VendorConfirmationForm
+
+    if request.user.user_type != 'vendor':
+        messages.error(request, 'Only vendors can confirm orders.')
+        return redirect('products:product_list')
+
+    order = get_object_or_404(Order, id=order_id)
+
+    # Check if vendor has items in this order
+    vendor_items = OrderItem.objects.filter(order=order, product__vendor=request.user)
+    if not vendor_items.exists():
+        messages.error(request, 'You do not have any items in this order.')
+        return redirect('orders:vendor_orders')
+
+    if order.status != Order.STATUS_AWAITING_CONFIRMATION:
+        messages.info(request, 'This order is not awaiting confirmation.')
+        return redirect('orders:vendor_order_details', order_id=order.id)
+
+    if request.method == 'POST':
+        form = VendorConfirmationForm(request.POST)
+        if form.is_valid():
+            action = form.cleaned_data['action']
+
+            if action == 'confirm':
+                order.vendor_confirmed = True
+                order.vendor_confirmed_at = timezone.now()
+                order.vendor_confirmed_by = request.user
+                order.status = Order.STATUS_PROCESSING
+
+                # Create purchase records and update stock
+                import uuid
+                txid = f"{order.payment_method.upper()}-{uuid.uuid4().hex[:12].upper()}"
+
+                for item in order.items.all():
+                    purchase = Purchase.objects.create(
+                        customer=order.customer,
+                        product=item.product,
+                        quantity=item.quantity,
+                        amount=item.price * item.quantity,
+                        payment_method=order.payment_method,
+                        transaction_id=txid,
+                    )
+
+                    PurchaseLog.objects.create(
+                        purchase=purchase,
+                        action=PurchaseLog.ACTION_PURCHASE,
+                        actor=request.user,
+                        note=f'Vendor confirmed - Order #{order.id}'
+                    )
+
+                    # Update stock
+                    item.product.stock -= item.quantity
+                    item.product.save()
+
+                order.save()
+
+                # Send confirmation email to customer
+                try:
+                    from django.template.loader import render_to_string
+                    from django.core.mail import EmailMessage
+
+                    html = render_to_string('emails/order_confirmed.html', {
+                        'order': order,
+                        'user': order.customer
+                    })
+                    msg = EmailMessage(
+                        subject=f'Order #{order.id} Confirmed - Payment Verified',
+                        body=html,
+                        from_email=settings.DEFAULT_FROM_EMAIL,
+                        to=[order.customer.email]
+                    )
+                    msg.content_subtype = 'html'
+                    msg.send(fail_silently=True)
+                except Exception:
+                    pass
+
+                messages.success(request, f'Order #{order.id} has been confirmed.')
+
+            else:  # reject
+                order.vendor_rejection_reason = form.cleaned_data['rejection_reason']
+                order.status = Order.STATUS_CANCELLED
+                order.save()
+
+                # Send rejection email to customer
+                try:
+                    from django.template.loader import render_to_string
+                    from django.core.mail import EmailMessage
+
+                    html = render_to_string('emails/order_rejected.html', {
+                        'order': order,
+                        'user': order.customer,
+                        'rejection_reason': order.vendor_rejection_reason
+                    })
+                    msg = EmailMessage(
+                        subject=f'Order #{order.id} - Payment Issue',
+                        body=html,
+                        from_email=settings.DEFAULT_FROM_EMAIL,
+                        to=[order.customer.email]
+                    )
+                    msg.content_subtype = 'html'
+                    msg.send(fail_silently=True)
+                except Exception:
+                    pass
+
+                messages.warning(request, f'Order #{order.id} has been rejected.')
+
+            return redirect('orders:vendor_orders')
+    else:
+        form = VendorConfirmationForm()
+
+    return render(request, 'orders/vendor_confirm_order.html', {
+        'order': order,
+        'form': form,
+        'vendor_items': vendor_items,
+    })
+
+
+@login_required
+def track_delivery(request, order_id):
+    """Display delivery tracking page with GPS map"""
+    order = get_object_or_404(Order, id=order_id)
+
+    # Check permission
+    user_is_customer = (order.customer == request.user)
+    user_is_staff = getattr(request.user, 'is_staff', False) or getattr(request.user, 'is_superuser', False)
+    user_is_vendor = getattr(request.user, 'user_type', None) == 'vendor'
+    vendor_has_item = False
+    if user_is_vendor:
+        vendor_has_item = OrderItem.objects.filter(order=order, product__vendor=request.user).exists()
+
+    if not (user_is_customer or user_is_staff or vendor_has_item):
+        messages.error(request, 'You do not have permission to track this delivery.')
+        return redirect('orders:my_orders')
+
+    # Get or create delivery tracking
+    from core.models import DeliveryTracking, DeliveryTrackingHistory
+    tracking, created = DeliveryTracking.objects.get_or_create(
+        order=order,
+        defaults={
+            'destination_latitude': order.delivery_latitude,
+            'destination_longitude': order.delivery_longitude,
+        }
+    )
+
+    # Get tracking history
+    history = tracking.history.all()[:20]
+
+    return render(request, 'orders/track_delivery.html', {
+        'order': order,
+        'tracking': tracking,
+        'history': history,
+    })
+
+
+@login_required
+def update_delivery_tracking(request, order_id):
+    """Update delivery tracking (for admin/vendor)"""
+    from .forms import DeliveryTrackingForm
+    from core.models import DeliveryTracking, DeliveryTrackingHistory
+
+    if not (request.user.is_staff or request.user.user_type == 'vendor'):
+        messages.error(request, 'You do not have permission to update tracking.')
+        return redirect('orders:my_orders')
+
+    order = get_object_or_404(Order, id=order_id)
+
+    # If vendor, check they have items in this order
+    if request.user.user_type == 'vendor':
+        if not OrderItem.objects.filter(order=order, product__vendor=request.user).exists():
+            messages.error(request, 'You do not have items in this order.')
+            return redirect('orders:vendor_orders')
+
+    tracking, created = DeliveryTracking.objects.get_or_create(order=order)
+
+    if request.method == 'POST':
+        form = DeliveryTrackingForm(request.POST)
+        if form.is_valid():
+            old_status = tracking.status
+            tracking.status = form.cleaned_data['status']
+            tracking.driver_name = form.cleaned_data.get('driver_name', '')
+            tracking.driver_phone = form.cleaned_data.get('driver_phone', '')
+            tracking.vehicle_number = form.cleaned_data.get('vehicle_number', '')
+            tracking.notes = form.cleaned_data.get('notes', '')
+
+            new_lat = form.cleaned_data.get('current_latitude')
+            new_lng = form.cleaned_data.get('current_longitude')
+
+            if new_lat and new_lng:
+                tracking.current_latitude = new_lat
+                tracking.current_longitude = new_lng
+
+                # Record in history
+                DeliveryTrackingHistory.objects.create(
+                    tracking=tracking,
+                    latitude=new_lat,
+                    longitude=new_lng,
+                    status=tracking.status,
+                    note=f"Updated by {request.user.username}"
+                )
+
+            # Update timestamps based on status
+            if tracking.status == 'picked_up' and not tracking.picked_up_at:
+                tracking.picked_up_at = timezone.now()
+            elif tracking.status == 'delivered':
+                tracking.delivered_at = timezone.now()
+                # Also update order status
+                order.status = Order.STATUS_DELIVERED
+                order.save()
+
+            tracking.save()
+            messages.success(request, 'Delivery tracking updated successfully.')
+            return redirect('orders:track_delivery', order_id=order.id)
+    else:
+        form = DeliveryTrackingForm(initial={
+            'status': tracking.status,
+            'driver_name': tracking.driver_name,
+            'driver_phone': tracking.driver_phone,
+            'vehicle_number': tracking.vehicle_number,
+            'current_latitude': tracking.current_latitude,
+            'current_longitude': tracking.current_longitude,
+            'notes': tracking.notes,
+        })
+
+    return render(request, 'orders/update_tracking.html', {
+        'order': order,
+        'tracking': tracking,
+        'form': form,
+    })
+
+
+def get_tracking_location(request, order_id):
+    """API endpoint to get current tracking location (for AJAX polling)"""
+    from core.models import DeliveryTracking
+
+    try:
+        order = Order.objects.get(id=order_id)
+    except Order.DoesNotExist:
+        return JsonResponse({'error': 'Order not found'}, status=404)
+
+    # Check permission (simplified for API)
+    if not request.user.is_authenticated:
+        return JsonResponse({'error': 'Unauthorized'}, status=401)
+
+    try:
+        tracking = DeliveryTracking.objects.get(order=order)
+    except DeliveryTracking.DoesNotExist:
+        return JsonResponse({'error': 'No tracking information'}, status=404)
+
+    return JsonResponse({
+        'status': tracking.status,
+        'status_display': tracking.get_status_display(),
+        'driver_name': tracking.driver_name,
+        'driver_phone': tracking.driver_phone,
+        'vehicle_number': tracking.vehicle_number,
+        'current_latitude': float(tracking.current_latitude) if tracking.current_latitude else None,
+        'current_longitude': float(tracking.current_longitude) if tracking.current_longitude else None,
+        'destination_latitude': float(tracking.destination_latitude) if tracking.destination_latitude else None,
+        'destination_longitude': float(tracking.destination_longitude) if tracking.destination_longitude else None,
+        'estimated_delivery': tracking.estimated_delivery.isoformat() if tracking.estimated_delivery else None,
+        'updated_at': tracking.updated_at.isoformat(),
+    })
+
+
 
 

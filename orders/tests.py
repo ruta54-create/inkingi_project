@@ -121,9 +121,16 @@ class MockPaymentTests(TestCase):
         # login admin and call admin action to reprocess
         self.client.login(username='admin', password='pass')
         from django.urls import reverse
+
+        # Step 1: Initiate reprocess action - this redirects to confirmation page
         url = reverse('admin:orders_stripewebhookevent_changelist')
         resp = self.client.post(url, {'action': 'reprocess_events', '_selected_action': [str(ev.id)]})
-        # admin redirects back on success
+        self.assertEqual(resp.status_code, 302)  # Should redirect to confirmation
+
+        # Step 2: Post to confirmation page with 'confirm' to actually process
+        confirm_url = reverse('admin:orders_stripewebhookevent_reprocess_confirmation')
+        resp = self.client.post(confirm_url, {'confirm': 'true', 'selected_ids': [str(ev.id)]})
+        # admin redirects back to changelist on success
         self.assertIn(resp.status_code, (302, 200))
 
         # refresh and assert processed and order finalized
